@@ -122,20 +122,25 @@ function App() {
     if (analysisMode === 'low') depth = 12;
     if (analysisMode === 'high') depth = 18;
     if (analysisMode === 'custom') depth = customDepth;
-    analyzeStep(-1, depth);
+
+    // Pass a fresh game instance for incremental analysis
+    analyzeStep(-1, depth, new Chess());
   };
 
-  const analyzeStep = (index, depth) => {
-    const tempGame = new Chess();
-    for (let i = 0; i <= index; i++) tempGame.move(moveHistory[i]);
-    const fen = tempGame.fen();
+  const analyzeStep = (index, depth, gameInstance) => {
+    // Apply the move for the current index if applicable
+    // This incrementally updates the game state instead of replaying from start
+    if (index >= 0) {
+      gameInstance.move(moveHistory[index]);
+    }
+    const fen = gameInstance.fen();
 
     engine.analyzePosition(fen, depth, (result) => {
         setAnalysisResults(prev => ({ ...prev, [index]: result }));
         const nextIndex = index + 1;
         setAnalysisProgress(Math.round(((index + 2) / (moveHistory.length + 1)) * 100));
         if (nextIndex < moveHistory.length) {
-            analyzeStep(nextIndex, depth);
+            analyzeStep(nextIndex, depth, gameInstance);
         } else {
             setIsAnalyzing(false);
         }
