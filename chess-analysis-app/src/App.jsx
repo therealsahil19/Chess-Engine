@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
 import Engine from './engine';
@@ -45,7 +45,7 @@ function App() {
     safeGameMutate((g) => {
       try {
         move = g.move({ from: sourceSquare, to: targetSquare, promotion: 'q' });
-      } catch(e) { /* invalid move */ }
+      } catch { /* invalid move */ }
     });
 
     if (move) {
@@ -68,7 +68,7 @@ function App() {
       setCurrentMoveIndex(-1);
       setAnalysisResults({});
       setIsAnalyzing(false);
-    } catch (error) {
+    } catch {
       alert('Invalid PGN');
     }
   };
@@ -193,7 +193,7 @@ function App() {
             promotion: res.bestMove.length > 4 ? res.bestMove[4] : 'q'
         });
         return move.san;
-      } catch (e) {
+      } catch {
           return res.bestMove;
       }
   };
