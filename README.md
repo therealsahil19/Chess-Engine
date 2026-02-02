@@ -68,6 +68,7 @@ npm run build
 - [ ] Multi-PV (multiple principal variations) support.
 - [ ] Evaluation bar visualization.
 - [ ] Opening book integration.
+- [x] GitHub Actions deployment configuration.
 
 ## License
 
