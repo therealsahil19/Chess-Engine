@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
 import Engine from './engine';
@@ -9,6 +9,8 @@ function App() {
   const [fen, setFen] = useState(game.fen());
   const [pgnInput, setPgnInput] = useState('');
   const [engine, setEngine] = useState(null);
+
+  const finalGameRef = useRef(new Chess());
 
   // Navigation State
   const [moveHistory, setMoveHistory] = useState([]);
@@ -42,17 +44,21 @@ function App() {
   };
 
   const onDrop = (sourceSquare, targetSquare) => {
+    const gameCopy = new Chess(game.fen());
     let move = null;
-    safeGameMutate((g) => {
-      try {
-        move = g.move({ from: sourceSquare, to: targetSquare, promotion: 'q' });
-      } catch { /* invalid move */ }
-    });
+    try {
+      move = gameCopy.move({ from: sourceSquare, to: targetSquare, promotion: 'q' });
+    } catch { /* invalid move */ }
 
     if (move) {
+        setGame(gameCopy);
         const newHistory = [...moveHistory.slice(0, currentMoveIndex + 1), move];
         setMoveHistory(newHistory);
         setCurrentMoveIndex(prev => prev + 1);
+
+        // Update final game ref
+        finalGameRef.current = new Chess(gameCopy.fen());
+
         return true;
     }
     return false;
@@ -66,6 +72,10 @@ function App() {
       setMoveHistory(history);
       const newGame = new Chess();
       setGame(newGame);
+
+      // Update final game ref
+      finalGameRef.current = new Chess(tempGame.fen());
+
       setCurrentMoveIndex(-1);
       setAnalysisResults({});
       setIsAnalyzing(false);
@@ -78,6 +88,7 @@ function App() {
   const handleReset = () => {
     setGame(new Chess());
     setMoveHistory([]);
+    finalGameRef.current = new Chess();
     setCurrentMoveIndex(-1);
     setPgnInput('');
     setAnalysisResults({});
@@ -100,9 +111,8 @@ function App() {
     }
   };
   const goToEnd = () => {
-    const newGame = new Chess();
-    for (const move of moveHistory) newGame.move(move);
-    setGame(newGame);
+    // Optimized: Use cached final state instead of replaying
+    setGame(new Chess(finalGameRef.current.fen()));
     setCurrentMoveIndex(moveHistory.length - 1);
   };
   const jumpToMove = (index) => {
