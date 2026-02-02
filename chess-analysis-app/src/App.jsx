@@ -1,8 +1,47 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
 import Engine from './engine';
 import './App.css';
+
+// Helper functions
+const getNormScore = (res, index) => {
+  if (!res) return 0;
+  let val = res.scoreVal;
+  if (res.scoreType === 'mate') {
+    val = (val > 0 ? 10000 : -10000) - (val * 100);
+  }
+  const modifier = (index + 1) % 2 === 0 ? 1 : -1;
+  return val * modifier;
+};
+
+const computeClassification = (index, moveHistory, analysisResults) => {
+  if (index === -1) return null; // Start pos
+  const prevRes = analysisResults[index - 1];
+  const currRes = analysisResults[index];
+  if (!prevRes || !currRes) return null;
+
+  const playedMoveObj = moveHistory[index];
+  const playedMoveLan = playedMoveObj.from + playedMoveObj.to + (playedMoveObj.promotion || '');
+  if (playedMoveLan === prevRes.bestMove) return { label: 'Best', className: 'class-best' };
+
+  const prevScore = getNormScore(prevRes, index - 1);
+  const currScore = getNormScore(currRes, index);
+
+  let loss = 0;
+  if (playedMoveObj.color === 'w') {
+    loss = prevScore - currScore;
+  } else {
+    loss = currScore - prevScore;
+  }
+
+  if (loss <= 0) return { label: 'Best', className: 'class-best' };
+  if (loss <= 20) return { label: 'Excellent', className: 'class-excellent' };
+  if (loss <= 50) return { label: 'Good', className: 'class-good' };
+  if (loss <= 100) return { label: 'Inaccuracy', className: 'class-inaccuracy' };
+  if (loss <= 300) return { label: 'Mistake', className: 'class-mistake' };
+  return { label: 'Blunder', className: 'class-blunder' };
+};
 
 function App() {
   const [game, setGame] = useState(new Chess());
@@ -171,44 +210,6 @@ function App() {
     });
   };
 
-  // Classification Helpers
-  const getNormScore = (res, index) => {
-      if (!res) return 0;
-      let val = res.scoreVal;
-      if (res.scoreType === 'mate') {
-          val = (val > 0 ? 10000 : -10000) - (val * 100);
-      }
-      const modifier = (index + 1) % 2 === 0 ? 1 : -1;
-      return val * modifier;
-  };
-
-  const getClassForMove = (index) => {
-      if (index === -1) return null; // Start pos
-      const prevRes = analysisResults[index - 1];
-      const currRes = analysisResults[index];
-      if (!prevRes || !currRes) return null;
-
-      const playedMoveObj = moveHistory[index];
-      const playedMoveLan = playedMoveObj.from + playedMoveObj.to + (playedMoveObj.promotion || '');
-      if (playedMoveLan === prevRes.bestMove) return { label: 'Best', className: 'class-best' };
-
-      const prevScore = getNormScore(prevRes, index - 1);
-      const currScore = getNormScore(currRes, index);
-
-      let loss = 0;
-      if (playedMoveObj.color === 'w') {
-          loss = prevScore - currScore;
-      } else {
-          loss = currScore - prevScore;
-      }
-
-      if (loss <= 0) return { label: 'Best', className: 'class-best' };
-      if (loss <= 20) return { label: 'Excellent', className: 'class-excellent' };
-      if (loss <= 50) return { label: 'Good', className: 'class-good' };
-      if (loss <= 100) return { label: 'Inaccuracy', className: 'class-inaccuracy' };
-      if (loss <= 300) return { label: 'Mistake', className: 'class-mistake' };
-      return { label: 'Blunder', className: 'class-blunder' };
-  };
 
   const getBestMoveSan = (index) => {
       const res = analysisResults[index - 1];
@@ -246,7 +247,15 @@ function App() {
     };
   };
 
-  const currentClassification = getClassForMove(currentMoveIndex);
+  const moveClassifications = useMemo(() => {
+    const classifications = {};
+    moveHistory.forEach((_, index) => {
+      classifications[index] = computeClassification(index, moveHistory, analysisResults);
+    });
+    return classifications;
+  }, [moveHistory, analysisResults]);
+
+  const currentClassification = moveClassifications[currentMoveIndex];
   const bestMoveSuggestion = (currentClassification && (currentClassification.label === 'Mistake' || currentClassification.label === 'Blunder'))
       ? getBestMoveSan(currentMoveIndex) : null;
 
@@ -331,39 +340,44 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {moveRows.map((row) => (
-                <tr key={row.num} className="move-row">
-                  <td className="move-number">{row.num}.</td>
-                  <td
-                    className={`move-cell ${currentMoveIndex === row.white.index ? 'current' : ''}`}
-                    onClick={() => jumpToMove(row.white.index)}
-                  >
-                    {row.white.move.san}
-                    {getClassForMove(row.white.index) && (
-                      <span className={`move-annotation ${getClassForMove(row.white.index).className}`}>
-                        {getClassForMove(row.white.index).label === 'Best' ? '★' : ''}
-                        {getClassForMove(row.white.index).label === 'Inaccuracy' ? '?!' : ''}
-                        {getClassForMove(row.white.index).label === 'Mistake' ? '?' : ''}
-                        {getClassForMove(row.white.index).label === 'Blunder' ? '??' : ''}
-                      </span>
-                    )}
-                  </td>
-                  <td
-                    className={`move-cell ${row.black && currentMoveIndex === row.black.index ? 'current' : ''}`}
-                    onClick={() => row.black && jumpToMove(row.black.index)}
-                  >
-                    {row.black?.move.san}
-                    {row.black && getClassForMove(row.black.index) && (
-                      <span className={`move-annotation ${getClassForMove(row.black.index).className}`}>
-                        {getClassForMove(row.black.index).label === 'Best' ? '★' : ''}
-                        {getClassForMove(row.black.index).label === 'Inaccuracy' ? '?!' : ''}
-                        {getClassForMove(row.black.index).label === 'Mistake' ? '?' : ''}
-                        {getClassForMove(row.black.index).label === 'Blunder' ? '??' : ''}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {moveRows.map((row) => {
+                const whiteClass = moveClassifications[row.white.index];
+                const blackClass = row.black ? moveClassifications[row.black.index] : null;
+
+                return (
+                  <tr key={row.num} className="move-row">
+                    <td className="move-number">{row.num}.</td>
+                    <td
+                      className={`move-cell ${currentMoveIndex === row.white.index ? 'current' : ''}`}
+                      onClick={() => jumpToMove(row.white.index)}
+                    >
+                      {row.white.move.san}
+                      {whiteClass && (
+                        <span className={`move-annotation ${whiteClass.className}`}>
+                          {whiteClass.label === 'Best' ? '★' : ''}
+                          {whiteClass.label === 'Inaccuracy' ? '?!' : ''}
+                          {whiteClass.label === 'Mistake' ? '?' : ''}
+                          {whiteClass.label === 'Blunder' ? '??' : ''}
+                        </span>
+                      )}
+                    </td>
+                    <td
+                      className={`move-cell ${row.black && currentMoveIndex === row.black.index ? 'current' : ''}`}
+                      onClick={() => row.black && jumpToMove(row.black.index)}
+                    >
+                      {row.black?.move.san}
+                      {blackClass && (
+                        <span className={`move-annotation ${blackClass.className}`}>
+                          {blackClass.label === 'Best' ? '★' : ''}
+                          {blackClass.label === 'Inaccuracy' ? '?!' : ''}
+                          {blackClass.label === 'Mistake' ? '?' : ''}
+                          {blackClass.label === 'Blunder' ? '??' : ''}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
