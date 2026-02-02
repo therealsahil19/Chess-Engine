@@ -305,7 +305,14 @@ function App() {
           <div className="stats-panel">
             <div className="stat-item">
               <span className="stat-label">Evaluation</span>
-              <span className="stat-value">{evalData.text} {currentAnalysis.scoreType === 'mate' ? '(Mate)' : ''}</span>
+              <span className="stat-value">
+                {currentAnalysis.bound && (
+                  ((currentMoveIndex + 1) % 2 === 0)
+                    ? (currentAnalysis.bound === 'lower' ? '≥ ' : '≤ ')
+                    : (currentAnalysis.bound === 'lower' ? '≤ ' : '≥ ')
+                )}
+                {evalData.text} {currentAnalysis.scoreType === 'mate' ? '(Mate)' : ''}
+              </span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Depth</span>
