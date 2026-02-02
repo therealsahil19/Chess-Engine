@@ -136,6 +136,20 @@ function App() {
     const fen = gameInstance.fen();
 
     engine.analyzePosition(fen, depth, (result) => {
+        if (result.bestMove) {
+            try {
+                const move = gameInstance.move({
+                    from: result.bestMove.substring(0, 2),
+                    to: result.bestMove.substring(2, 4),
+                    promotion: result.bestMove.length > 4 ? result.bestMove[4] : 'q'
+                });
+                result.bestMoveSan = move.san;
+                gameInstance.undo();
+            } catch {
+                result.bestMoveSan = result.bestMove;
+            }
+        }
+
         setAnalysisResults(prev => ({ ...prev, [index]: result }));
         const nextIndex = index + 1;
         setAnalysisProgress(Math.round(((index + 2) / (moveHistory.length + 1)) * 100));
@@ -189,20 +203,7 @@ function App() {
   const getBestMoveSan = (index) => {
       const res = analysisResults[index - 1];
       if (!res || !res.bestMove) return null;
-
-      const tempGame = new Chess();
-      for(let i=0; i<index; i++) tempGame.move(moveHistory[i]);
-
-      try {
-        const move = tempGame.move({
-            from: res.bestMove.substring(0, 2),
-            to: res.bestMove.substring(2, 4),
-            promotion: res.bestMove.length > 4 ? res.bestMove[4] : 'q'
-        });
-        return move.san;
-      } catch {
-          return res.bestMove;
-      }
+      return res.bestMoveSan || res.bestMove;
   };
 
   const getEvalData = () => {
