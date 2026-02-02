@@ -1,6 +1,7 @@
 export default class Engine {
   constructor(onMessage) {
-    this.stockfish = new Worker("/stockfish.js");
+    const workerPath = `${import.meta.env.BASE_URL}stockfish.js`;
+    this.stockfish = new Worker(workerPath);
     this.latestInfo = {};
 
     this.stockfish.onmessage = (event) => {
