@@ -20,6 +20,7 @@ function App() {
   const [analysisResults, setAnalysisResults] = useState({});
   const [analysisMode, setAnalysisMode] = useState('low');
   const [customDepth, setCustomDepth] = useState(15);
+  const [isPgnCollapsed, setIsPgnCollapsed] = useState(true);
 
   // Initialize Engine
   useEffect(() => {
@@ -68,6 +69,7 @@ function App() {
       setCurrentMoveIndex(-1);
       setAnalysisResults({});
       setIsAnalyzing(false);
+      setIsPgnCollapsed(true);
     } catch {
       alert('Invalid PGN');
     }
@@ -198,9 +200,41 @@ function App() {
       }
   };
 
+  const getEvalData = () => {
+    const res = analysisResults[currentMoveIndex];
+    if (!res) return { percentage: 50, text: '0.0', side: 'top' };
+
+    let score = res.scoreVal;
+    if (res.scoreType === 'mate') {
+      // Logic: if it's black to move (even index+1, or currentMoveIndex is even), and score > 0, white is mating.
+      // Wait, let's simplify.
+      const sideToMove = (currentMoveIndex + 1) % 2 === 0 ? 'w' : 'b';
+      const whiteScore = sideToMove === 'w' ? score : -score;
+      return {
+        percentage: whiteScore > 0 ? 100 : 0,
+        text: `M${Math.abs(score)}`,
+        side: whiteScore > 0 ? 'bottom' : 'top'
+      };
+    }
+
+    const sideToMove = (currentMoveIndex + 1) % 2 === 0 ? 'w' : 'b';
+    const whiteScore = sideToMove === 'w' ? score : -score;
+
+    let percentage = 50 + (whiteScore / 10);
+    percentage = Math.max(5, Math.min(95, percentage));
+
+    return {
+      percentage,
+      text: (Math.abs(whiteScore) / 100).toFixed(1),
+      side: whiteScore >= 0 ? 'bottom' : 'top'
+    };
+  };
+
   const currentClassification = getClassForMove(currentMoveIndex);
   const bestMoveSuggestion = (currentClassification && (currentClassification.label === 'Mistake' || currentClassification.label === 'Blunder'))
       ? getBestMoveSan(currentMoveIndex) : null;
+
+  const evalData = getEvalData();
 
   // Arrows for Best Move
   const arrows = [];
@@ -211,104 +245,165 @@ function App() {
       arrows.push([from, to]);
   }
 
+  // Move grouping for table
+  const moveRows = [];
+  for (let i = 0; i < moveHistory.length; i += 2) {
+    moveRows.push({
+      num: Math.floor(i / 2) + 1,
+      white: { move: moveHistory[i], index: i },
+      black: moveHistory[i+1] ? { move: moveHistory[i+1], index: i+1 } : null
+    });
+  }
+
   return (
-    <div className="app-container">
-      <div className="board-container">
+    <main className="app-container">
+      <aside className="evaluation-bar-container" aria-label="Evaluation Bar">
+        <div
+          className="evaluation-bar-fill"
+          style={{ height: `${evalData.percentage}%` }}
+        />
+        <span className={`evaluation-text ${evalData.side}`}>{evalData.text}</span>
+      </aside>
+
+      <section className="board-container">
         <Chessboard
             position={fen}
             onPieceDrop={onDrop}
             customArrows={arrows}
-            customArrowColor="rgba(46, 204, 113, 0.8)"
+            customArrowColor="rgba(129, 182, 76, 0.8)"
+            boardOrientation="white"
         />
 
         <div className="navigation-controls">
-            <button onClick={goToStart} disabled={currentMoveIndex === -1}>&lt;&lt;</button>
-            <button onClick={goBack} disabled={currentMoveIndex === -1}>&lt;</button>
-            <button onClick={goForward} disabled={currentMoveIndex === moveHistory.length - 1}>&gt;</button>
-            <button onClick={goToEnd} disabled={currentMoveIndex === moveHistory.length - 1}>&gt;&gt;</button>
+            <button onClick={goToStart} disabled={currentMoveIndex === -1} aria-label="Go to start">«</button>
+            <button onClick={goBack} disabled={currentMoveIndex === -1} aria-label="Go back">‹</button>
+            <button onClick={goForward} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go forward">›</button>
+            <button onClick={goToEnd} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go to end">»</button>
+        </div>
+      </section>
+
+      <aside className="analysis-panel">
+        <div className="panel-header">
+          <h2>Analysis</h2>
         </div>
 
-        {bestMoveSuggestion && (
-            <div className="feedback-panel">
-                <span className={`class-badge ${currentClassification.className}`}>{currentClassification.label}</span>
-                <span className="suggestion">Best was: {bestMoveSuggestion}</span>
+        {currentAnalysis && (
+          <div className="stats-panel">
+            <div className="stat-item">
+              <span className="stat-label">Evaluation</span>
+              <span className="stat-value">{evalData.text} {currentAnalysis.scoreType === 'mate' ? '(Mate)' : ''}</span>
             </div>
-        )}
-      </div>
-
-      <div className="controls-container">
-        <h2>Chess Analysis</h2>
-
-        <div className="analysis-settings">
-            <label>Mode:
-                <select value={analysisMode} onChange={(e) => setAnalysisMode(e.target.value)} disabled={isAnalyzing}>
-                    <option value="low">Low Reasoning (Fast)</option>
-                    <option value="high">High Reasoning (Deep)</option>
-                    <option value="custom">Custom</option>
-                </select>
-            </label>
-            {analysisMode === 'custom' && (
-                <input
-                    type="number"
-                    value={customDepth}
-                    onChange={(e) => setCustomDepth(parseInt(e.target.value))}
-                    min="1" max="30"
-                />
+            <div className="stat-item">
+              <span className="stat-label">Depth</span>
+              <span className="stat-value">{currentAnalysis.depth || 0}</span>
+            </div>
+            {currentAnalysis.pv && (
+              <div className="pv-display" title="Principal Variation">
+                {currentAnalysis.pv}
+              </div>
             )}
-            <button onClick={startAnalysis} disabled={isAnalyzing || moveHistory.length === 0}>
-                {isAnalyzing ? `Analyzing... ${analysisProgress}%` : 'Analyze Game'}
-            </button>
+          </div>
+        )}
+
+        <div className="move-history-container">
+          <table className="move-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>White</th>
+                <th>Black</th>
+              </tr>
+            </thead>
+            <tbody>
+              {moveRows.map((row) => (
+                <tr key={row.num} className="move-row">
+                  <td className="move-number">{row.num}.</td>
+                  <td
+                    className={`move-cell ${currentMoveIndex === row.white.index ? 'current' : ''}`}
+                    onClick={() => jumpToMove(row.white.index)}
+                  >
+                    {row.white.move.san}
+                    {getClassForMove(row.white.index) && (
+                      <span className={`move-annotation ${getClassForMove(row.white.index).className}`}>
+                        {getClassForMove(row.white.index).label === 'Best' ? '★' : ''}
+                        {getClassForMove(row.white.index).label === 'Inaccuracy' ? '?!' : ''}
+                        {getClassForMove(row.white.index).label === 'Mistake' ? '?' : ''}
+                        {getClassForMove(row.white.index).label === 'Blunder' ? '??' : ''}
+                      </span>
+                    )}
+                  </td>
+                  <td
+                    className={`move-cell ${row.black && currentMoveIndex === row.black.index ? 'current' : ''}`}
+                    onClick={() => row.black && jumpToMove(row.black.index)}
+                  >
+                    {row.black?.move.san}
+                    {row.black && getClassForMove(row.black.index) && (
+                      <span className={`move-annotation ${getClassForMove(row.black.index).className}`}>
+                        {getClassForMove(row.black.index).label === 'Best' ? '★' : ''}
+                        {getClassForMove(row.black.index).label === 'Inaccuracy' ? '?!' : ''}
+                        {getClassForMove(row.black.index).label === 'Mistake' ? '?' : ''}
+                        {getClassForMove(row.black.index).label === 'Blunder' ? '??' : ''}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        <div className="pgn-input-section">
-          {!moveHistory.length && (
-              <>
-                <textarea
-                    placeholder="Paste PGN here..."
-                    value={pgnInput}
-                    onChange={(e) => setPgnInput(e.target.value)}
-                    rows={5}
-                />
-                <div className="button-group">
-                    <button onClick={handlePgnLoad}>Load PGN</button>
-                    <button onClick={handleReset}>Reset</button>
-                </div>
-              </>
-          )}
-          {moveHistory.length > 0 && <button onClick={handleReset}>New Game</button>}
+        <div className="settings-section">
+          <div className="analysis-settings">
+              <label>Mode:
+                  <select value={analysisMode} onChange={(e) => setAnalysisMode(e.target.value)} disabled={isAnalyzing}>
+                      <option value="low">Low Reasoning (Fast)</option>
+                      <option value="high">High Reasoning (Deep)</option>
+                      <option value="custom">Custom</option>
+                  </select>
+              </label>
+              {analysisMode === 'custom' && (
+                  <input
+                      type="number"
+                      value={customDepth}
+                      onChange={(e) => setCustomDepth(parseInt(e.target.value))}
+                      min="1" max="30"
+                  />
+              )}
+              <button className="analyze-button" onClick={startAnalysis} disabled={isAnalyzing || moveHistory.length === 0}>
+                  {isAnalyzing ? `Analyzing... ${analysisProgress}%` : 'Analyze Game'}
+              </button>
+          </div>
         </div>
 
-        <div className="move-history">
-            <strong>Moves:</strong>
-            <div className="move-list">
-                {moveHistory.map((move, i) => {
-                    const cls = getClassForMove(i);
-                    return (
-                        <span
-                            key={i}
-                            className={`move-item ${i === currentMoveIndex ? 'current' : ''} ${cls ? cls.className : ''}`}
-                            onClick={() => jumpToMove(i)}
-                            title={cls ? cls.label : ''}
-                        >
-                            {i % 2 === 0 ? <span className="move-num">{(i/2) + 1}.</span> : ''}
-                            {move.san}
-                            {cls && (
-                                <span className="move-annotation">
-                                    {cls.label === 'Best' && '★'}
-                                    {cls.label === 'Excellent' && ''}
-                                    {cls.label === 'Good' && ''}
-                                    {cls.label === 'Inaccuracy' && '?!'}
-                                    {cls.label === 'Mistake' && '?'}
-                                    {cls.label === 'Blunder' && '??'}
-                                </span>
-                            )}
-                        </span>
-                    );
-                })}
+        <div className="collapsible-section">
+          <div className="collapsible-header" onClick={() => setIsPgnCollapsed(!isPgnCollapsed)}>
+            <span>PGN / New Game</span>
+            <span>{isPgnCollapsed ? '▼' : '▲'}</span>
+          </div>
+          {!isPgnCollapsed && (
+            <div className="collapsible-content">
+              <textarea
+                  placeholder="Paste PGN here..."
+                  value={pgnInput}
+                  onChange={(e) => setPgnInput(e.target.value)}
+                  rows={5}
+              />
+              <div className="button-group">
+                  <button onClick={handlePgnLoad}>Load PGN</button>
+                  <button onClick={handleReset}>Reset / New Game</button>
+              </div>
             </div>
+          )}
         </div>
-      </div>
-    </div>
+      </aside>
+
+      {bestMoveSuggestion && (
+          <div className="feedback-panel" style={{ gridColumn: '2 / span 1' }}>
+              <span className={`class-badge class-${currentClassification.label.toLowerCase()}`}>{currentClassification.label}</span>
+              <span className="suggestion">Best was: {bestMoveSuggestion}</span>
+          </div>
+      )}
+    </main>
   );
 }
 
