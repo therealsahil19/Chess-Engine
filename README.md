@@ -20,6 +20,9 @@ A modern, web-based chess analysis application that leverages Stockfish (WASM) t
 - **PGN Support**: Load games from PGN strings for full analysis.
 - **Game Navigation**: Easily navigate through moves with start, back, forward, and end controls.
 - **Visual Feedback**: Best move arrows and move-by-move evaluation badges.
+- **Evaluation Bar**: Vertical bar showing the current advantage (centipawns or mate scores).
+- **Engine Bound Display**: Indicates if the score is a lower (≥) or upper (≤) bound.
+- **3-Column Layout**: Optimized UI with Evaluation Bar, Chessboard, and Analysis Panel side-by-side.
 
 ## Technologies Used
 
@@ -62,11 +65,18 @@ To create a production build:
 npm run build
 ```
 
+## Deployment
+
+The project is configured to automatically deploy to GitHub Pages using GitHub Actions.
+- The workflow file is located at `.github/workflows/deploy.yml`.
+- It triggers on pushes to the `main` branch.
+- It builds the project and uploads the `dist` artifact to GitHub Pages.
+
 ## Future Roadmap
 
 - [ ] "Brilliant" move classification logic.
 - [ ] Multi-PV (multiple principal variations) support.
-- [ ] Evaluation bar visualization.
+- [x] Evaluation bar visualization.
 - [ ] Opening book integration.
 - [x] GitHub Actions deployment configuration.
 
