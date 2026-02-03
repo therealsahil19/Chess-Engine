@@ -1,6 +1,6 @@
 export function parseInfo(line) {
   const info = {};
-  const parts = line.split(' ');
+  const parts = line.split(/\s+/).filter(p => p !== '');
 
   // score
   const scoreIdx = parts.indexOf('score');
