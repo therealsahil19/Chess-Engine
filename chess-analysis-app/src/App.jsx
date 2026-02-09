@@ -96,11 +96,11 @@ function App() {
       tempGame.loadPgn(pgnInput);
       const rawHistory = tempGame.history({ verbose: true });
 
-      const replayGame = new Chess();
-      const history = rawHistory.map(move => {
-        replayGame.move(move);
-        return { ...move, fen: replayGame.fen() };
-      });
+      const history = new Array(rawHistory.length);
+      for (let i = rawHistory.length - 1; i >= 0; i--) {
+        history[i] = { ...rawHistory[i], fen: tempGame.fen() };
+        tempGame.undo();
+      }
 
       setMoveHistory(history);
       const newGame = new Chess();
