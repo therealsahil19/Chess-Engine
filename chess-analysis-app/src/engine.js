@@ -11,18 +11,20 @@ export default class Engine {
 
       // Parse info lines for depth, score, pv
       if (line.startsWith('info') && line.includes('score')) {
-        this.latestInfo = parseInfo(line);
+        this.rawInfo = line;
       }
 
       // When bestmove is returned, the analysis for this position is done
       if (line.startsWith('bestmove')) {
         const bestMove = line.split(' ')[1];
         if (this.onResult) {
-            this.onResult({
-                bestMove,
-                ...this.latestInfo
-            });
-            this.onResult = null; // Clear callback
+          // Lazy parse the latest info
+          this.latestInfo = this.rawInfo ? parseInfo(this.rawInfo) : {};
+          this.onResult({
+            bestMove,
+            ...this.latestInfo
+          });
+          this.onResult = null; // Clear callback
         }
       }
 

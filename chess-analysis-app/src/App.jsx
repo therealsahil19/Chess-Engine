@@ -213,7 +213,6 @@ function App() {
     let score = res.scoreVal;
     if (res.scoreType === 'mate') {
       // Logic: if it's black to move (even index+1, or currentMoveIndex is even), and score > 0, white is mating.
-      // Wait, let's simplify.
       const sideToMove = (currentMoveIndex + 1) % 2 === 0 ? 'w' : 'b';
       const whiteScore = sideToMove === 'w' ? score : -score;
       return {
@@ -251,23 +250,28 @@ function App() {
   const evalData = getEvalData();
 
   // Arrows for Best Move
-  const arrows = [];
-  const currentAnalysis = analysisResults[currentMoveIndex];
-  if (currentAnalysis && currentAnalysis.bestMove) {
-      const from = currentAnalysis.bestMove.substring(0, 2);
-      const to = currentAnalysis.bestMove.substring(2, 4);
-      arrows.push([from, to]);
-  }
+  const arrows = useMemo(() => {
+    const currentAnalysis = analysisResults[currentMoveIndex];
+    if (currentAnalysis && currentAnalysis.bestMove) {
+        const from = currentAnalysis.bestMove.substring(0, 2);
+        const to = currentAnalysis.bestMove.substring(2, 4);
+        return [[from, to]];
+    }
+    return [];
+  }, [analysisResults, currentMoveIndex]);
 
   // Move grouping for table
-  const moveRows = [];
-  for (let i = 0; i < moveHistory.length; i += 2) {
-    moveRows.push({
-      num: Math.floor(i / 2) + 1,
-      white: { move: moveHistory[i], index: i },
-      black: moveHistory[i+1] ? { move: moveHistory[i+1], index: i+1 } : null
-    });
-  }
+  const moveRows = useMemo(() => {
+    const rows = [];
+    for (let i = 0; i < moveHistory.length; i += 2) {
+      rows.push({
+        num: Math.floor(i / 2) + 1,
+        white: { move: moveHistory[i], index: i },
+        black: moveHistory[i+1] ? { move: moveHistory[i+1], index: i+1 } : null
+      });
+    }
+    return rows;
+  }, [moveHistory]);
 
   return (
     <main className="app-container">

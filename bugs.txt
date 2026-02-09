@@ -1,0 +1,82 @@
+Description
+The `customArrows` array is recreated on every render, potentially forcing the expensive `Chessboard` component to re-render.
+
+Location
+chess-analysis-app/src/App.jsx:262
+
+Rationale
+Passing a new array reference to `customArrows` on every render breaks `React.memo` optimizations within the `Chessboard` component. Wrapping it in `useMemo` ensures referential stability.
+
+Code context
+  // Arrows for Best Move
+  const arrows = [];
+  const currentAnalysis = analysisResults[currentMoveIndex];
+  if (currentAnalysis && currentAnalysis.bestMove) {
+      const from = currentAnalysis.bestMove.substring(0, 2);
+Description
+The engine parses every 'info' line from Stockfish, but only uses the last one, wasting CPU cycles on the main thread.
+
+Location
+chess-analysis-app/src/engine.js:14
+
+Rationale
+Storing the raw info string and parsing it only when 'bestmove' is received or the info is actually needed avoids thousands of unnecessary object allocations and parsing operations per move.
+
+Code context
+      // Parse info lines for depth, score, pv
+      if (line.startsWith('info') && line.includes('score')) {
+        this.latestInfo = parseInfo(line);
+      }
+
+      // When bestmove is returned, the analysis for this position is done
+
+Description
+The move list table is reconstructed on every render, causing unnecessary computations during analysis updates.
+
+Location
+chess-analysis-app/src/App.jsx:270
+
+Rationale
+Wrapping the `moveRows` generation logic in `useMemo` prevents recalculation on every render (e.g., when analysis progress updates), improving UI responsiveness.
+
+Code context
+  // Move grouping for table
+  const moveRows = [];
+  for (let i = 0; i < moveHistory.length; i += 2) {
+    moveRows.push({
+      num: Math.floor(i / 2) + 1,
+      white: { move: moveHistory[i], index: i },
+
+Description
+Moves are analyzed one by one; utilizing multiple Web Workers would allow parallel analysis of positions, drastically reducing wait time.
+
+Location
+chess-analysis-app/src/App.jsx:172
+
+Rationale
+Parallelizing analysis across multiple Web Workers can reduce total analysis time by a factor equal to the number of available cores (e.g., 4x faster). This requires implementing a worker pool and managing async state.
+
+Code context
+  const analyzeStep = (index, depth, gameInstance) => {
+    // Apply the move for the current index if applicable
+    // This incrementally updates the game state instead of replaying from start
+    if (index >= 0) {
+      gameInstance.move(moveHistory[index]);
+    }
+
+Description
+Developer note indicating a desire to simplify the logic for mate score calculation.
+
+Location
+chess-analysis-app/src/App.jsx:216
+
+Rationale
+The comment "Wait, let's simplify" clearly indicates a developer's intention to refactor or simplify the code block immediately following it, which handles mate score display logic.
+
+Code context
+    let score = res.scoreVal;
+    if (res.scoreType === 'mate') {
+      // Logic: if it's black to move (even index+1, or currentMoveIndex is even), and score > 0, white is mating.
+      // Wait, let's simplify.
+      const sideToMove = (currentMoveIndex + 1) % 2 === 0 ? 'w' : 'b';
+      const whiteScore = sideToMove === 'w' ? score : -score;
