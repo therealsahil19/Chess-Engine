@@ -27,6 +27,7 @@ A modern, web-based chess analysis application that leverages Stockfish (WASM) t
 - **PGN Support**: Load games from PGN strings for full analysis. Includes a collapsible input section.
 - **Game Navigation**: Easily navigate through moves with start, back, forward, and end controls.
 - **Visual Feedback**: Best move arrows and move-by-move evaluation badges.
+- **Feedback Panel**: Displays the engine's best move suggestion when a Mistake or Blunder is played.
 - **Evaluation Bar**: Vertical bar showing the current advantage.
 - **3-Column Layout**: Optimized UI with Evaluation Bar, Chessboard, and Analysis Panel side-by-side.
 
@@ -34,14 +35,14 @@ A modern, web-based chess analysis application that leverages Stockfish (WASM) t
 
 The application is built with a clear separation of concerns:
 
-- **`App.jsx`**: The main React component that handles application state (game history, analysis results, UI interaction). It manages the `chess.js` game instance and orchestrates the analysis flow.
+- **`App.jsx`**: The main React component that handles application state (game history, analysis results, UI interaction). It manages the `chess.js` game instance and orchestrates the analysis flow. Optimized PGN loading uses a backward undo loop for O(N) performance.
 - **`engine.js`**: A wrapper class for the `stockfish.js` Web Worker. It handles communication (sending UCI commands, receiving messages) and keeps the UI thread responsive.
 - **`uci-parser.js`**: A utility module dedicated to parsing raw UCI (Universal Chess Interface) messages from the engine. It extracts structured data like score, depth, bounds, and PV lines.
 
 ## Technologies Used
 
-- **React**: Frontend framework.
-- **Vite**: Build tool and dev server.
+- **React** (v19): Frontend framework.
+- **Vite** (v7): Build tool and dev server.
 - **chess.js**: Move validation and game logic.
 - **react-chessboard**: Interactive UI component.
 - **stockfish.js**: WASM version of the Stockfish chess engine.
