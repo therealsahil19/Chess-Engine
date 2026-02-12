@@ -33,4 +33,8 @@ The application uses `import.meta.env.BASE_URL` to resolve paths for static asse
   - `stockfish.js`: The Stockfish chess engine compiled to WebAssembly (WASM).
   - `stockfish.wasm`: The accompanying WASM binary.
 
+## Optimization Notes
+
+For details on recent performance improvements, specifically regarding O(N) PGN loading, please refer to [OPTIMIZATION_LOG.md](./OPTIMIZATION_LOG.md).
+
 For more information about the project features and roadmap, please refer to the [root README](../README.md).

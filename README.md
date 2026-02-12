@@ -92,9 +92,7 @@ The project is configured to automatically deploy to GitHub Pages using GitHub A
 
 - [ ] "Brilliant" move classification logic.
 - [ ] Multi-PV (multiple principal variations) support.
-- [x] Evaluation bar visualization.
 - [ ] Opening book integration.
-- [x] GitHub Actions deployment configuration.
 
 ## License
 

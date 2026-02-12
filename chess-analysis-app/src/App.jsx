@@ -273,6 +273,8 @@ function App() {
     return rows;
   }, [moveHistory]);
 
+  const currentAnalysis = analysisResults[currentMoveIndex];
+
   return (
     <main className="app-container">
       <aside className="evaluation-bar-container" aria-label="Evaluation Bar">
