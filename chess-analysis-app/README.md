@@ -4,6 +4,8 @@ This is the React-based frontend for the Chess Analysis App. It uses Vite for de
 
 ## Development
 
+All commands must be run from within the `chess-analysis-app` directory.
+
 To start the development server:
 
 ```bash
@@ -29,8 +31,10 @@ The application uses `import.meta.env.BASE_URL` to resolve paths for static asse
   - `engine.js`: Wrapper class for the Stockfish WASM worker. Manages UCI communication.
   - `uci-parser.js`: Utility to parse UCI output strings (info depth, score, pv, etc.).
   - `App.css`: Application-specific styles.
-- `public/`: Static assets.
+- `public/`: Static assets served directly.
   - `stockfish.js`: The Stockfish chess engine compiled to WebAssembly (WASM).
   - `stockfish.wasm`: The accompanying WASM binary.
+- `eslint.config.js`: ESLint configuration using the new Flat Config system.
+- `OPTIMIZATION_LOG.md`: A record of performance improvements and architectural decisions (e.g., PGN loading optimization).
 
 For more information about the project features and roadmap, please refer to the [root README](../README.md).
