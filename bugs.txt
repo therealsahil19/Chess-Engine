@@ -1,0 +1,3 @@
+Headless Mode Stability: The engine worker may be unstable in headless environments (like Playwright CI), failing to respond after the first move.
+Missing Styles: The feedback panel (displayed for Mistakes/Blunders) lacks CSS definitions for .feedback-panel, .class-badge, and .suggestion, causing it to render without intended styling.
+Environment Issues: Dependencies like vitest or @eslint/js may fail to install or resolve in some environments, potentially blocking test or lint commands.

@@ -49,10 +49,13 @@ The application is built with a clear separation of concerns:
 - **react-chessboard**: Interactive UI component.
 - **stockfish.js**: WASM version of the Stockfish chess engine.
 - **ESLint**: Flat Config system (`eslint.config.js`) for code linting.
+- **Vitest**: Unit testing framework.
 
 ## Known Issues
 
 - **Headless Mode Stability**: The `stockfish.js` engine worker may exhibit instability or fail to respond to subsequent commands after the first move when running in headless environments (like Playwright CI). Verification scripts may require a graphical environment or specific configuration adjustments.
+- **Missing Styles**: The feedback panel (displayed for Mistakes/Blunders) lacks specific CSS definitions for `.feedback-panel`, `.class-badge`, and `.suggestion`, causing it to render without intended styling.
+- **Environment Issues**: Dependencies like `vitest` or `@eslint/js` may fail to install or resolve in some environments, potentially blocking test or lint commands.
 
 ## Getting Started
 
@@ -78,6 +81,13 @@ The application is built with a clear separation of concerns:
 To start the development server:
 ```bash
 npm run dev
+```
+
+### Running Tests
+
+To run the test suite (Vitest):
+```bash
+npm test
 ```
 
 ### Building for Production

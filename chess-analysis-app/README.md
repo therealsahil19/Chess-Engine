@@ -22,6 +22,7 @@ The application uses `import.meta.env.BASE_URL` to resolve paths for static asse
 - `npm run dev`: Starts the development server.
 - `npm run build`: Builds the app for production.
 - `npm run lint`: Runs ESLint to check for code quality.
+- `npm run test`: Runs the test suite using Vitest.
 - `npm run preview`: Previews the production build locally.
 
 ## Project Structure
@@ -30,10 +31,14 @@ The application uses `import.meta.env.BASE_URL` to resolve paths for static asse
   - `App.jsx`: Main application component. Handles game state, navigation, and integrates the UI with the engine.
   - `engine.js`: Wrapper class for the Stockfish WASM worker. Manages UCI communication.
   - `uci-parser.js`: Utility to parse UCI output strings (info depth, score, pv, etc.).
+  - `App.test.jsx`: Unit tests for the main application component.
+  - `setupTests.js`: Configuration for the test environment.
   - `App.css`: Application-specific styles.
+  - `index.css`: Global CSS styles.
 - `public/`: Static assets served directly.
   - `stockfish.js`: The Stockfish chess engine compiled to WebAssembly (WASM).
   - `stockfish.wasm`: The accompanying WASM binary.
+  - `vite.svg`: Vite project logo.
 - `eslint.config.js`: ESLint configuration using the new Flat Config system.
 - `OPTIMIZATION_LOG.md`: A record of performance improvements and architectural decisions (e.g., PGN loading optimization).
 
