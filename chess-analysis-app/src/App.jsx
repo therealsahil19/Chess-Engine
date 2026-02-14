@@ -5,6 +5,25 @@ import Engine from './engine';
 import './App.css';
 
 // Helper functions
+const CLASSIFICATION_THRESHOLDS = {
+  BEST: 0,
+  EXCELLENT: 20,
+  GOOD: 50,
+  INACCURACY: 100,
+  MISTAKE: 300
+};
+
+const ANALYSIS_MODES = {
+  LOW: 'low',
+  HIGH: 'high',
+  CUSTOM: 'custom'
+};
+
+const ANALYSIS_DEPTHS = {
+  LOW: 12,
+  HIGH: 18,
+  DEFAULT: 15
+};
 const getNormScore = (res, index) => {
   if (!res) return 0;
   let val = res.scoreVal;
@@ -35,17 +54,17 @@ const computeClassification = (index, moveHistory, analysisResults) => {
     loss = currScore - prevScore;
   }
 
-  if (loss <= 0) return { label: 'Best', className: 'class-best' };
-  if (loss <= 20) return { label: 'Excellent', className: 'class-excellent' };
-  if (loss <= 50) return { label: 'Good', className: 'class-good' };
-  if (loss <= 100) return { label: 'Inaccuracy', className: 'class-inaccuracy' };
-  if (loss <= 300) return { label: 'Mistake', className: 'class-mistake' };
+  if (loss <= CLASSIFICATION_THRESHOLDS.BEST) return { label: 'Best', className: 'class-best' };
+  if (loss <= CLASSIFICATION_THRESHOLDS.EXCELLENT) return { label: 'Excellent', className: 'class-excellent' };
+  if (loss <= CLASSIFICATION_THRESHOLDS.GOOD) return { label: 'Good', className: 'class-good' };
+  if (loss <= CLASSIFICATION_THRESHOLDS.INACCURACY) return { label: 'Inaccuracy', className: 'class-inaccuracy' };
+  if (loss <= CLASSIFICATION_THRESHOLDS.MISTAKE) return { label: 'Mistake', className: 'class-mistake' };
   return { label: 'Blunder', className: 'class-blunder' };
 };
 
 function App() {
   const [game, setGame] = useState(new Chess());
-  const [fen, setFen] = useState(game.fen());
+  // fen state removed, derived from game.fen()
   const [pgnInput, setPgnInput] = useState('');
   const [engine, setEngine] = useState(null);
 
@@ -57,8 +76,8 @@ function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisResults, setAnalysisResults] = useState({});
-  const [analysisMode, setAnalysisMode] = useState('low');
-  const [customDepth, setCustomDepth] = useState(15);
+  const [analysisMode, setAnalysisMode] = useState(ANALYSIS_MODES.LOW);
+  const [customDepth, setCustomDepth] = useState(ANALYSIS_DEPTHS.DEFAULT);
   const [isPgnCollapsed, setIsPgnCollapsed] = useState(true);
 
   // Initialize Engine
@@ -68,9 +87,7 @@ function App() {
     return () => newEngine.quit();
   }, []);
 
-  useEffect(() => {
-    setFen(game.fen());
-  }, [game]);
+
 
   const onDrop = (sourceSquare, targetSquare) => {
     const gameCopy = new Chess(game.fen());
@@ -80,12 +97,12 @@ function App() {
     } catch { /* invalid move */ }
 
     if (move) {
-        setGame(gameCopy);
-        const newHistory = [...moveHistory.slice(0, currentMoveIndex + 1), { ...move, fen: gameCopy.fen() }];
-        setMoveHistory(newHistory);
-        setCurrentMoveIndex(prev => prev + 1);
+      setGame(gameCopy);
+      const newHistory = [...moveHistory.slice(0, currentMoveIndex + 1), { ...move, fen: gameCopy.fen() }];
+      setMoveHistory(newHistory);
+      setCurrentMoveIndex(prev => prev + 1);
 
-        return true;
+      return true;
     }
     return false;
   };
@@ -128,12 +145,12 @@ function App() {
   const goToStart = () => { jumpToMove(-1); };
   const goBack = () => {
     if (currentMoveIndex >= 0) {
-        jumpToMove(currentMoveIndex - 1);
+      jumpToMove(currentMoveIndex - 1);
     }
   };
   const goForward = () => {
     if (currentMoveIndex < moveHistory.length - 1) {
-        jumpToMove(currentMoveIndex + 1);
+      jumpToMove(currentMoveIndex + 1);
     }
   };
   const goToEnd = () => {
@@ -156,10 +173,10 @@ function App() {
     setIsAnalyzing(true);
     setAnalysisResults({});
     setAnalysisProgress(0);
-    let depth = 15;
-    if (analysisMode === 'low') depth = 12;
-    if (analysisMode === 'high') depth = 18;
-    if (analysisMode === 'custom') depth = customDepth;
+    let depth = ANALYSIS_DEPTHS.DEFAULT;
+    if (analysisMode === ANALYSIS_MODES.LOW) depth = ANALYSIS_DEPTHS.LOW;
+    if (analysisMode === ANALYSIS_MODES.HIGH) depth = ANALYSIS_DEPTHS.HIGH;
+    if (analysisMode === ANALYSIS_MODES.CUSTOM) depth = customDepth;
 
     // Pass a fresh game instance for incremental analysis
     analyzeStep(-1, depth, new Chess());
@@ -174,36 +191,36 @@ function App() {
     const fen = gameInstance.fen();
 
     engine.analyzePosition(fen, depth, (result) => {
-        if (result.bestMove) {
-            try {
-                const move = gameInstance.move({
-                    from: result.bestMove.substring(0, 2),
-                    to: result.bestMove.substring(2, 4),
-                    promotion: result.bestMove.length > 4 ? result.bestMove[4] : 'q'
-                });
-                result.bestMoveSan = move.san;
-                gameInstance.undo();
-            } catch {
-                result.bestMoveSan = result.bestMove;
-            }
+      if (result.bestMove) {
+        try {
+          const move = gameInstance.move({
+            from: result.bestMove.substring(0, 2),
+            to: result.bestMove.substring(2, 4),
+            promotion: result.bestMove.length > 4 ? result.bestMove[4] : 'q'
+          });
+          result.bestMoveSan = move.san;
+          gameInstance.undo();
+        } catch {
+          result.bestMoveSan = result.bestMove;
         }
+      }
 
-        setAnalysisResults(prev => ({ ...prev, [index]: result }));
-        const nextIndex = index + 1;
-        setAnalysisProgress(Math.round(((index + 2) / (moveHistory.length + 1)) * 100));
-        if (nextIndex < moveHistory.length) {
-            analyzeStep(nextIndex, depth, gameInstance);
-        } else {
-            setIsAnalyzing(false);
-        }
+      setAnalysisResults(prev => ({ ...prev, [index]: result }));
+      const nextIndex = index + 1;
+      setAnalysisProgress(Math.round(((index + 2) / (moveHistory.length + 1)) * 100));
+      if (nextIndex < moveHistory.length) {
+        analyzeStep(nextIndex, depth, gameInstance);
+      } else {
+        setIsAnalyzing(false);
+      }
     });
   };
 
 
   const getBestMoveSan = (index) => {
-      const res = analysisResults[index - 1];
-      if (!res || !res.bestMove) return null;
-      return res.bestMoveSan || res.bestMove;
+    const res = analysisResults[index - 1];
+    if (!res || !res.bestMove) return null;
+    return res.bestMoveSan || res.bestMove;
   };
 
   const getEvalData = () => {
@@ -243,9 +260,11 @@ function App() {
     return classifications;
   }, [moveHistory, analysisResults]);
 
+  const currentAnalysis = analysisResults[currentMoveIndex];
+
   const currentClassification = moveClassifications[currentMoveIndex];
   const bestMoveSuggestion = (currentClassification && (currentClassification.label === 'Mistake' || currentClassification.label === 'Blunder'))
-      ? getBestMoveSan(currentMoveIndex) : null;
+    ? getBestMoveSan(currentMoveIndex) : null;
 
   const evalData = getEvalData();
 
@@ -253,9 +272,9 @@ function App() {
   const arrows = useMemo(() => {
     const currentAnalysis = analysisResults[currentMoveIndex];
     if (currentAnalysis && currentAnalysis.bestMove) {
-        const from = currentAnalysis.bestMove.substring(0, 2);
-        const to = currentAnalysis.bestMove.substring(2, 4);
-        return [[from, to]];
+      const from = currentAnalysis.bestMove.substring(0, 2);
+      const to = currentAnalysis.bestMove.substring(2, 4);
+      return [[from, to]];
     }
     return [];
   }, [analysisResults, currentMoveIndex]);
@@ -267,7 +286,7 @@ function App() {
       rows.push({
         num: Math.floor(i / 2) + 1,
         white: { move: moveHistory[i], index: i },
-        black: moveHistory[i+1] ? { move: moveHistory[i+1], index: i+1 } : null
+        black: moveHistory[i + 1] ? { move: moveHistory[i + 1], index: i + 1 } : null
       });
     }
     return rows;
@@ -285,18 +304,18 @@ function App() {
 
       <section className="board-container">
         <Chessboard
-            position={fen}
-            onPieceDrop={onDrop}
-            customArrows={arrows}
-            customArrowColor="rgba(129, 182, 76, 0.8)"
-            boardOrientation="white"
+          position={game.fen()}
+          onPieceDrop={onDrop}
+          customArrows={arrows}
+          customArrowColor="rgba(129, 182, 76, 0.8)"
+          boardOrientation="white"
         />
 
         <div className="navigation-controls">
-            <button onClick={goToStart} disabled={currentMoveIndex === -1} aria-label="Go to start">«</button>
-            <button onClick={goBack} disabled={currentMoveIndex === -1} aria-label="Go back">‹</button>
-            <button onClick={goForward} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go forward">›</button>
-            <button onClick={goToEnd} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go to end">»</button>
+          <button onClick={goToStart} disabled={currentMoveIndex === -1} aria-label="Go to start">«</button>
+          <button onClick={goBack} disabled={currentMoveIndex === -1} aria-label="Go back">‹</button>
+          <button onClick={goForward} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go forward">›</button>
+          <button onClick={goToEnd} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go to end">»</button>
         </div>
       </section>
 
@@ -384,24 +403,24 @@ function App() {
 
         <div className="settings-section">
           <div className="analysis-settings">
-              <label>Mode:
-                  <select value={analysisMode} onChange={(e) => setAnalysisMode(e.target.value)} disabled={isAnalyzing}>
-                      <option value="low">Low Reasoning (Fast)</option>
-                      <option value="high">High Reasoning (Deep)</option>
-                      <option value="custom">Custom</option>
-                  </select>
-              </label>
-              {analysisMode === 'custom' && (
-                  <input
-                      type="number"
-                      value={customDepth}
-                      onChange={(e) => setCustomDepth(parseInt(e.target.value))}
-                      min="1" max="30"
-                  />
-              )}
-              <button className="analyze-button" onClick={startAnalysis} disabled={isAnalyzing || moveHistory.length === 0}>
-                  {isAnalyzing ? `Analyzing... ${analysisProgress}%` : 'Analyze Game'}
-              </button>
+            <label>Mode:
+              <select value={analysisMode} onChange={(e) => setAnalysisMode(e.target.value)} disabled={isAnalyzing}>
+                <option value={ANALYSIS_MODES.LOW}>Low Reasoning (Fast)</option>
+                <option value={ANALYSIS_MODES.HIGH}>High Reasoning (Deep)</option>
+                <option value={ANALYSIS_MODES.CUSTOM}>Custom</option>
+              </select>
+            </label>
+            {analysisMode === ANALYSIS_MODES.CUSTOM && (
+              <input
+                type="number"
+                value={customDepth}
+                onChange={(e) => setCustomDepth(parseInt(e.target.value))}
+                min="1" max="30"
+              />
+            )}
+            <button className="analyze-button" onClick={startAnalysis} disabled={isAnalyzing || moveHistory.length === 0}>
+              {isAnalyzing ? `Analyzing... ${analysisProgress}%` : 'Analyze Game'}
+            </button>
           </div>
         </div>
 
@@ -413,14 +432,14 @@ function App() {
           {!isPgnCollapsed && (
             <div className="collapsible-content">
               <textarea
-                  placeholder="Paste PGN here..."
-                  value={pgnInput}
-                  onChange={(e) => setPgnInput(e.target.value)}
-                  rows={5}
+                placeholder="Paste PGN here..."
+                value={pgnInput}
+                onChange={(e) => setPgnInput(e.target.value)}
+                rows={5}
               />
               <div className="button-group">
-                  <button onClick={handlePgnLoad}>Load PGN</button>
-                  <button onClick={handleReset}>Reset / New Game</button>
+                <button onClick={handlePgnLoad}>Load PGN</button>
+                <button onClick={handleReset}>Reset / New Game</button>
               </div>
             </div>
           )}
@@ -428,10 +447,10 @@ function App() {
       </aside>
 
       {bestMoveSuggestion && (
-          <div className="feedback-panel" style={{ gridColumn: '2 / span 1' }}>
-              <span className={`class-badge class-${currentClassification.label.toLowerCase()}`}>{currentClassification.label}</span>
-              <span className="suggestion">Best was: {bestMoveSuggestion}</span>
-          </div>
+        <div className="feedback-panel" style={{ gridColumn: '2 / span 1' }}>
+          <span className={`class-badge class-${currentClassification.label.toLowerCase()}`}>{currentClassification.label}</span>
+          <span className="suggestion">Best was: {bestMoveSuggestion}</span>
+        </div>
       )}
     </main>
   );

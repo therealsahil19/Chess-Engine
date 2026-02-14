@@ -43,22 +43,13 @@ export default class Engine {
     this.stockfish.postMessage(`go depth ${depth}`);
   }
 
-  analyzePositionTime(fen, time, callback) {
-    this.latestInfo = {};
-    this.onResult = callback;
-    this.stockfish.postMessage(`position fen ${fen}`);
-    this.stockfish.postMessage(`go movetime ${time}`);
-  }
 
-  stop() {
-    this.stockfish.postMessage("stop");
-  }
+
+
 
   quit() {
     this.stockfish.postMessage("quit");
   }
 
-  sendCommand(command) {
-    this.stockfish.postMessage(command);
-  }
+
 }
