@@ -24,8 +24,8 @@ A modern, web-based chess analysis application that leverages Stockfish (WASM) t
     - **Low Reasoning (Fast)**: Quick evaluation at depth 12.
     - **High Reasoning (Deep)**: Thorough analysis at depth 18.
     - **Custom**: Specify your desired analysis depth (1-30).
-- **PGN Support**: Load games from PGN strings for full analysis. Includes a collapsible input section.
-- **Game Navigation**: Easily navigate through moves with start, back, forward, and end controls.
+- **PGN Support**: Load games from PGN strings for full analysis. Optimized PGN loading uses a backward undo loop (O(N) * StatePop) and enforces a 50,000 character limit to ensure performance and security.
+- **Game Navigation**: Easily navigate through moves with start, back, forward, and end controls. Uses cached FEN strings for efficient O(1) board updates.
 - **Visual Feedback**: Best move arrows and move-by-move evaluation badges.
 - **Feedback Panel**: Displays the engine's best move suggestion when a Mistake or Blunder is played, helping users learn from their errors.
 - **Evaluation Bar**: Vertical bar showing the current advantage, visually representing who is winning.
@@ -36,7 +36,11 @@ A modern, web-based chess analysis application that leverages Stockfish (WASM) t
 
 The application is built with a clear separation of concerns:
 
-- **`App.jsx`**: The main React component that handles application state (game history, analysis results, UI interaction). It manages the `chess.js` game instance and orchestrates the analysis flow. Optimized PGN loading uses a backward undo loop (O(N) * StatePop) to bypass expensive move validation, significantly improving performance for long games.
+- **`App.jsx`**: The main React component that handles application state (game history, analysis results, UI interaction). It manages the `chess.js` game instance and orchestrates the analysis flow. It implements several optimizations:
+    - **PGN Loading**: Uses a backward undo loop (O(N) * StatePop) to bypass expensive move validation.
+    - **Move Classification Caching**: Utilizes a `useRef` cache to prevent O(N^2) recalculations of move classifications during renders.
+    - **Pre-calculated SAN**: Retrieves pre-calculated SAN strings via `getBestMoveSan` to eliminate history replay during renders.
+    - **Centralized Scoring**: Turn-based scoring logic is centralized via helper functions (`isWhiteToMove`, `getWhiteScore`) for consistency.
 - **`engine.js`**: A wrapper class for the `stockfish.js` Web Worker. It handles communication (sending UCI commands, receiving messages) and keeps the UI thread responsive. It implements lazy parsing, only invoking the parser when necessary.
 - **`uci-parser.js`**: A utility module dedicated to parsing raw UCI (Universal Chess Interface) messages from the engine. It extracts structured data like score, depth, bounds, and PV lines, using defensive programming to handle malformed inputs.
 - **`verification/`**: Contains Python scripts (like `verify_bounds.py`) using Playwright for end-to-end verification of engine logic and UI elements.
@@ -52,7 +56,10 @@ The application is built with a clear separation of concerns:
 
 ## Known Issues
 
-- **Headless Mode Stability**: The `stockfish.js` engine worker may exhibit instability or fail to respond to subsequent commands after the first move when running in headless environments (like Playwright CI). Verification scripts may require a graphical environment or specific configuration adjustments.
+See `bugs.txt` for a complete list of known issues, including:
+- **Headless Mode Stability**: The `stockfish.js` engine worker may exhibit instability in headless environments.
+- **Missing Styles**: The feedback panel lacks styling due to a missing CSS class.
+- **Environment Issues**: Occasional `npm` execution failures in the development environment.
 
 ## Getting Started
 

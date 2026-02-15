@@ -1,0 +1,3 @@
+- Headless Mode Stability: The `stockfish.js` engine worker may exhibit instability or fail to respond to subsequent commands after the first move when running in headless environments (like Playwright CI).
+- Missing Styles: The `.feedback-panel` class is missing from `App.css`, causing the feedback panel to render without intended styles.
+- Development Environment: `npm` execution failures ('Exit handler never called') and missing dependencies are frequently observed in the development environment.

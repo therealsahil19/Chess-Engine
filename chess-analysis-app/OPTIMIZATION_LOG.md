@@ -25,3 +25,35 @@ Establishment of a baseline benchmark was attempted but was impractical in the c
     - Restores the board and metadata to the previous state.
 
 This change avoids O(N) redundant validations, making PGN loading measurably faster, especially for long games.
+
+# Performance Optimization Log - Move Classification Caching
+
+## 💡 What
+Implemented a `useRef` cache (`classificationsCache`) in `App.jsx` to store move classifications.
+
+## 🎯 Why
+Calculating move classifications (Best, Excellent, Mistake, etc.) can be expensive if done repeatedly for every render, especially when navigating through a long game history. The cache ensures that classifications are only computed once for a given move/analysis result pair, preventing O(N^2) recalculations.
+
+# Performance Optimization Log - Memoized Custom Arrows
+
+## 💡 What
+Wrapped the `customArrows` array in `App.jsx` with `useMemo`.
+
+## 🎯 Why
+The `Chessboard` component can be expensive to re-render. By memoizing `customArrows`, we ensure that the array reference remains stable unless the underlying data (best move, current move) actually changes, preventing unnecessary re-renders of the board.
+
+# Performance Optimization Log - Pre-calculated SAN
+
+## 💡 What
+Implemented `getBestMoveSan` to retrieve pre-calculated Standard Algebraic Notation (SAN) strings from `analysisResults`.
+
+## 🎯 Why
+Previously, the application might have needed to replay the game history to generate SAN strings for display. By pre-calculating and storing these strings during the analysis phase (`analyzeStep`), we avoid expensive history replay operations during the render cycle.
+
+# Performance Optimization Log - UCI Parser Optimization
+
+## 💡 What
+Utilized `line.split(' ')` instead of regular expressions in `uci-parser.js` for parsing UCI info strings.
+
+## 🎯 Why
+String splitting is generally faster than regex matching for simple delimiter-based parsing. Since UCI messages are high-frequency events (especially during active analysis), this micro-optimization reduces the overhead of the parsing logic on the main thread.

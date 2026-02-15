@@ -22,7 +22,13 @@ The application uses `import.meta.env.BASE_URL` to resolve paths for static asse
 - `npm run dev`: Starts the development server.
 - `npm run build`: Builds the app for production.
 - `npm run lint`: Runs ESLint to check for code quality.
+- `npm run test`: Runs unit tests using `vitest` in a `jsdom` environment.
 - `npm run preview`: Previews the production build locally.
+
+## Configuration
+
+- **Vite Config (`vite.config.js`)**: Configured with `base: '/Chess-Engine/'` to support GitHub Pages deployment.
+- **Testing**: Uses `vitest` for unit testing with `jsdom` environment.
 
 ## Project Structure
 
