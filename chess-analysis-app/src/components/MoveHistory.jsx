@@ -1,7 +1,16 @@
 import React, { useMemo } from 'react';
 import { CLASSIFICATION_LABELS } from './constants';
+import { computeClassification } from './utils';
 
-const MoveHistory = ({ moveHistory, currentMoveIndex, jumpToMove, moveClassifications }) => {
+const MoveHistory = ({ moveHistory, currentMoveIndex, jumpToMove, analysisResults }) => {
+
+    const moveClassifications = useMemo(() => {
+        const classifications = {};
+        for (let i = 0; i < moveHistory.length; i++) {
+            classifications[i] = computeClassification(i, moveHistory, analysisResults);
+        }
+        return classifications;
+    }, [moveHistory, analysisResults]);
 
     const moveRows = useMemo(() => {
         const rows = [];

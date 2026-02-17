@@ -317,3 +317,36 @@ select, input[type="number"], textarea {
     grid-column: 1 / span 2;
   }
 }
+
+/* Feedback Panel */
+.feedback-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.class-badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.class-badge.class-best { color: #81b64c; border: 1px solid #81b64c; }
+.class-badge.class-excellent { color: #96bc4b; border: 1px solid #96bc4b; }
+.class-badge.class-good { color: #fff; border: 1px solid #fff; }
+.class-badge.class-inaccuracy { color: #f0c15c; border: 1px solid #f0c15c; }
+.class-badge.class-mistake { color: #e58f2a; border: 1px solid #e58f2a; }
+.class-badge.class-blunder { color: #fa412d; border: 1px solid #fa412d; }
+
+.suggestion {
+  color: var(--text-bright);
+  font-size: 1rem;
+}
