@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"E:/Chess Engine/Chess-Engine/chess-analysis-app/build/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/chess-analysis-app/build/src/libs/raylib-5.0/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/chess-analysis-app/build/src/libs/raylib-5.0/raylib/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/chess-analysis-app/build/src/libs/raylib-5.0/raylib/external/glfw/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/chess-analysis-app/build/src/libs/raylib-5.0/raylib/external/glfw/src/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

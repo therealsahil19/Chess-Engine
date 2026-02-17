@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"E:/Chess Engine/Chess-Engine/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
