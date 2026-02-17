@@ -1,0 +1,12 @@
+# Stockfish binaries
+stockfish/*.exe
+stockfish/*.bin
+stockfish/*.o
+
+# Build directories
+build/
+bin/
+obj/
+
+# VS Code
+.vscode/
