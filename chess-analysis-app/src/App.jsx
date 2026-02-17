@@ -250,6 +250,11 @@ function App() {
           customArrows={arrows}
           customArrowColor="rgba(129, 182, 76, 0.8)"
           boardOrientation="white"
+          customBoardStyle={{
+            borderRadius: '4px',
+            boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)',
+            backgroundColor: '#edd6b0' // Light square color to fill gaps
+          }}
         />
 
         <BoardControls

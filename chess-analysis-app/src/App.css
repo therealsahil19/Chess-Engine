@@ -72,6 +72,10 @@ body {
 .board-container {
   width: 100%;
   position: relative;
+  background-color: #edd6b0; /* Match light square color */
+  border-radius: 4px;
+  overflow: hidden;
+  line-height: 0;
 }
 
 .navigation-controls {
