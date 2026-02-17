@@ -14,6 +14,7 @@ add_subdirectory(src/libs/raylib-5.0)
 # --- Sources ---
 file(GLOB CORE_SOURCES "src/core/*.cpp")
 file(GLOB GUI_SOURCES "src/gui/*.cpp")
+message(STATUS "CORE SOURCES: ${CORE_SOURCES}")
 
 # --- Executable ---
 add_executable(ChessApp src/main.cpp ${CORE_SOURCES} ${GUI_SOURCES})

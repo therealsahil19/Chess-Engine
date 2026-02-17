@@ -38,7 +38,7 @@ enum Piece {
 
 struct Move {
     Square from = SQUARE_NONE;
-    Square to = SQUARE_NONE;
+    Square dest = SQUARE_NONE;
     PieceType promotion = NO_PIECE_TYPE;
     
     // Flags could be added here (capture, castle, etc.) but let's keep it simple for now

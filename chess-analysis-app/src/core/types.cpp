@@ -28,7 +28,7 @@ Square stringToSquare(std::string s) {
 
 std::string Move::toString() const {
     if (isNull()) return "0000";
-    std::string s = squareToString(from) + squareToString(to);
+    std::string s = squareToString(from) + squareToString(dest);
     if (promotion != NO_PIECE_TYPE && promotion != NO_PIECE_TYPE) {
         char p = ' ';
         switch(promotion) {
@@ -47,7 +47,7 @@ Move Move::fromString(const std::string& s) {
     Move m;
     if (s.length() < 4) return m;
     m.from = stringToSquare(s.substr(0, 2));
-    m.to = stringToSquare(s.substr(2, 2));
+    m.dest = stringToSquare(s.substr(2, 2));
     if (s.length() > 4) {
         switch(s[4]) {
             case 'q': m.promotion = QUEEN; break;

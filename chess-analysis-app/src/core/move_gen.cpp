@@ -18,15 +18,15 @@ bool isSquareValid(int sq) {
 // Check if moving 'step' from 'current' crosses board edge
 // For 1D representation, we need to be careful about file wrapping.
 // We can check if file index changes by more than 1 or wraps.
-bool isWrap(int from, int to) {
+bool isWrap(int from, int destSq) {
     int f1 = from % 8;
-    int f2 = to % 8;
+    int f2 = destSq % 8;
     // If we moved horizontally/diagonally, file diff should be small
     // Actually, simpler approach:
     // Precompute distances to edge for every square/direction? 
     // Or just robust coordinate math.
     int r1 = from / 8;
-    int r2 = to / 8;
+    int r2 = destSq / 8;
     int dr = r2 - r1;
     int df = f2 - f1;
     // If it's a valid sliding move, abs(dr) == abs(df) (diag) or one is 0 (straight)
@@ -50,12 +50,12 @@ void addSlidingMoves(const Board& b, int from, const int* dirs, int numDirs, std
     
     for (int d = 0; d < numDirs; d++) {
         int dir = dirs[d];
-        int to = from;
+        int targetSq = from;
         
         while (true) {
             // Check boundary before adding
-            int file = to % 8;
-            int rank = to / 8;
+            int file = targetSq % 8;
+            int rank = targetSq / 8;
             
             // Check if adding dir would wrap
             // E/W/NE/SE/NW/SW components
@@ -64,15 +64,15 @@ void addSlidingMoves(const Board& b, int from, const int* dirs, int numDirs, std
             if ( (dir == 8 || dir == 9 || dir == 7) && rank == 7 ) break; // North-ward blocked
             if ( (dir == -8 || dir == -9 || dir == -7) && rank == 0 ) break; // South-ward blocked
 
-            to += dir;
-            if (!isSquareValid(to)) break;
+            targetSq += dir;
+            if (!isSquareValid(targetSq)) break;
 
-            Piece target = b.getPiece(to);
+            Piece target = b.getPiece(targetSq);
             if (target == NO_PIECE) {
-                moves.push_back({from, to, NO_PIECE_TYPE});
+                moves.push_back({from, targetSq, NO_PIECE_TYPE});
             } else {
                 if (colorOf(target) != us) {
-                    moves.push_back({from, to, NO_PIECE_TYPE}); // Capture
+                    moves.push_back({from, targetSq, NO_PIECE_TYPE}); // Capture
                 }
                 break; // Blocked by any piece
             }
@@ -140,15 +140,15 @@ std::vector<Move> Board::generatePseudoLegalMoves() const {
             // Knight logic
             const int KnightOffsets[] = {-17, -15, -10, -6, 6, 10, 15, 17};
             for (int offset : KnightOffsets) {
-                int to = from + offset;
-                if (!isSquareValid(to)) continue;
+                int targetSq = from + offset;
+                if (!isSquareValid(targetSq)) continue;
                 // Check wrap
-                int dr = abs((to/8) - r);
-                int dc = abs((to%8) - c);
+                int dr = abs((targetSq/8) - r);
+                int dc = abs((targetSq%8) - c);
                 if (dr + dc == 3) {
-                     Piece target = board[to];
+                     Piece target = board[targetSq];
                      if (target == NO_PIECE || colorOf(target) != turn) {
-                         moves.push_back({from, to, NO_PIECE_TYPE});
+                         moves.push_back({from, targetSq, NO_PIECE_TYPE});
                      }
                 }
             }
@@ -156,14 +156,14 @@ std::vector<Move> Board::generatePseudoLegalMoves() const {
         else if (pt == KING) {
              const int KingOffsets[] = {-9, -8, -7, -1, 1, 7, 8, 9};
              for (int offset : KingOffsets) {
-                int to = from + offset;
-                if (!isSquareValid(to)) continue;
-                int dr = abs((to/8) - r);
-                int dc = abs((to%8) - c);
+                int targetSq = from + offset;
+                if (!isSquareValid(targetSq)) continue;
+                int dr = abs((targetSq/8) - r);
+                int dc = abs((targetSq%8) - c);
                 if (dr <= 1 && dc <= 1) {
-                     Piece target = board[to];
+                     Piece target = board[targetSq];
                      if (target == NO_PIECE || colorOf(target) != turn) {
-                         moves.push_back({from, to, NO_PIECE_TYPE});
+                         moves.push_back({from, targetSq, NO_PIECE_TYPE});
                      }
                 }
              }
