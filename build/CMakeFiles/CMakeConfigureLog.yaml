@@ -35,18 +35,6 @@ events:
     found: "C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeCCompilerId.c.in"
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -107,18 +95,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
-      ENV{INCLUDE}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\VS\\include"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\um"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\shared"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\winrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\cppwinrt"
   -
     kind: "message-v1"
     backtrace:
@@ -135,7 +111,7 @@ events:
       The output was:
       0
       MSBuild version 17.14.23+b0019275e for .NET Framework
-      Build started 17-02-2026 20:59:03.
+      Build started 18-02-2026 03:32:35.
       
       Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\4.1.3\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
       PrepareForBuild:
@@ -164,7 +140,7 @@ events:
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:01.37
+      Time Elapsed 00:00:01.18
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -197,17 +173,6 @@ events:
       - "link"
     candidate_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/"
       - "E:/cursor/resources/app/bin/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
@@ -232,27 +197,11 @@ events:
       - "D:/Kiro/bin/"
       - "C:/Users/mehna/.local/bin/"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/"
     searched_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
     found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -313,10 +262,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
   -
     kind: "find-v1"
     backtrace:
@@ -340,17 +285,6 @@ events:
       - "lld-link"
     candidate_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/"
       - "E:/cursor/resources/app/bin/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
@@ -375,47 +309,10 @@ events:
       - "D:/Kiro/bin/"
       - "C:/Users/mehna/.local/bin/"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/"
     searched_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/lld-link"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.com"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.exe"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/lld-link"
       - "E:/cursor/resources/app/bin/lld-link.com"
       - "E:/cursor/resources/app/bin/lld-link.exe"
       - "E:/cursor/resources/app/bin/lld-link"
@@ -488,33 +385,9 @@ events:
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/lld-link.com"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/lld-link.exe"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/lld-link"
     found: false
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -575,10 +448,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
   -
     kind: "find-v1"
     backtrace:
@@ -600,17 +469,6 @@ events:
       - "link"
     candidate_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/"
       - "E:/cursor/resources/app/bin/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
@@ -635,27 +493,11 @@ events:
       - "D:/Kiro/bin/"
       - "C:/Users/mehna/.local/bin/"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/"
     searched_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
     found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -716,10 +558,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
   -
     kind: "find-v1"
     backtrace:
@@ -741,17 +579,6 @@ events:
       - "mt"
     candidate_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/"
       - "E:/cursor/resources/app/bin/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
@@ -776,45 +603,85 @@ events:
       - "D:/Kiro/bin/"
       - "C:/Users/mehna/.local/bin/"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/"
     searched_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.com"
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.exe"
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/mt.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/mt.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/mt"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/mt.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/mt.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/mt"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/mt.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/mt.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/mt"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/mt.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/mt.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/mt"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/mt.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/mt.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/mt"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/mt.com"
-    found: "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/mt.exe"
+      - "E:/cursor/resources/app/bin/mt.com"
+      - "E:/cursor/resources/app/bin/mt.exe"
+      - "E:/cursor/resources/app/bin/mt"
+      - "C:/Windows/System32/mt.com"
+      - "C:/Windows/System32/mt.exe"
+      - "C:/Windows/System32/mt"
+      - "C:/Windows/mt.com"
+      - "C:/Windows/mt.exe"
+      - "C:/Windows/mt"
+      - "C:/Windows/System32/wbem/mt.com"
+      - "C:/Windows/System32/wbem/mt.exe"
+      - "C:/Windows/System32/wbem/mt"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt"
+      - "C:/Windows/System32/OpenSSH/mt.com"
+      - "C:/Windows/System32/OpenSSH/mt.exe"
+      - "C:/Windows/System32/OpenSSH/mt"
+      - "C:/Program Files/HP/HP One Agent/mt.com"
+      - "C:/Program Files/HP/HP One Agent/mt.exe"
+      - "C:/Program Files/HP/HP One Agent/mt"
+      - "C:/Program Files/dotnet/mt.com"
+      - "C:/Program Files/dotnet/mt.exe"
+      - "C:/Program Files/dotnet/mt"
+      - "C:/MinGW/bin/mt.com"
+      - "C:/MinGW/bin/mt.exe"
+      - "C:/MinGW/bin/mt"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/mt.com"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/mt.exe"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/mt"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/mt.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/mt.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/mt"
+      - "C:/Users/mehna/.lmstudio/bin/mt.com"
+      - "C:/Users/mehna/.lmstudio/bin/mt.exe"
+      - "C:/Users/mehna/.lmstudio/bin/mt"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/mt.com"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/mt.exe"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/mt"
+      - "C:/Users/mehna/AppData/Roaming/npm/mt.com"
+      - "C:/Users/mehna/AppData/Roaming/npm/mt.exe"
+      - "C:/Users/mehna/AppData/Roaming/npm/mt"
+      - "D:/Windsurf/bin/mt.com"
+      - "D:/Windsurf/bin/mt.exe"
+      - "D:/Windsurf/bin/mt"
+      - "C:/Program Files/nodejs/mt.com"
+      - "C:/Program Files/nodejs/mt.exe"
+      - "C:/Program Files/nodejs/mt"
+      - "C:/ProgramData/chocolatey/bin/mt.com"
+      - "C:/ProgramData/chocolatey/bin/mt.exe"
+      - "C:/ProgramData/chocolatey/bin/mt"
+      - "C:/Program Files/CMake/bin/mt.com"
+      - "C:/Program Files/CMake/bin/mt.exe"
+      - "C:/Program Files/CMake/bin/mt"
+      - "C:/Program Files/Git/cmd/mt.com"
+      - "C:/Program Files/Git/cmd/mt.exe"
+      - "C:/Program Files/Git/cmd/mt"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/mt.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/mt.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/mt"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/mt.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/mt.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/mt"
+      - "D:/Kiro/bin/mt.com"
+      - "D:/Kiro/bin/mt.exe"
+      - "D:/Kiro/bin/mt"
+      - "C:/Users/mehna/.local/bin/mt.com"
+      - "C:/Users/mehna/.local/bin/mt.exe"
+      - "C:/Users/mehna/.local/bin/mt"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/mt.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/mt.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/mt"
+    found: false
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -875,10 +742,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
   -
     kind: "find-v1"
     backtrace:
@@ -900,17 +763,6 @@ events:
       - "lib"
     candidate_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/"
       - "E:/cursor/resources/app/bin/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
@@ -935,27 +787,11 @@ events:
       - "D:/Kiro/bin/"
       - "C:/Users/mehna/.local/bin/"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/"
     searched_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.com"
     found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.exe"
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -1016,10 +852,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
   -
     kind: "find-v1"
     backtrace:
@@ -1047,18 +879,6 @@ events:
     found: "C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeCXXCompilerId.cpp.in"
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -1119,18 +939,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
-      ENV{INCLUDE}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\include"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\VS\\include"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\um"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\shared"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\winrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\\\include\\10.0.26100.0\\\\cppwinrt"
   -
     kind: "message-v1"
     backtrace:
@@ -1147,7 +955,7 @@ events:
       The output was:
       0
       MSBuild version 17.14.23+b0019275e for .NET Framework
-      Build started 17-02-2026 20:59:05.
+      Build started 18-02-2026 03:32:37.
       
       Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\4.1.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
       PrepareForBuild:
@@ -1176,7 +984,7 @@ events:
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:00.77
+      Time Elapsed 00:00:00.71
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -1209,17 +1017,6 @@ events:
       - "lld-link"
     candidate_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/"
       - "E:/cursor/resources/app/bin/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
@@ -1244,47 +1041,10 @@ events:
       - "D:/Kiro/bin/"
       - "C:/Users/mehna/.local/bin/"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/"
     searched_directories:
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
       - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/lld-link"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.com"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.exe"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/lld-link"
       - "E:/cursor/resources/app/bin/lld-link.com"
       - "E:/cursor/resources/app/bin/lld-link.exe"
       - "E:/cursor/resources/app/bin/lld-link"
@@ -1357,33 +1117,9 @@ events:
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/lld-link.com"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/lld-link.exe"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/lld-link"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/lld-link"
     found: false
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -1444,10 +1180,6 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
   -
     kind: "find-v1"
     backtrace:
@@ -1471,18 +1203,6 @@ events:
     names:
       - "rc"
     candidate_directories:
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/x64/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/Tools/"
       - "E:/cursor/resources/app/bin/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
@@ -1507,10 +1227,6 @@ events:
       - "D:/Kiro/bin/"
       - "C:/Users/mehna/.local/bin/"
       - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/"
       - "C:/Program Files/bin/"
       - "C:/Program Files/sbin/"
       - "C:/Program Files/"
@@ -1520,44 +1236,121 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "C:/Program Files/CMake/sbin/"
       - "C:/Program Files/CMake/"
-      - "C:/Program Files/chess_core/bin/"
-      - "C:/Program Files/chess_core/sbin/"
-      - "C:/Program Files/chess_core/"
+      - "C:/Program Files/ChessEngineNative/bin/"
+      - "C:/Program Files/ChessEngineNative/sbin/"
+      - "C:/Program Files/ChessEngineNative/"
     searched_directories:
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/rc.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/rc.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/rc"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/rc.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/rc.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/VC/vcpackages/rc"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/rc.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/rc.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/CommonExtensions/Microsoft/TestWindow/rc"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/rc.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/rc.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/Roslyn/rc"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/rc.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/rc.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Team Tools/DiagnosticsHub/Collector/rc"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/rc.com"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/rc.exe"
-      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/Common7/IDE/Extensions/Microsoft/CodeCoverage.Console/rc"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/rc.com"
-    found: "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/rc.exe"
+      - "E:/cursor/resources/app/bin/rc.com"
+      - "E:/cursor/resources/app/bin/rc.exe"
+      - "E:/cursor/resources/app/bin/rc"
+      - "C:/Windows/System32/rc.com"
+      - "C:/Windows/System32/rc.exe"
+      - "C:/Windows/System32/rc"
+      - "C:/Windows/rc.com"
+      - "C:/Windows/rc.exe"
+      - "C:/Windows/rc"
+      - "C:/Windows/System32/wbem/rc.com"
+      - "C:/Windows/System32/wbem/rc.exe"
+      - "C:/Windows/System32/wbem/rc"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc"
+      - "C:/Windows/System32/OpenSSH/rc.com"
+      - "C:/Windows/System32/OpenSSH/rc.exe"
+      - "C:/Windows/System32/OpenSSH/rc"
+      - "C:/Program Files/HP/HP One Agent/rc.com"
+      - "C:/Program Files/HP/HP One Agent/rc.exe"
+      - "C:/Program Files/HP/HP One Agent/rc"
+      - "C:/Program Files/dotnet/rc.com"
+      - "C:/Program Files/dotnet/rc.exe"
+      - "C:/Program Files/dotnet/rc"
+      - "C:/MinGW/bin/rc.com"
+      - "C:/MinGW/bin/rc.exe"
+      - "C:/MinGW/bin/rc"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/rc.com"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/rc.exe"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/rc"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/rc.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/rc.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/rc"
+      - "C:/Users/mehna/.lmstudio/bin/rc.com"
+      - "C:/Users/mehna/.lmstudio/bin/rc.exe"
+      - "C:/Users/mehna/.lmstudio/bin/rc"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/rc.com"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/rc.exe"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/rc"
+      - "C:/Users/mehna/AppData/Roaming/npm/rc.com"
+      - "C:/Users/mehna/AppData/Roaming/npm/rc.exe"
+      - "C:/Users/mehna/AppData/Roaming/npm/rc"
+      - "D:/Windsurf/bin/rc.com"
+      - "D:/Windsurf/bin/rc.exe"
+      - "D:/Windsurf/bin/rc"
+      - "C:/Program Files/nodejs/rc.com"
+      - "C:/Program Files/nodejs/rc.exe"
+      - "C:/Program Files/nodejs/rc"
+      - "C:/ProgramData/chocolatey/bin/rc.com"
+      - "C:/ProgramData/chocolatey/bin/rc.exe"
+      - "C:/ProgramData/chocolatey/bin/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Program Files/Git/cmd/rc.com"
+      - "C:/Program Files/Git/cmd/rc.exe"
+      - "C:/Program Files/Git/cmd/rc"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/rc.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/rc.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/rc"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/rc.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/rc.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/rc"
+      - "D:/Kiro/bin/rc.com"
+      - "D:/Kiro/bin/rc.exe"
+      - "D:/Kiro/bin/rc"
+      - "C:/Users/mehna/.local/bin/rc.com"
+      - "C:/Users/mehna/.local/bin/rc.exe"
+      - "C:/Users/mehna/.local/bin/rc"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/rc.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/rc.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/rc"
+      - "C:/Program Files/bin/rc.com"
+      - "C:/Program Files/bin/rc.exe"
+      - "C:/Program Files/bin/rc"
+      - "C:/Program Files/sbin/rc.com"
+      - "C:/Program Files/sbin/rc.exe"
+      - "C:/Program Files/sbin/rc"
+      - "C:/Program Files/rc.com"
+      - "C:/Program Files/rc.exe"
+      - "C:/Program Files/rc"
+      - "C:/Program Files (x86)/bin/rc.com"
+      - "C:/Program Files (x86)/bin/rc.exe"
+      - "C:/Program Files (x86)/bin/rc"
+      - "C:/Program Files (x86)/sbin/rc.com"
+      - "C:/Program Files (x86)/sbin/rc.exe"
+      - "C:/Program Files (x86)/sbin/rc"
+      - "C:/Program Files (x86)/rc.com"
+      - "C:/Program Files (x86)/rc.exe"
+      - "C:/Program Files (x86)/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Program Files/CMake/sbin/rc.com"
+      - "C:/Program Files/CMake/sbin/rc.exe"
+      - "C:/Program Files/CMake/sbin/rc"
+      - "C:/Program Files/CMake/rc.com"
+      - "C:/Program Files/CMake/rc.exe"
+      - "C:/Program Files/CMake/rc"
+      - "C:/Program Files/ChessEngineNative/bin/rc.com"
+      - "C:/Program Files/ChessEngineNative/bin/rc.exe"
+      - "C:/Program Files/ChessEngineNative/bin/rc"
+      - "C:/Program Files/ChessEngineNative/sbin/rc.com"
+      - "C:/Program Files/ChessEngineNative/sbin/rc.exe"
+      - "C:/Program Files/ChessEngineNative/sbin/rc"
+      - "C:/Program Files/ChessEngineNative/rc.com"
+      - "C:/Program Files/ChessEngineNative/rc.exe"
+      - "C:/Program Files/ChessEngineNative/rc"
+    found: false
     search_context:
       ENV{PATH}:
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\"
         - "e:\\cursor\\resources\\app\\bin"
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
@@ -1618,16 +1411,12 @@ events:
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\.local\\bin"
         - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\vcpkg"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files/chess_core"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files/ChessEngineNative"
       CMAKE_SYSTEM_PREFIX_PATH:
         - "C:/Program Files"
         - "C:/Program Files (x86)"
         - "C:/Program Files/CMake"
-        - "C:/Program Files/chess_core"
+        - "C:/Program Files/ChessEngineNative"
   -
     kind: "try_compile-v1"
     backtrace:
@@ -1637,50 +1426,50 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yj35jh"
-      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yj35jh"
+      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-wa34tp"
+      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-wa34tp"
     cmakeVariables:
-      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
-      CMAKE_C_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
       CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
     buildResult:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yj35jh'
+        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-wa34tp'
         
-        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_59375.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_560e6.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.14.23+b0019275e for .NET Framework
-        Build started 17-02-2026 20:59:06.
+        Build started 18-02-2026 03:32:38.
         
-        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yj35jh\\cmTC_59375.vcxproj" on node 1 (default targets).
+        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-wa34tp\\cmTC_560e6.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_59375.dir\\Debug\\".
+          Creating directory "cmTC_560e6.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yj35jh\\Debug\\".
-          Creating directory "cmTC_59375.dir\\Debug\\cmTC_59375.tlog\\".
+          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-wa34tp\\Debug\\".
+          Creating directory "cmTC_560e6.dir\\Debug\\cmTC_560e6.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_59375.dir\\Debug\\cmTC_59375.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_59375.dir\\Debug\\cmTC_59375.tlog\\unsuccessfulbuild".
+          Creating "cmTC_560e6.dir\\Debug\\cmTC_560e6.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_560e6.dir\\Debug\\cmTC_560e6.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_59375.dir\\Debug\\\\" /Fd"cmTC_59375.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_560e6.dir\\Debug\\\\" /Fd"cmTC_560e6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_59375.dir\\Debug\\\\" /Fd"cmTC_59375.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_560e6.dir\\Debug\\\\" /Fd"cmTC_560e6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yj35jh\\Debug\\cmTC_59375.exe" /INCREMENTAL /ILK:"cmTC_59375.dir\\Debug\\cmTC_59375.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yj35jh/Debug/cmTC_59375.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yj35jh/Debug/cmTC_59375.lib" /MACHINE:X64  /machine:x64 cmTC_59375.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_59375.vcxproj -> E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yj35jh\\Debug\\cmTC_59375.exe
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-wa34tp\\Debug\\cmTC_560e6.exe" /INCREMENTAL /ILK:"cmTC_560e6.dir\\Debug\\cmTC_560e6.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-wa34tp/Debug/cmTC_560e6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-wa34tp/Debug/cmTC_560e6.lib" /MACHINE:X64  /machine:x64 cmTC_560e6.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_560e6.vcxproj -> E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-wa34tp\\Debug\\cmTC_560e6.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_59375.dir\\Debug\\cmTC_59375.tlog\\unsuccessfulbuild".
-          Touching "cmTC_59375.dir\\Debug\\cmTC_59375.tlog\\cmTC_59375.lastbuildstate".
-        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yj35jh\\cmTC_59375.vcxproj" (default targets).
+          Deleting file "cmTC_560e6.dir\\Debug\\cmTC_560e6.tlog\\unsuccessfulbuild".
+          Touching "cmTC_560e6.dir\\Debug\\cmTC_560e6.tlog\\cmTC_560e6.lastbuildstate".
+        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-wa34tp\\cmTC_560e6.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.67
+        Time Elapsed 00:00:00.71
         
       exitCode: 0
   -
@@ -1720,51 +1509,51 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-whfwpe"
-      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-whfwpe"
+      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yiheqz"
+      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yiheqz"
     cmakeVariables:
-      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
-      CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
       CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
       CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
     buildResult:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-whfwpe'
+        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yiheqz'
         
-        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_08463.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_04aba.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.14.23+b0019275e for .NET Framework
-        Build started 17-02-2026 20:59:07.
+        Build started 18-02-2026 03:32:39.
         
-        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-whfwpe\\cmTC_08463.vcxproj" on node 1 (default targets).
+        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yiheqz\\cmTC_04aba.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_08463.dir\\Debug\\".
+          Creating directory "cmTC_04aba.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-whfwpe\\Debug\\".
-          Creating directory "cmTC_08463.dir\\Debug\\cmTC_08463.tlog\\".
+          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yiheqz\\Debug\\".
+          Creating directory "cmTC_04aba.dir\\Debug\\cmTC_04aba.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_08463.dir\\Debug\\cmTC_08463.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_08463.dir\\Debug\\cmTC_08463.tlog\\unsuccessfulbuild".
+          Creating "cmTC_04aba.dir\\Debug\\cmTC_04aba.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_04aba.dir\\Debug\\cmTC_04aba.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /GR /Fo"cmTC_08463.dir\\Debug\\\\" /Fd"cmTC_08463.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCXXCompilerABI.cpp"
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Fo"cmTC_04aba.dir\\Debug\\\\" /Fd"cmTC_04aba.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /GR /Fo"cmTC_08463.dir\\Debug\\\\" /Fd"cmTC_08463.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Fo"cmTC_04aba.dir\\Debug\\\\" /Fd"cmTC_04aba.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.1\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-whfwpe\\Debug\\cmTC_08463.exe" /INCREMENTAL /ILK:"cmTC_08463.dir\\Debug\\cmTC_08463.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-whfwpe/Debug/cmTC_08463.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-whfwpe/Debug/cmTC_08463.lib" /MACHINE:X64  /machine:x64 cmTC_08463.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_08463.vcxproj -> E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-whfwpe\\Debug\\cmTC_08463.exe
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yiheqz\\Debug\\cmTC_04aba.exe" /INCREMENTAL /ILK:"cmTC_04aba.dir\\Debug\\cmTC_04aba.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yiheqz/Debug/cmTC_04aba.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-yiheqz/Debug/cmTC_04aba.lib" /MACHINE:X64  /machine:x64 cmTC_04aba.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_04aba.vcxproj -> E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yiheqz\\Debug\\cmTC_04aba.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_08463.dir\\Debug\\cmTC_08463.tlog\\unsuccessfulbuild".
-          Touching "cmTC_08463.dir\\Debug\\cmTC_08463.tlog\\cmTC_08463.lastbuildstate".
-        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-whfwpe\\cmTC_08463.vcxproj" (default targets).
+          Deleting file "cmTC_04aba.dir\\Debug\\cmTC_04aba.tlog\\unsuccessfulbuild".
+          Touching "cmTC_04aba.dir\\Debug\\cmTC_04aba.tlog\\cmTC_04aba.lastbuildstate".
+        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yiheqz\\cmTC_04aba.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.68
+        Time Elapsed 00:00:01.02
         
       exitCode: 0
   -
@@ -1795,4 +1584,536 @@ events:
       Running the CXX compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
       Microsoft (R) Incremental Linker Version 14.44.35220.0
       Copyright (C) Microsoft Corporation.  All rights reserved.
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindGit.cmake:86 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FetchContent.cmake:1874 (find_package)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FetchContent.cmake:1609 (__FetchContent_populateSubbuild)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FetchContent.cmake:2145:EVAL:2 (__FetchContent_doPopulation)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FetchContent.cmake:2145 (cmake_language)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FetchContent.cmake:2384 (__FetchContent_Populate)"
+      - "CMakeLists.txt:17 (FetchContent_MakeAvailable)"
+    mode: "program"
+    variable: "GIT_EXECUTABLE"
+    description: "Git command line client"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "git.cmd"
+      - "git"
+    candidate_directories:
+      - "E:/cursor/resources/app/bin/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/HP/HP One Agent/"
+      - "C:/Program Files/dotnet/"
+      - "C:/MinGW/bin/"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/"
+      - "C:/Users/mehna/.lmstudio/bin/"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/"
+      - "C:/Users/mehna/AppData/Roaming/npm/"
+      - "D:/Windsurf/bin/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/"
+      - "D:/Kiro/bin/"
+      - "C:/Users/mehna/.local/bin/"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/sbin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/sbin/"
+      - "C:/Program Files (x86)/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/CMake/sbin/"
+      - "C:/Program Files/CMake/"
+      - "C:/Program Files/ChessEngineNative/bin/"
+      - "C:/Program Files/ChessEngineNative/sbin/"
+      - "C:/Program Files/ChessEngineNative/"
+      - "C:/Users/mehna/AppData/Local/Atlassian/SourceTree/git_local/bin/"
+    searched_directories:
+      - "E:/cursor/resources/app/bin/git.cmd.com"
+      - "E:/cursor/resources/app/bin/git.cmd.exe"
+      - "E:/cursor/resources/app/bin/git.cmd"
+      - "C:/Windows/System32/git.cmd.com"
+      - "C:/Windows/System32/git.cmd.exe"
+      - "C:/Windows/System32/git.cmd"
+      - "C:/Windows/git.cmd.com"
+      - "C:/Windows/git.cmd.exe"
+      - "C:/Windows/git.cmd"
+      - "C:/Windows/System32/wbem/git.cmd.com"
+      - "C:/Windows/System32/wbem/git.cmd.exe"
+      - "C:/Windows/System32/wbem/git.cmd"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.cmd.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.cmd.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.cmd"
+      - "C:/Windows/System32/OpenSSH/git.cmd.com"
+      - "C:/Windows/System32/OpenSSH/git.cmd.exe"
+      - "C:/Windows/System32/OpenSSH/git.cmd"
+      - "C:/Program Files/HP/HP One Agent/git.cmd.com"
+      - "C:/Program Files/HP/HP One Agent/git.cmd.exe"
+      - "C:/Program Files/HP/HP One Agent/git.cmd"
+      - "C:/Program Files/dotnet/git.cmd.com"
+      - "C:/Program Files/dotnet/git.cmd.exe"
+      - "C:/Program Files/dotnet/git.cmd"
+      - "C:/MinGW/bin/git.cmd.com"
+      - "C:/MinGW/bin/git.cmd.exe"
+      - "C:/MinGW/bin/git.cmd"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/git.cmd.com"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/git.cmd"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/git.cmd.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/git.cmd"
+      - "C:/Users/mehna/.lmstudio/bin/git.cmd.com"
+      - "C:/Users/mehna/.lmstudio/bin/git.cmd.exe"
+      - "C:/Users/mehna/.lmstudio/bin/git.cmd"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/git.cmd.com"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/git.cmd"
+      - "C:/Users/mehna/AppData/Roaming/npm/git.cmd.com"
+      - "C:/Users/mehna/AppData/Roaming/npm/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Roaming/npm/git.cmd"
+      - "D:/Windsurf/bin/git.cmd.com"
+      - "D:/Windsurf/bin/git.cmd.exe"
+      - "D:/Windsurf/bin/git.cmd"
+      - "C:/Program Files/nodejs/git.cmd.com"
+      - "C:/Program Files/nodejs/git.cmd.exe"
+      - "C:/Program Files/nodejs/git.cmd"
+      - "C:/ProgramData/chocolatey/bin/git.cmd.com"
+      - "C:/ProgramData/chocolatey/bin/git.cmd.exe"
+      - "C:/ProgramData/chocolatey/bin/git.cmd"
+      - "C:/Program Files/CMake/bin/git.cmd.com"
+      - "C:/Program Files/CMake/bin/git.cmd.exe"
+      - "C:/Program Files/CMake/bin/git.cmd"
+      - "C:/Program Files/Git/cmd/git.cmd.com"
+      - "C:/Program Files/Git/cmd/git.cmd.exe"
+      - "C:/Program Files/Git/cmd/git.cmd"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/git.cmd.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/Scripts/git.cmd"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/git.cmd.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Python/Python312/git.cmd"
+      - "D:/Kiro/bin/git.cmd.com"
+      - "D:/Kiro/bin/git.cmd.exe"
+      - "D:/Kiro/bin/git.cmd"
+      - "C:/Users/mehna/.local/bin/git.cmd.com"
+      - "C:/Users/mehna/.local/bin/git.cmd.exe"
+      - "C:/Users/mehna/.local/bin/git.cmd"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/git.cmd.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Antigravity/bin/git.cmd"
+      - "C:/Program Files/bin/git.cmd.com"
+      - "C:/Program Files/bin/git.cmd.exe"
+      - "C:/Program Files/bin/git.cmd"
+      - "C:/Program Files/sbin/git.cmd.com"
+      - "C:/Program Files/sbin/git.cmd.exe"
+      - "C:/Program Files/sbin/git.cmd"
+      - "C:/Program Files/git.cmd.com"
+      - "C:/Program Files/git.cmd.exe"
+      - "C:/Program Files/git.cmd"
+      - "C:/Program Files (x86)/bin/git.cmd.com"
+      - "C:/Program Files (x86)/bin/git.cmd.exe"
+      - "C:/Program Files (x86)/bin/git.cmd"
+      - "C:/Program Files (x86)/sbin/git.cmd.com"
+      - "C:/Program Files (x86)/sbin/git.cmd.exe"
+      - "C:/Program Files (x86)/sbin/git.cmd"
+      - "C:/Program Files (x86)/git.cmd.com"
+      - "C:/Program Files (x86)/git.cmd.exe"
+      - "C:/Program Files (x86)/git.cmd"
+      - "C:/Program Files/CMake/bin/git.cmd.com"
+      - "C:/Program Files/CMake/bin/git.cmd.exe"
+      - "C:/Program Files/CMake/bin/git.cmd"
+      - "C:/Program Files/CMake/sbin/git.cmd.com"
+      - "C:/Program Files/CMake/sbin/git.cmd.exe"
+      - "C:/Program Files/CMake/sbin/git.cmd"
+      - "C:/Program Files/CMake/git.cmd.com"
+      - "C:/Program Files/CMake/git.cmd.exe"
+      - "C:/Program Files/CMake/git.cmd"
+      - "C:/Program Files/ChessEngineNative/bin/git.cmd.com"
+      - "C:/Program Files/ChessEngineNative/bin/git.cmd.exe"
+      - "C:/Program Files/ChessEngineNative/bin/git.cmd"
+      - "C:/Program Files/ChessEngineNative/sbin/git.cmd.com"
+      - "C:/Program Files/ChessEngineNative/sbin/git.cmd.exe"
+      - "C:/Program Files/ChessEngineNative/sbin/git.cmd"
+      - "C:/Program Files/ChessEngineNative/git.cmd.com"
+      - "C:/Program Files/ChessEngineNative/git.cmd.exe"
+      - "C:/Program Files/ChessEngineNative/git.cmd"
+      - "C:/Users/mehna/AppData/Local/Atlassian/SourceTree/git_local/bin/git.cmd.com"
+      - "C:/Users/mehna/AppData/Local/Atlassian/SourceTree/git_local/bin/git.cmd.exe"
+      - "C:/Users/mehna/AppData/Local/Atlassian/SourceTree/git_local/bin/git.cmd"
+      - "E:/cursor/resources/app/bin/git.com"
+      - "E:/cursor/resources/app/bin/git.exe"
+      - "E:/cursor/resources/app/bin/git"
+      - "C:/Windows/System32/git.com"
+      - "C:/Windows/System32/git.exe"
+      - "C:/Windows/System32/git"
+      - "C:/Windows/git.com"
+      - "C:/Windows/git.exe"
+      - "C:/Windows/git"
+      - "C:/Windows/System32/wbem/git.com"
+      - "C:/Windows/System32/wbem/git.exe"
+      - "C:/Windows/System32/wbem/git"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/git"
+      - "C:/Windows/System32/OpenSSH/git.com"
+      - "C:/Windows/System32/OpenSSH/git.exe"
+      - "C:/Windows/System32/OpenSSH/git"
+      - "C:/Program Files/HP/HP One Agent/git.com"
+      - "C:/Program Files/HP/HP One Agent/git.exe"
+      - "C:/Program Files/HP/HP One Agent/git"
+      - "C:/Program Files/dotnet/git.com"
+      - "C:/Program Files/dotnet/git.exe"
+      - "C:/Program Files/dotnet/git"
+      - "C:/MinGW/bin/git.com"
+      - "C:/MinGW/bin/git.exe"
+      - "C:/MinGW/bin/git"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/git.com"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/git.exe"
+      - "C:/Users/mehna/AppData/Local/Microsoft/WindowsApps/git"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/git.com"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/git.exe"
+      - "C:/Users/mehna/AppData/Local/Programs/Ollama/git"
+      - "C:/Users/mehna/.lmstudio/bin/git.com"
+      - "C:/Users/mehna/.lmstudio/bin/git.exe"
+      - "C:/Users/mehna/.lmstudio/bin/git"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/git.com"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/git.exe"
+      - "C:/Users/mehna/AppData/Local/Muse Hub/lib/git"
+      - "C:/Users/mehna/AppData/Roaming/npm/git.com"
+      - "C:/Users/mehna/AppData/Roaming/npm/git.exe"
+      - "C:/Users/mehna/AppData/Roaming/npm/git"
+      - "D:/Windsurf/bin/git.com"
+      - "D:/Windsurf/bin/git.exe"
+      - "D:/Windsurf/bin/git"
+      - "C:/Program Files/nodejs/git.com"
+      - "C:/Program Files/nodejs/git.exe"
+      - "C:/Program Files/nodejs/git"
+      - "C:/ProgramData/chocolatey/bin/git.com"
+      - "C:/ProgramData/chocolatey/bin/git.exe"
+      - "C:/ProgramData/chocolatey/bin/git"
+      - "C:/Program Files/CMake/bin/git.com"
+      - "C:/Program Files/CMake/bin/git.exe"
+      - "C:/Program Files/CMake/bin/git"
+      - "C:/Program Files/Git/cmd/git.com"
+    found: "C:/Program Files/Git/cmd/git.exe"
+    search_context:
+      ENV{PATH}:
+        - "e:\\cursor\\resources\\app\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\HP\\HP One Agent"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\MinGW\\bin"
+        - "C:\\Users\\mehna\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Ollama"
+        - "C:\\Users\\mehna\\.lmstudio\\bin"
+        - "C:\\Users\\mehna\\AppData\\Local\\Muse Hub\\lib"
+        - "C:\\Users\\mehna\\AppData\\Roaming\\npm"
+        - "D:\\Windsurf\\bin"
+        - "E:\\cursor\\resources\\app\\bin"
+        - "e:\\cursor\\resources\\app\\bin"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\"
+        - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Python\\Python312\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\HP\\HP One Agent"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\MinGW\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\mehna\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Ollama"
+        - "C:\\Users\\mehna\\.lmstudio\\bin"
+        - "C:\\Users\\mehna\\AppData\\Local\\Muse Hub\\lib"
+        - "C:\\Users\\mehna\\AppData\\Roaming\\npm"
+        - "D:\\Windsurf\\bin"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Users\\mehna\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Ollama"
+        - "C:\\Users\\mehna\\.lmstudio\\bin"
+        - "C:\\Users\\mehna\\AppData\\Local\\Muse Hub\\lib"
+        - "D:\\Kiro\\bin"
+        - "C:\\Users\\mehna\\AppData\\Roaming\\npm"
+        - "C:\\Users\\mehna\\.local\\bin"
+        - "C:\\Users\\mehna\\.local\\bin"
+        - "C:\\Users\\mehna\\AppData\\Local\\Programs\\Antigravity\\bin"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files/ChessEngineNative"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files/ChessEngineNative"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/cmake/AddIfFlagCompiles.cmake:3 (CHECK_C_COMPILER_FLAG)"
+      - "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/cmake/CompilerFlags.cmake:5 (add_if_flag_compiles)"
+      - "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/CMakeLists.txt:27 (include)"
+    checks:
+      - "Performing Test COMPILER_HAS_THOSE_TOGGLES"
+    directories:
+      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-y5zjtt"
+      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-y5zjtt"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/cmake"
+    buildResult:
+      variable: "COMPILER_HAS_THOSE_TOGGLES"
+      cached: true
+      stdout: |
+        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-y5zjtt'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_3ab12.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.14.23+b0019275e for .NET Framework
+        Build started 18-02-2026 03:35:45.
+        
+        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\cmTC_3ab12.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_3ab12.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\Debug\\".
+          Creating directory "cmTC_3ab12.dir\\Debug\\cmTC_3ab12.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_3ab12.dir\\Debug\\cmTC_3ab12.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_3ab12.dir\\Debug\\cmTC_3ab12.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D COMPILER_HAS_THOSE_TOGGLES /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_3ab12.dir\\Debug\\\\" /Fd"cmTC_3ab12.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue  -Werror=pointer-arith "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\src.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D COMPILER_HAS_THOSE_TOGGLES /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_3ab12.dir\\Debug\\\\" /Fd"cmTC_3ab12.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue  -Werror=pointer-arith "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\src.c"
+        cl : command line  error D8021: invalid numeric argument '/Werror=pointer-arith' [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\cmTC_3ab12.vcxproj]
+        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\cmTC_3ab12.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\cmTC_3ab12.vcxproj" (default target) (1) ->
+        (ClCompile target) -> 
+          cl : command line  error D8021: invalid numeric argument '/Werror=pointer-arith' [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-y5zjtt\\cmTC_3ab12.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.59
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/CheckCSourceCompiles.cmake:103 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindThreads.cmake:97 (check_c_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/src/external/glfw/CMakeLists.txt:60 (find_package)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-1weq1l"
+      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-1weq1l"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/cmake;E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/src/external/glfw/CMake/modules"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-1weq1l'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_dd6c1.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.14.23+b0019275e for .NET Framework
+        Build started 18-02-2026 03:35:46.
+        
+        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\cmTC_dd6c1.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_dd6c1.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\Debug\\".
+          Creating directory "cmTC_dd6c1.dir\\Debug\\cmTC_dd6c1.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_dd6c1.dir\\Debug\\cmTC_dd6c1.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_dd6c1.dir\\Debug\\cmTC_dd6c1.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_dd6c1.dir\\Debug\\\\" /Fd"cmTC_dd6c1.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\src.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_dd6c1.dir\\Debug\\\\" /Fd"cmTC_dd6c1.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\src.c"
+          src.c
+        E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\src.c(1,10): error C1083: Cannot open include file: 'pthread.h': No such file or directory [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\cmTC_dd6c1.vcxproj]
+        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\cmTC_dd6c1.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\cmTC_dd6c1.vcxproj" (default target) (1) ->
+        (ClCompile target) -> 
+          E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\src.c(1,10): error C1083: Cannot open include file: 'pthread.h': No such file or directory [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1weq1l\\cmTC_dd6c1.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.63
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/CheckLibraryExists.cmake:154 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindThreads.cmake:112 (check_library_exists)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindThreads.cmake:175 (_threads_check_lib)"
+      - "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/src/external/glfw/CMakeLists.txt:60 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthreads"
+    directories:
+      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-npgeth"
+      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-npgeth"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/cmake;E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/src/external/glfw/CMake/modules"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREADS_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-npgeth'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_41235.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.14.23+b0019275e for .NET Framework
+        Build started 18-02-2026 03:35:47.
+        
+        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\cmTC_41235.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_41235.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\Debug\\".
+          Creating directory "cmTC_41235.dir\\Debug\\cmTC_41235.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_41235.dir\\Debug\\cmTC_41235.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_41235.dir\\Debug\\cmTC_41235.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_41235.dir\\Debug\\\\" /Fd"cmTC_41235.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\CheckFunctionExists.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_41235.dir\\Debug\\\\" /Fd"cmTC_41235.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\CheckFunctionExists.c"
+          CheckFunctionExists.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\Debug\\cmTC_41235.exe" /INCREMENTAL /ILK:"cmTC_41235.dir\\Debug\\cmTC_41235.ilk" /NOLOGO pthreads.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-npgeth/Debug/cmTC_41235.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-npgeth/Debug/cmTC_41235.lib" /MACHINE:X64  /machine:x64 cmTC_41235.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\cmTC_41235.vcxproj]
+        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\cmTC_41235.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\cmTC_41235.vcxproj" (default target) (1) ->
+        (Link target) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-npgeth\\cmTC_41235.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:01.14
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/CheckLibraryExists.cmake:154 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindThreads.cmake:112 (check_library_exists)"
+      - "C:/Program Files/CMake/share/cmake-4.1/Modules/FindThreads.cmake:176 (_threads_check_lib)"
+      - "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/src/external/glfw/CMakeLists.txt:60 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthread"
+    directories:
+      source: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-z0cpxp"
+      binary: "E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-z0cpxp"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/cmake;E:/Chess Engine/Chess-Engine/build/_deps/raylib-src/src/external/glfw/CMake/modules"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREAD_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: 'E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-z0cpxp'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_d7732.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.14.23+b0019275e for .NET Framework
+        Build started 18-02-2026 03:35:49.
+        
+        Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\cmTC_d7732.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_d7732.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\Debug\\".
+          Creating directory "cmTC_d7732.dir\\Debug\\cmTC_d7732.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_d7732.dir\\Debug\\cmTC_d7732.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_d7732.dir\\Debug\\cmTC_d7732.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_d7732.dir\\Debug\\\\" /Fd"cmTC_d7732.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\CheckFunctionExists.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Fo"cmTC_d7732.dir\\Debug\\\\" /Fd"cmTC_d7732.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\CheckFunctionExists.c"
+          CheckFunctionExists.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\Debug\\cmTC_d7732.exe" /INCREMENTAL /ILK:"cmTC_d7732.dir\\Debug\\cmTC_d7732.ilk" /NOLOGO pthread.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-z0cpxp/Debug/cmTC_d7732.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"E:/Chess Engine/Chess-Engine/build/CMakeFiles/CMakeScratch/TryCompile-z0cpxp/Debug/cmTC_d7732.lib" /MACHINE:X64  /machine:x64 cmTC_d7732.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthread.lib' [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\cmTC_d7732.vcxproj]
+        Done Building Project "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\cmTC_d7732.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\cmTC_d7732.vcxproj" (default target) (1) ->
+        (Link target) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthread.lib' [E:\\Chess Engine\\Chess-Engine\\build\\CMakeFiles\\CMakeScratch\\TryCompile-z0cpxp\\cmTC_d7732.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:01.45
+        
+      exitCode: 1
 ...

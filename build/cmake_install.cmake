@@ -1,8 +1,8 @@
-# Install script for directory: E:/Chess Engine/Chess-Engine/chess-analysis-app/src/cpp
+# Install script for directory: E:/Chess Engine/Chess-Engine/chess-analysis-app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files/chess_core")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files/ChessEngineNative")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -30,6 +30,11 @@ endif()
 # Is this installation the result of a crosscompile?
 if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("E:/Chess Engine/Chess-Engine/build/_deps/raylib-build/cmake_install.cmake")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT

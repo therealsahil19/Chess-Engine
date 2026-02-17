@@ -1,7 +1,11 @@
 {
 	"InstallScripts" : 
 	[
-		"E:/Chess Engine/Chess-Engine/build/cmake_install.cmake"
+		"E:/Chess Engine/Chess-Engine/build/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/build/_deps/raylib-build/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/build/_deps/raylib-build/raylib/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/build/_deps/raylib-build/raylib/external/glfw/cmake_install.cmake",
+		"E:/Chess Engine/Chess-Engine/build/_deps/raylib-build/raylib/external/glfw/src/cmake_install.cmake"
 	],
 	"Parallel" : false
 }
