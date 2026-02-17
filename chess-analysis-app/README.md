@@ -23,6 +23,26 @@ The application uses `import.meta.env.BASE_URL` to resolve paths for static asse
 - `npm run build`: Builds the app for production.
 - `npm run lint`: Runs ESLint to check for code quality.
 - `npm run preview`: Previews the production build locally.
+- `npm run test`: Runs unit tests using Vitest.
+
+## Testing
+
+Unit tests are implemented using `vitest` with `jsdom` environment.
+
+To run tests:
+```bash
+npm run test
+```
+
+Alternatively, if you have [Bun](https://bun.sh/) installed, you can run tests directly:
+```bash
+bun test
+```
+
+## Performance & Optimization
+
+Performance improvements and architectural decisions (such as the optimized PGN loading strategy) are documented in:
+- [`OPTIMIZATION_LOG.md`](OPTIMIZATION_LOG.md)
 
 ## Project Structure
 
@@ -35,6 +55,6 @@ The application uses `import.meta.env.BASE_URL` to resolve paths for static asse
   - `stockfish.js`: The Stockfish chess engine compiled to WebAssembly (WASM).
   - `stockfish.wasm`: The accompanying WASM binary.
 - `eslint.config.js`: ESLint configuration using the new Flat Config system.
-- `OPTIMIZATION_LOG.md`: A record of performance improvements and architectural decisions (e.g., PGN loading optimization).
+- `OPTIMIZATION_LOG.md`: A record of performance improvements.
 
 For more information about the project features and roadmap, please refer to the [root README](../README.md).
