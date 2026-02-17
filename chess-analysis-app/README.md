@@ -1,60 +1,54 @@
-# Chess Analysis App - Frontend
+# Native C++ Chess Analysis App
 
-This is the React-based frontend for the Chess Analysis App. It uses Vite for development and building.
+A high-performance, native desktop chess application built with C++17 and [Raylib](https://www.raylib.com/).
 
-## Development
+## Features
 
-All commands must be run from within the `chess-analysis-app` directory.
+- **Core Chess Engine**:
+  - Complete implementation of chess rules (Castling, En Passant, Promotion).
+  - Legal move generation and validation.
+  - Game End Detection: Checkmate, Stalemate, Insufficient Material, 50-Move Rule.
+- **Native GUI**:
+  - Fast, hardware-accelerated rendering using Raylib.
+  - Interactive board with click-to-move functionality.
+- **File Support**:
+  - **PGN Loading**: Drag & drop `.pgn` files to parse and replay games automatically.
+  - **FEN Loading**: Drag & drop `.fen` files or text files containing FEN strings to load positions.
+  - **Drag & Drop**: Native OS file drag and drop integration.
 
-To start the development server:
+## Prerequisites
 
-```bash
-npm install
-npm run dev
-```
+- **CMake** (3.20 or newer)
+- **C++ Compiler** with C++17 support (MSVC, GCC, or Clang)
+- **Raylib**: Automatically fetched and built via CMake.
 
-### Important Note on Asset Loading
+## Build Instructions
 
-The application uses `import.meta.env.BASE_URL` to resolve paths for static assets like the Stockfish Web Worker (`stockfish.js`). This ensures that the worker loads correctly both in local development (root path `/`) and when deployed to GitHub Pages (subdirectory path `/Chess-Engine/`).
+1.  **Configure**:
+    ```bash
+    cmake -S . -B build
+    ```
 
-## Available Scripts
+2.  **Build**:
+    ```bash
+    cmake --build build --config Release
+    ```
 
-- `npm run dev`: Starts the development server.
-- `npm run build`: Builds the app for production.
-- `npm run lint`: Runs ESLint to check for code quality.
-- `npm run preview`: Previews the production build locally.
-- `npm run test`: Runs unit tests using Vitest.
+3.  **Run**:
+    The executable will be located in `build/Release/ChessApp.exe` (Windows) or `build/ChessApp` (Linux/Mac).
 
-## Testing
+## Controls
 
-Unit tests are implemented using `vitest` with `jsdom` environment.
-
-To run tests:
-```bash
-npm run test
-```
-
-Alternatively, if you have [Bun](https://bun.sh/) installed, you can run tests directly:
-```bash
-bun test
-```
-
-## Performance & Optimization
-
-Performance improvements and architectural decisions (such as the optimized PGN loading strategy) are documented in:
-- [`OPTIMIZATION_LOG.md`](OPTIMIZATION_LOG.md)
+-   **Left Click**: Select a piece / Move to a valid square.
+-   **Click on Own Piece**: Reselect different piece.
+-   **Drag & Drop**: Drop a `.pgn` or `.fen` file onto the window to load it.
+-   **Restart**: Click on the board when game is over to reset (or re-launch app).
 
 ## Project Structure
 
-- `src/`: Contains the React source code.
-  - `App.jsx`: Main application component. Handles game state, navigation, and integrates the UI with the engine.
-  - `engine.js`: Wrapper class for the Stockfish WASM worker. Manages UCI communication.
-  - `uci-parser.js`: Utility to parse UCI output strings (info depth, score, pv, etc.).
-  - `App.css`: Application-specific styles.
-- `public/`: Static assets served directly.
-  - `stockfish.js`: The Stockfish chess engine compiled to WebAssembly (WASM).
-  - `stockfish.wasm`: The accompanying WASM binary.
-- `eslint.config.js`: ESLint configuration using the new Flat Config system.
-- `OPTIMIZATION_LOG.md`: A record of performance improvements.
-
-For more information about the project features and roadmap, please refer to the [root README](../README.md).
+-   `src/core/`: Chess logic (Board representation, Move generation, Rules).
+    -   `board.hpp`: Header-only implementation of the Board logic (to resolve linking issues).
+    -   `move_gen.cpp`: Move generation logic.
+    -   `types.hpp`: Basic types (Bitboard, Piece, Square).
+-   `src/main.cpp`: Entry point, Game Loop, and Raylib GUI rendering.
+-   `CMakeLists.txt`: Build configuration.
