@@ -12,14 +12,17 @@ const int SCREEN_WIDTH = 1000; // Expanded for UI
 const int SCREEN_HEIGHT = 800;
 const int BOARD_SIZE = 640;
 const int SQUARE_SIZE = BOARD_SIZE / 8;
-const int BOARD_OFFSET_X = 50;
+const int BOARD_OFFSET_X = 40;
 const int BOARD_OFFSET_Y = (SCREEN_HEIGHT - BOARD_SIZE) / 2;
 
-// Colors
-const Color COLOR_LIGHT = {240, 217, 181, 255};
-const Color COLOR_DARK = {181, 136, 99, 255};
-const Color COLOR_HIGHLIGHT = {255, 255, 0, 100};
-const Color COLOR_SELECTED = {0, 255, 0, 100};
+// Colors - High Contrast Theme
+const Color COLOR_BG = { 43, 45, 48, 255 };        // IntelliJ-like Dark Gray
+const Color COLOR_LIGHT = { 235, 236, 208, 255 };  // Cream / Lichess Light
+const Color COLOR_DARK = { 119, 149, 86, 255 };   // Green / Lichess Dark
+const Color COLOR_HIGHLIGHT = { 255, 246, 126, 180 }; // Yellow highlight
+const Color COLOR_SELECTED = { 186, 202, 43, 200 };   // Lime-ish green for selection
+const Color COLOR_TEXT_MAIN = { 205, 205, 205, 255 }; 
+const Color COLOR_TEXT_DIM = { 150, 150, 150, 255 };
 
 struct AnimState {
     bool active = false;
@@ -137,6 +140,11 @@ int main() {
             selectedSq = -1;
         }
         
+        // Toggle Fullscreen
+        if (IsKeyPressed(KEY_F11)) {
+            ToggleFullscreen();
+        }
+
         // Animation
         if (anim.active) {
             anim.progress += dt * anim.speed;
@@ -262,11 +270,36 @@ int main() {
                     }
                 }
             }
+
+            // "Paste PGN" Button Click Detection
+            int pasteButtonX = SCREEN_WIDTH - 280;
+            int pasteButtonY = 420;
+            int pasteButtonWidth = 150;
+            int pasteButtonHeight = 40;
+
+            if (mousePos.x >= pasteButtonX && mousePos.x <= pasteButtonX + pasteButtonWidth &&
+                mousePos.y >= pasteButtonY && mousePos.y <= pasteButtonY + pasteButtonHeight) {
+
+                const char* clipboardText = GetClipboardText();
+                if (clipboardText) {
+                    std::string content(clipboardText);
+                    if (content.find("[Event") != std::string::npos || content.find("1.") != std::string::npos) {
+                        LoadPgnToRecord(content, board, gameRecord);
+                        triggerAnalysis();
+                    }
+                    else if (content.length() > 20) { // Naive FEN length check
+                        board.loadFen(content);
+                        gameRecord.reset();
+                        triggerAnalysis();
+                    }
+                    selectedSq = -1;
+                }
+            }
         }
 
         // --- Draw ---
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(COLOR_BG);
         
         // Draw Board
         for (int r = 0; r < 8; r++) {
@@ -358,16 +391,23 @@ int main() {
         
         // Draw INFO Panel
         int infoX = SCREEN_WIDTH - 280;
-        DrawText("Analysis", infoX, 20, 30, DARKGRAY);
-        DrawText(("Eval: " + currentEval).c_str(), infoX, 70, 20, BLACK);
-        DrawText(("Best: " + bestMoveSan).c_str(), infoX, 100, 20, BLACK);
+        DrawText("Analysis", infoX, 20, 30, COLOR_TEXT_MAIN);
+        DrawText(("Eval: " + currentEval).c_str(), infoX, 70, 20, COLOR_TEXT_MAIN);
+        DrawText(("Best: " + bestMoveSan).c_str(), infoX, 100, 20, COLOR_TEXT_MAIN);
         
-        if (board.getTurn() == Chess::White) DrawText("White to Move", infoX, 150, 20, DARKGRAY);
-        else DrawText("Black to Move", infoX, 150, 20, DARKGRAY);
+        if (board.getTurn() == Chess::White) DrawText("White to Move", infoX, 150, 20, COLOR_TEXT_DIM);
+        else DrawText("Black to Move", infoX, 150, 20, COLOR_TEXT_DIM);
         
-        DrawText("Controls:", infoX, 300, 20, DARKGRAY);
-        DrawText("Arrow L/R: Navigate", infoX, 330, 10, DARKGRAY);
-        DrawText("Drag PGN: Load Game", infoX, 350, 10, DARKGRAY);
+        DrawText("Controls:", infoX, 300, 20, COLOR_TEXT_MAIN);
+        DrawText("Arrow L/R: Navigate", infoX, 330, 15, COLOR_TEXT_DIM);
+        DrawText("Drag PGN: Load Game", infoX, 355, 15, COLOR_TEXT_DIM);
+        DrawText("F11: Full Screen", infoX, 380, 15, COLOR_TEXT_DIM);
+
+        // Paste PGN Button
+        int pasteButtonY = 420;
+        bool mouseOverPaste = CheckCollisionPointRec(GetMousePosition(), { (float)infoX, (float)pasteButtonY, 150, 40 });
+        DrawRectangle(infoX, pasteButtonY, 150, 40, mouseOverPaste ? COLOR_SELECTED : COLOR_DARK);
+        DrawText("Paste PGN", infoX + 25, pasteButtonY + 10, 20, COLOR_BG);
 
         EndDrawing();
     }
