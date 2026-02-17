@@ -75,16 +75,9 @@ public:
     void loadFen(const std::string& fen);
     
     // Inlined for linking
-    void loadPgn(const std::string& pgn) {
-        reset();
-        std::istringstream ss(pgn);
-        std::string token;
-        while (ss >> token) {
-            if (token.find('.') != std::string::npos) continue;
-            if (token == "1-0" || token == "0-1" || token == "1/2-1/2") break;
-        }
-    }
-    std::string moveToSan(const Move& m);
+    void loadPgn(const std::string& pgn);
+    std::string moveToSan(const Move& m) const;
+    Move parseSan(const std::string& san) const;
 
 private:
     std::array<Piece, 64> board;
@@ -367,8 +360,152 @@ private:
         return true;
     }
 
-    inline std::string Board::moveToSan(const Move& m) {
-        return m.toString(); 
+
+    inline std::string Board::moveToSan(const Move& m) const {
+        Piece p = board[m.from];
+        PieceType pt = typeOf(p);
+        
+        // Castling
+        if (pt == KING) {
+            if (m.dest - m.from == 2) return "O-O";
+            if (m.from - m.dest == 2) return "O-O-O";
+        }
+        
+        std::string san = "";
+        
+        if (pt != PAWN) {
+            switch(pt) {
+                case KNIGHT: san += "N"; break;
+                case BISHOP: san += "B"; break;
+                case ROOK:   san += "R"; break;
+                case QUEEN:  san += "Q"; break;
+                case KING:   san += "K"; break;
+                default: break;
+            }
+        }
+        
+        // Disambiguation
+        std::vector<Move> moves = getLegalMoves();
+        bool anySameFile = false;
+        bool anySameRank = false; // "rank" means row here (0-7)
+        bool ambiguous = false;
+
+        for (const auto& other : moves) {
+            if (other.from == m.from) continue;
+            if (other.dest != m.dest) continue;
+            if (typeOf(board[other.from]) != pt) continue; // Should be same type if we are here
+            
+            ambiguous = true;
+            if ( (other.from % 8) == (m.from % 8) ) anySameFile = true;
+            if ( (other.from / 8) == (m.from / 8) ) anySameRank = true;
+        }
+
+        if (pt == PAWN) {
+            if (board[m.dest] != NO_PIECE || m.dest == enPassantSquare) {
+                 if (abs(m.dest - m.from) % 8 != 0) {
+                     san += squareToString(m.from).substr(0,1);
+                 }
+            }
+        } else {
+            if (ambiguous) {
+                if (!anySameFile) {
+                    san += squareToString(m.from).substr(0,1);
+                } else if (!anySameRank) {
+                    san += squareToString(m.from).substr(1,1);
+                } else {
+                    san += squareToString(m.from);
+                }
+            }
+        }
+        
+        // Capture
+        if (board[m.dest] != NO_PIECE || (pt == PAWN && m.dest == enPassantSquare)) {
+            san += "x";
+        }
+        
+        san += squareToString(m.dest);
+        
+        // Promotion
+        if (m.promotion != NO_PIECE_TYPE) {
+            char pChar = ' ';
+            switch(m.promotion) {
+                case QUEEN: pChar = 'Q'; break;
+                case ROOK: pChar = 'R'; break;
+                case BISHOP: pChar = 'B'; break;
+                case KNIGHT: pChar = 'N'; break;
+                default: break;
+            }
+            san += "=";
+            san += pChar;
+        }
+        
+        // Check/Mate
+        Board nextState = *this;
+        nextState.makeMove(m);
+        if (nextState.isCheck()) {
+            if (nextState.getLegalMoves().empty()) {
+                san += "#";
+            } else {
+                san += "+";
+            }
+        }
+        
+        return san;
+    }
+
+    inline Move Board::parseSan(const std::string& san) const {
+        std::vector<Move> moves = getLegalMoves();
+        std::string cleanIn = san;
+        if (!cleanIn.empty() && (cleanIn.back() == '+' || cleanIn.back() == '#')) cleanIn.pop_back();
+
+        for (const auto& m : moves) {
+            std::string mySan = moveToSan(m);
+            std::string cleanMy = mySan;
+            if (!cleanMy.empty() && (cleanMy.back() == '+' || cleanMy.back() == '#')) cleanMy.pop_back();
+            
+            if (cleanMy == cleanIn) return m;
+        }
+        return {}; 
+    }
+
+    inline void Board::loadPgn(const std::string& pgn) {
+        reset();
+        std::string cleanPgn = pgn;
+        for(char& c : cleanPgn) if (c == '\n' || c == '\r') c = ' ';
+        
+        std::string movesOnly;
+        bool inTag = false;
+        bool inComment = false;
+        for (size_t i = 0; i < cleanPgn.size(); i++) {
+            char c = cleanPgn[i];
+            if (c == '[') inTag = true;
+            if (c == '{') inComment = true;
+            
+            if (!inTag && !inComment) {
+                movesOnly += c;
+            }
+            
+            if (c == ']') inTag = false;
+            if (c == '}') inComment = false;
+        }
+        
+        std::istringstream ss(movesOnly);
+        std::string token;
+        while (ss >> token) {
+             size_t dot = token.find('.');
+             if (dot != std::string::npos) {
+                 token = token.substr(dot + 1);
+             }
+             
+             if (token.empty()) continue; 
+             if (isdigit(token[0])) continue; 
+             if (token == "1-0" || token == "0-1" || token == "1/2-1/2" || token == "*") break; 
+             
+             Move m = parseSan(token);
+             if (!m.isNull()) {
+                 makeMove(m);
+             }
+        }
     }
 
 } // namespace Chess

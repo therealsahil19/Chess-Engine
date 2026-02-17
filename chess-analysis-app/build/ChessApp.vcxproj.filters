@@ -4,9 +4,6 @@
     <ClCompile Include="E:\Chess Engine\Chess-Engine\chess-analysis-app\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\Chess Engine\Chess-Engine\chess-analysis-app\src\core\board.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="E:\Chess Engine\Chess-Engine\chess-analysis-app\src\core\move_gen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

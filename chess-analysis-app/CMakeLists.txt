@@ -8,8 +8,13 @@ cmake_policy(SET CMP0077 NEW)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
 
-# --- Raylib Integration ---
-add_subdirectory(src/libs/raylib-5.0)
+include(FetchContent)
+FetchContent_Declare(
+    raylib
+    GIT_REPOSITORY https://github.com/raysan5/raylib.git
+    GIT_TAG        master
+)
+FetchContent_MakeAvailable(raylib)
 
 # --- Sources ---
 file(GLOB CORE_SOURCES "src/core/*.cpp")

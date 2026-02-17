@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/Chess Engine/Chess-Engine/chess-analysis-app/build/src/libs/raylib-5.0/cmake_install.cmake")
+  include("E:/Chess Engine/Chess-Engine/chess-analysis-app/build/_deps/raylib-build/cmake_install.cmake")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
