@@ -1,5 +1,5 @@
 # Stockfish binaries
-stockfish/*.exe
+# stockfish/*.exe (removed to allow LFS tracking)
 stockfish/*.bin
 stockfish/*.o
 
