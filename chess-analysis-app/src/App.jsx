@@ -254,10 +254,7 @@ function App() {
             borderRadius: '4px',
             boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)',
             backgroundColor: '#edd6b0', // Light square color to fill gaps
-            border: '2px solid #312e2b' // Board border
           }}
-          customDarkSquareStyle={{ border: '0.5px solid rgba(0, 0, 0, 0.1)' }}
-          customLightSquareStyle={{ border: '0.5px solid rgba(0, 0, 0, 0.1)' }}
         />
 
         <BoardControls
