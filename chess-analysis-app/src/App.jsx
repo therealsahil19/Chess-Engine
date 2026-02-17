@@ -84,15 +84,18 @@ function App() {
       }
 
       setMoveHistory(history);
-      const newGame = new Chess();
-      setGame(newGame);
 
-      setCurrentMoveIndex(-1);
+      const lastMoveIndex = history.length - 1;
+      const lastFen = history.length > 0 ? history[lastMoveIndex].fen : new Chess().fen();
+
+      setGame(new Chess(lastFen));
+      setCurrentMoveIndex(lastMoveIndex);
       setAnalysisResults({});
       setIsAnalyzing(false);
       setIsPgnCollapsed(true);
-    } catch {
-      alert('Invalid PGN');
+    } catch (e) {
+      console.error('PGN Load Error:', e);
+      alert('Invalid PGN format. Please check your input.');
     }
   };
 
