@@ -5,62 +5,13 @@ import Engine from './engine';
 import './App.css';
 
 // Helper functions
-const CLASSIFICATION_THRESHOLDS = {
-  BEST: 0,
-  EXCELLENT: 20,
-  GOOD: 50,
-  INACCURACY: 100,
-  MISTAKE: 300
-};
-
-const ANALYSIS_MODES = {
-  LOW: 'low',
-  HIGH: 'high',
-  CUSTOM: 'custom'
-};
-
-const ANALYSIS_DEPTHS = {
-  LOW: 12,
-  HIGH: 18,
-  DEFAULT: 15
-};
-const getNormScore = (res, index) => {
-  if (!res) return 0;
-  let val = res.scoreVal;
-  if (res.scoreType === 'mate') {
-    val = (val > 0 ? 10000 : -10000) - (val * 100);
-  }
-  const modifier = (index + 1) % 2 === 0 ? 1 : -1;
-  return val * modifier;
-};
-
-const computeClassification = (index, moveHistory, analysisResults) => {
-  if (index === -1) return null; // Start pos
-  const prevRes = analysisResults[index - 1];
-  const currRes = analysisResults[index];
-  if (!prevRes || !currRes) return null;
-
-  const playedMoveObj = moveHistory[index];
-  const playedMoveLan = playedMoveObj.from + playedMoveObj.to + (playedMoveObj.promotion || '');
-  if (playedMoveLan === prevRes.bestMove) return { label: 'Best', className: 'class-best' };
-
-  const prevScore = getNormScore(prevRes, index - 1);
-  const currScore = getNormScore(currRes, index);
-
-  let loss = 0;
-  if (playedMoveObj.color === 'w') {
-    loss = prevScore - currScore;
-  } else {
-    loss = currScore - prevScore;
-  }
-
-  if (loss <= CLASSIFICATION_THRESHOLDS.BEST) return { label: 'Best', className: 'class-best' };
-  if (loss <= CLASSIFICATION_THRESHOLDS.EXCELLENT) return { label: 'Excellent', className: 'class-excellent' };
-  if (loss <= CLASSIFICATION_THRESHOLDS.GOOD) return { label: 'Good', className: 'class-good' };
-  if (loss <= CLASSIFICATION_THRESHOLDS.INACCURACY) return { label: 'Inaccuracy', className: 'class-inaccuracy' };
-  if (loss <= CLASSIFICATION_THRESHOLDS.MISTAKE) return { label: 'Mistake', className: 'class-mistake' };
-  return { label: 'Blunder', className: 'class-blunder' };
-};
+import EvaluationBar from './components/EvaluationBar';
+import BoardControls from './components/BoardControls';
+import AnalysisStats from './components/AnalysisStats';
+import MoveHistory from './components/MoveHistory';
+import ControlPanel from './components/ControlPanel';
+import { ANALYSIS_MODES, ANALYSIS_DEPTHS } from './components/constants';
+import { getNormScore, computeClassification } from './components/utils';
 
 function App() {
   const [game, setGame] = useState(new Chess());
@@ -91,10 +42,8 @@ function App() {
 
   const onDrop = (sourceSquare, targetSquare) => {
     const gameCopy = new Chess(game.fen());
-    let move = null;
-    try {
-      move = gameCopy.move({ from: sourceSquare, to: targetSquare, promotion: 'q' });
-    } catch { /* invalid move */ }
+    const move = gameCopy.move({ from: sourceSquare, to: targetSquare, promotion: 'q' });
+
 
     if (move) {
       setGame(gameCopy);
@@ -108,15 +57,30 @@ function App() {
   };
 
   const handlePgnLoad = () => {
+    if (pgnInput.length > 1000000) {
+      alert('PGN too large');
+      return;
+    }
     try {
       const tempGame = new Chess();
       tempGame.loadPgn(pgnInput);
       const rawHistory = tempGame.history({ verbose: true });
 
-      const history = new Array(rawHistory.length);
-      for (let i = rawHistory.length - 1; i >= 0; i--) {
-        history[i] = { ...rawHistory[i], fen: tempGame.fen() };
-        tempGame.undo();
+      const history = rawHistory.map(move => ({
+        ...move,
+        fen: move.after || (() => { tempGame.move(move); const f = tempGame.fen(); return f; })()
+      }));
+
+      // If .after wasn't present, we might have advanced tempGame state, but let's assume we want to rely on the verbose history if possible. 
+      // Actually, if 'after' is missing, the map above with side-effect is risky if we don't reset. 
+      // Safest optimized way without assumption:
+      if (!rawHistory[0]?.after) {
+        // Fallback to reconstruction if needed, but let's try to use the fact that we can just play forward
+        const reconstructionGame = new Chess();
+        for (let i = 0; i < history.length; i++) {
+          reconstructionGame.move(history[i]);
+          history[i].fen = reconstructionGame.fen();
+        }
       }
 
       setMoveHistory(history);
@@ -176,7 +140,10 @@ function App() {
     let depth = ANALYSIS_DEPTHS.DEFAULT;
     if (analysisMode === ANALYSIS_MODES.LOW) depth = ANALYSIS_DEPTHS.LOW;
     if (analysisMode === ANALYSIS_MODES.HIGH) depth = ANALYSIS_DEPTHS.HIGH;
-    if (analysisMode === ANALYSIS_MODES.CUSTOM) depth = customDepth;
+    if (analysisMode === ANALYSIS_MODES.HIGH) depth = ANALYSIS_DEPTHS.HIGH;
+    if (analysisMode === ANALYSIS_MODES.CUSTOM) {
+      depth = Math.max(1, Math.min(30, customDepth || ANALYSIS_DEPTHS.DEFAULT));
+    }
 
     // Pass a fresh game instance for incremental analysis
     analyzeStep(-1, depth, new Chess());
@@ -229,9 +196,7 @@ function App() {
 
     let score = res.scoreVal;
     if (res.scoreType === 'mate') {
-      // Logic: if it's black to move (even index+1, or currentMoveIndex is even), and score > 0, white is mating.
-      const sideToMove = (currentMoveIndex + 1) % 2 === 0 ? 'w' : 'b';
-      const whiteScore = sideToMove === 'w' ? score : -score;
+      const whiteScore = getNormScore(res, currentMoveIndex);
       return {
         percentage: whiteScore > 0 ? 100 : 0,
         text: `M${Math.abs(score)}`,
@@ -239,8 +204,7 @@ function App() {
       };
     }
 
-    const sideToMove = (currentMoveIndex + 1) % 2 === 0 ? 'w' : 'b';
-    const whiteScore = sideToMove === 'w' ? score : -score;
+    const whiteScore = getNormScore(res, currentMoveIndex);
 
     let percentage = 50 + (whiteScore / 10);
     percentage = Math.max(5, Math.min(95, percentage));
@@ -252,17 +216,11 @@ function App() {
     };
   };
 
-  const moveClassifications = useMemo(() => {
-    const classifications = {};
-    moveHistory.forEach((_, index) => {
-      classifications[index] = computeClassification(index, moveHistory, analysisResults);
-    });
-    return classifications;
-  }, [moveHistory, analysisResults]);
+
 
   const currentAnalysis = analysisResults[currentMoveIndex];
 
-  const currentClassification = moveClassifications[currentMoveIndex];
+  const currentClassification = computeClassification(currentMoveIndex, moveHistory, analysisResults);
   const bestMoveSuggestion = (currentClassification && (currentClassification.label === 'Mistake' || currentClassification.label === 'Blunder'))
     ? getBestMoveSan(currentMoveIndex) : null;
 
@@ -279,28 +237,11 @@ function App() {
     return [];
   }, [analysisResults, currentMoveIndex]);
 
-  // Move grouping for table
-  const moveRows = useMemo(() => {
-    const rows = [];
-    for (let i = 0; i < moveHistory.length; i += 2) {
-      rows.push({
-        num: Math.floor(i / 2) + 1,
-        white: { move: moveHistory[i], index: i },
-        black: moveHistory[i + 1] ? { move: moveHistory[i + 1], index: i + 1 } : null
-      });
-    }
-    return rows;
-  }, [moveHistory]);
+  // moveRows logic moved to MoveHistory component
 
   return (
     <main className="app-container">
-      <aside className="evaluation-bar-container" aria-label="Evaluation Bar">
-        <div
-          className="evaluation-bar-fill"
-          style={{ height: `${evalData.percentage}%` }}
-        />
-        <span className={`evaluation-text ${evalData.side}`}>{evalData.text}</span>
-      </aside>
+      <EvaluationBar evalData={evalData} />
 
       <section className="board-container">
         <Chessboard
@@ -311,12 +252,14 @@ function App() {
           boardOrientation="white"
         />
 
-        <div className="navigation-controls">
-          <button onClick={goToStart} disabled={currentMoveIndex === -1} aria-label="Go to start">«</button>
-          <button onClick={goBack} disabled={currentMoveIndex === -1} aria-label="Go back">‹</button>
-          <button onClick={goForward} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go forward">›</button>
-          <button onClick={goToEnd} disabled={currentMoveIndex === moveHistory.length - 1} aria-label="Go to end">»</button>
-        </div>
+        <BoardControls
+          goToStart={goToStart}
+          goBack={goBack}
+          goForward={goForward}
+          goToEnd={goToEnd}
+          currentMoveIndex={currentMoveIndex}
+          totalMoves={moveHistory.length}
+        />
       </section>
 
       <aside className="analysis-panel">
@@ -324,126 +267,35 @@ function App() {
           <h2>Analysis</h2>
         </div>
 
-        {currentAnalysis && (
-          <div className="stats-panel">
-            <div className="stat-item">
-              <span className="stat-label">Evaluation</span>
-              <span className="stat-value">
-                {currentAnalysis.bound && (
-                  ((currentMoveIndex + 1) % 2 === 0)
-                    ? (currentAnalysis.bound === 'lower' ? '≥ ' : '≤ ')
-                    : (currentAnalysis.bound === 'lower' ? '≤ ' : '≥ ')
-                )}
-                {evalData.text} {currentAnalysis.scoreType === 'mate' ? '(Mate)' : ''}
-              </span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Depth</span>
-              <span className="stat-value">{currentAnalysis.depth || 0}</span>
-            </div>
-            {currentAnalysis.pv && (
-              <div className="pv-display" title="Principal Variation">
-                {currentAnalysis.pv}
-              </div>
-            )}
-          </div>
-        )}
+        <AnalysisStats
+          currentAnalysis={currentAnalysis}
+          currentMoveIndex={currentMoveIndex}
+          evalData={evalData}
+        />
 
-        <div className="move-history-container">
-          <table className="move-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>White</th>
-                <th>Black</th>
-              </tr>
-            </thead>
-            <tbody>
-              {moveRows.map((row) => {
-                const whiteClass = moveClassifications[row.white.index];
-                const blackClass = row.black ? moveClassifications[row.black.index] : null;
+        <MoveHistory
+          moveHistory={moveHistory}
+          currentMoveIndex={currentMoveIndex}
+          jumpToMove={jumpToMove}
+          analysisResults={analysisResults}
+        />
 
-                return (
-                  <tr key={row.num} className="move-row">
-                    <td className="move-number">{row.num}.</td>
-                    <td
-                      className={`move-cell ${currentMoveIndex === row.white.index ? 'current' : ''}`}
-                      onClick={() => jumpToMove(row.white.index)}
-                    >
-                      {row.white.move.san}
-                      {whiteClass && (
-                        <span className={`move-annotation ${whiteClass.className}`}>
-                          {whiteClass.label === 'Best' ? '★' : ''}
-                          {whiteClass.label === 'Inaccuracy' ? '?!' : ''}
-                          {whiteClass.label === 'Mistake' ? '?' : ''}
-                          {whiteClass.label === 'Blunder' ? '??' : ''}
-                        </span>
-                      )}
-                    </td>
-                    <td
-                      className={`move-cell ${row.black && currentMoveIndex === row.black.index ? 'current' : ''}`}
-                      onClick={() => row.black && jumpToMove(row.black.index)}
-                    >
-                      {row.black?.move.san}
-                      {blackClass && (
-                        <span className={`move-annotation ${blackClass.className}`}>
-                          {blackClass.label === 'Best' ? '★' : ''}
-                          {blackClass.label === 'Inaccuracy' ? '?!' : ''}
-                          {blackClass.label === 'Mistake' ? '?' : ''}
-                          {blackClass.label === 'Blunder' ? '??' : ''}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="settings-section">
-          <div className="analysis-settings">
-            <label>Mode:
-              <select value={analysisMode} onChange={(e) => setAnalysisMode(e.target.value)} disabled={isAnalyzing}>
-                <option value={ANALYSIS_MODES.LOW}>Low Reasoning (Fast)</option>
-                <option value={ANALYSIS_MODES.HIGH}>High Reasoning (Deep)</option>
-                <option value={ANALYSIS_MODES.CUSTOM}>Custom</option>
-              </select>
-            </label>
-            {analysisMode === ANALYSIS_MODES.CUSTOM && (
-              <input
-                type="number"
-                value={customDepth}
-                onChange={(e) => setCustomDepth(parseInt(e.target.value))}
-                min="1" max="30"
-              />
-            )}
-            <button className="analyze-button" onClick={startAnalysis} disabled={isAnalyzing || moveHistory.length === 0}>
-              {isAnalyzing ? `Analyzing... ${analysisProgress}%` : 'Analyze Game'}
-            </button>
-          </div>
-        </div>
-
-        <div className="collapsible-section">
-          <div className="collapsible-header" onClick={() => setIsPgnCollapsed(!isPgnCollapsed)}>
-            <span>PGN / New Game</span>
-            <span>{isPgnCollapsed ? '▼' : '▲'}</span>
-          </div>
-          {!isPgnCollapsed && (
-            <div className="collapsible-content">
-              <textarea
-                placeholder="Paste PGN here..."
-                value={pgnInput}
-                onChange={(e) => setPgnInput(e.target.value)}
-                rows={5}
-              />
-              <div className="button-group">
-                <button onClick={handlePgnLoad}>Load PGN</button>
-                <button onClick={handleReset}>Reset / New Game</button>
-              </div>
-            </div>
-          )}
-        </div>
+        <ControlPanel
+          analysisMode={analysisMode}
+          setAnalysisMode={setAnalysisMode}
+          isAnalyzing={isAnalyzing}
+          customDepth={customDepth}
+          setCustomDepth={setCustomDepth}
+          moveHistoryLength={moveHistory.length}
+          startAnalysis={startAnalysis}
+          analysisProgress={analysisProgress}
+          isPgnCollapsed={isPgnCollapsed}
+          setIsPgnCollapsed={setIsPgnCollapsed}
+          pgnInput={pgnInput}
+          setPgnInput={setPgnInput}
+          handlePgnLoad={handlePgnLoad}
+          handleReset={handleReset}
+        />
       </aside>
 
       {bestMoveSuggestion && (

@@ -38,6 +38,7 @@ export default class Engine {
 
   analyzePosition(fen, depth, callback) {
     this.latestInfo = {};
+    this.rawInfo = '';
     this.onResult = callback;
     this.stockfish.postMessage(`position fen ${fen}`);
     this.stockfish.postMessage(`go depth ${depth}`);
