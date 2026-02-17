@@ -36,10 +36,17 @@ A modern, web-based chess analysis application that leverages Stockfish (WASM) t
 
 The application is built with a clear separation of concerns:
 
-- **`App.jsx`**: The main React component that handles application state (game history, analysis results, UI interaction). It manages the `chess.js` game instance and orchestrates the analysis flow. Optimized PGN loading uses a backward undo loop (O(N) * StatePop) to bypass expensive move validation, significantly improving performance for long games.
+- **`App.jsx`**: The main React component that handles application state (game history, analysis results, UI interaction). It manages the `chess.js` game instance and orchestrates the analysis flow. Optimized PGN loading uses a backward undo loop (O(N) * StatePop) to bypass expensive move validation, significantly improving performance for long games. See [`chess-analysis-app/OPTIMIZATION_LOG.md`](chess-analysis-app/OPTIMIZATION_LOG.md) for details.
 - **`engine.js`**: A wrapper class for the `stockfish.js` Web Worker. It handles communication (sending UCI commands, receiving messages) and keeps the UI thread responsive. It implements lazy parsing, only invoking the parser when necessary.
 - **`uci-parser.js`**: A utility module dedicated to parsing raw UCI (Universal Chess Interface) messages from the engine. It extracts structured data like score, depth, bounds, and PV lines, using defensive programming to handle malformed inputs.
-- **`verification/`**: Contains Python scripts (like `verify_bounds.py`) using Playwright for end-to-end verification of engine logic and UI elements.
+- **`verification/`**: Contains Python scripts using Playwright for end-to-end verification of engine logic and UI elements.
+
+### Verification & Testing
+
+- **`verification/verify_bounds.py`**: Verifies that engine evaluation bounds (lower/upper) are correctly displayed in the UI.
+- **`verification/verify_pgn.py`**: Validates that PGN games load correctly and the analysis interface is visible.
+- **`verification/verify_pgn_analysis.py`**: Performs an end-to-end test to ensure engine analysis updates evaluations across different moves (e.g., moves 5, 15, and end of game).
+- **Unit Tests**: Run via `vitest` (or `bun test`) to ensure core logic stability.
 
 ## Technologies Used
 
@@ -49,10 +56,14 @@ The application is built with a clear separation of concerns:
 - **react-chessboard**: Interactive UI component.
 - **stockfish.js**: WASM version of the Stockfish chess engine.
 - **ESLint**: Flat Config system (`eslint.config.js`) for code linting.
+- **Bun** (v1.2.14): Available environment for running tests and scripts.
 
 ## Known Issues
 
 - **Headless Mode Stability**: The `stockfish.js` engine worker may exhibit instability or fail to respond to subsequent commands after the first move when running in headless environments (like Playwright CI). Verification scripts may require a graphical environment or specific configuration adjustments.
+- **Security Headers**: The application is currently missing important security headers (like `X-Content-Type-Options`, `Referrer-Policy`) and has a relaxed Content Security Policy (CSP) allowing `unsafe-inline` and `unsafe-eval`.
+- **Synchronous PGN Parsing**: The `handlePgnLoad` function processes user-provided PGN strings synchronously without strict length limits, which could potentially freeze the browser with extremely large inputs.
+- **Redundant FEN Generation**: The backward undo loop for PGN loading, while faster than forward replay, might be redundant if `chess.js` history provides necessary state data directly.
 
 ## Getting Started
 
@@ -94,6 +105,7 @@ The project is configured to automatically deploy to GitHub Pages using GitHub A
 - **Workflow**: `.github/workflows/deploy.yml`
 - **Trigger**: Pushes to the `main` branch.
 - **Process**: Builds the React application and uploads the `chess-analysis-app/dist` artifact to the `gh-pages` environment.
+- **Live Demo**: Deployed to `https://<user>.github.io/Chess-Engine/` (replace `<user>` with the repository owner's username).
 
 ## Future Roadmap
 
