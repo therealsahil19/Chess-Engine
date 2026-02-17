@@ -18,11 +18,12 @@ FetchContent_MakeAvailable(raylib)
 
 # --- Sources ---
 file(GLOB CORE_SOURCES "src/core/*.cpp")
+file(GLOB ENGINE_SOURCES "src/engine/*.cpp")
 file(GLOB GUI_SOURCES "src/gui/*.cpp")
 message(STATUS "CORE SOURCES: ${CORE_SOURCES}")
 
 # --- Executable ---
-add_executable(ChessApp src/main.cpp ${CORE_SOURCES} ${GUI_SOURCES})
+add_executable(ChessApp src/main.cpp ${CORE_SOURCES} ${ENGINE_SOURCES} ${GUI_SOURCES})
 target_link_libraries(ChessApp PRIVATE raylib)
 
 # Copy assets to build directory if needed (or just reference them)

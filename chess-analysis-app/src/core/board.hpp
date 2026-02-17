@@ -334,30 +334,177 @@ private:
         Square oldEp = enPassantSquare;
         uint8_t oldCr = castlingRights;
         
+        // Handling En Passant Capture (before moving)
+        bool isEp = false;
+        Square epCapSq = SQUARE_NONE;
+        if (typeOf(p) == PAWN && move.dest == enPassantSquare && captured == NO_PIECE) {
+             isEp = true;
+             // Capture is at [dest - 8] (if White) or [dest + 8] (if Black)
+             // Because White moves +8, so "behind" the dest is -8.
+             epCapSq = move.dest + (turn == White ? -8 : 8);
+             captured = board[epCapSq];
+             board[epCapSq] = NO_PIECE;
+        }
+
         board[move.dest] = p;
         board[move.from] = NO_PIECE;
+        
+        // Promotion
         if (typeOf(p) == PAWN && move.promotion != NO_PIECE_TYPE) {
             board[move.dest] = makePiece(turn, move.promotion);
         }
+        
+        // Castling Move Handling
+        bool isCastling = (typeOf(p) == KING && abs(move.dest - move.from) == 2);
+        if (isCastling) {
+            // Kingside: dest > from. Queenside: dest < from.
+            // White K (e1=4, g1=6). dest > from. R(h1=7) -> f1=5.
+            // White Q (e1=4, c1=2). dest < from. R(a1=0) -> d1=3.
+            int rStart, rDest;
+            if (move.dest > move.from) { // Kingside
+                rStart = move.dest + 1;
+                rDest = move.dest - 1;
+            } else { // Queenside
+                rStart = move.dest - 2;
+                rDest = move.dest + 1;
+            }
+            
+            Piece rook = board[rStart];
+            board[rDest] = rook;
+            board[rStart] = NO_PIECE;
+        }
 
         if (isCheck()) {
+            // Undo changes
             board[move.from] = p;
-            board[move.dest] = captured;
+            board[move.dest] = (isEp ? NO_PIECE : captured); // If EP, dest was empty
+            if (isEp) board[epCapSq] = captured;
+            
+            if (isCastling) {
+                int rStart, rDest;
+                if (move.dest > move.from) {
+                    rStart = move.dest + 1;
+                    rDest = move.dest - 1;
+                } else {
+                    rStart = move.dest - 2;
+                    rDest = move.dest + 1;
+                }
+                board[rStart] = board[rDest];
+                board[rDest] = NO_PIECE;
+            }
             return false;
         }
 
-        history.push_back({move, oldCr, oldEp, halfMoveClock, captured});
+        // Update History
+        // Capture is stored. If EP, we store the captured pawn.
+        history.push_back({move, oldCr, oldEp, halfMoveClock, captured}); 
+
+        // Update Castling Rights
+        // Disable own if K or R moves
+        if (typeOf(p) == KING) {
+            if (turn == White) castlingRights &= ~3; // Clear K Q (1 | 2)
+            else castlingRights &= ~12; // Clear k q (4 | 8)
+        }
+        // Rook moves
+        if (typeOf(p) == ROOK) {
+            // Need to match specific squares. 
+            // White: a1=0 (Q), h1=7 (K). Black: a8=56 (q), h8=63 (k)
+            if (move.from == 0) castlingRights &= ~2; 
+            if (move.from == 7) castlingRights &= ~1;
+            if (move.from == 56) castlingRights &= ~8;
+            if (move.from == 63) castlingRights &= ~4;
+        }
+        // Capture of Rook updates opponent's rights
+        if (captured != NO_PIECE) { 
+             Square capSq = isEp ? epCapSq : move.dest;
+             if (capSq == 0) castlingRights &= ~2;
+             if (capSq == 7) castlingRights &= ~1;
+             if (capSq == 56) castlingRights &= ~8;
+             if (capSq == 63) castlingRights &= ~4;
+        }
+
+        // Update EP Square
         enPassantSquare = SQUARE_NONE;
         if (typeOf(p) == PAWN && abs(move.dest - move.from) == 16) {
             enPassantSquare = move.from + (move.dest - move.from) / 2;
         }
 
+        // Update Clocks
         turn = (turn == White) ? Black : White;
         if (turn == White) fullMoveNumber++;
         halfMoveClock++;
         if (typeOf(p) == PAWN || captured != NO_PIECE) halfMoveClock = 0;
 
         return true;
+    }
+
+    inline void Board::undoMove() {
+        if (history.empty()) return;
+        State s = history.back();
+        history.pop_back();
+
+        // Restore global state stuff first? No, we need current turn to know who moved.
+        // Current turn is Next Player. We need Previous Player (Mover).
+        // If current is Black, Mover was White.
+        // If we restore turn now, Mover is current turn.
+        turn = (turn == White) ? Black : White;
+        if (turn == Black) fullMoveNumber--; // If we just moved back to Black's turn (White moved last? No)
+        // Logic:
+        // 1. White moves. Turn -> Black. Fullmove stays.
+        // 2. Black moves. Turn -> White. Fullmove++.
+        // Undo 2: Turn -> Black. Fullmove--.
+        // Undo 1: Turn -> White. Fullmove stays.
+        // So if we revert to Black (turn became Black), fullmove--? 
+        // No. If we revert to Black (Turn was White), it means Black just moved.
+        // Wait, "2. Black moves. Turn -> White. Fullmove++".
+        // So if Turn is White, we revert to Black. We must decrement Fullmove.
+        // If Turn is Black, we revert to White. Fullmove stays.
+        if (turn == Black) fullMoveNumber--;
+
+        castlingRights = s.castlingRights;
+        enPassantSquare = s.enPassantSquare;
+        halfMoveClock = s.halfMoveClock; 
+
+        Move m = s.move;
+        Piece movedPiece = board[m.dest]; 
+        // Note: if promotion, board has Queen, but we need Pawn.
+        if (m.promotion != NO_PIECE_TYPE) {
+            movedPiece = makePiece(turn, PAWN);
+        }
+
+        board[m.from] = movedPiece;
+        board[m.dest] = NO_PIECE;
+
+        // Check for En Passant Capture Undo
+        // If the moved piece was a Pawn, and dest was OLD Ep square...
+        // Wait, EP capture condition in makeMove: `move.dest == enPassantSquare`.
+        // `s.enPassantSquare` is the EP square BEFORE the move.
+        // So if `m.dest == s.enPassantSquare` (and it's a pawn move), then it WAS an EP capture.
+        bool isEp = (typeOf(movedPiece) == PAWN && m.dest == s.enPassantSquare && s.capturedPiece != NO_PIECE);
+        // Note: s.capturedPiece is not NO_PIECE if it was EP capture.
+        
+        if (isEp) {
+             int capSq = m.dest + (turn == White ? -8 : 8);
+             board[capSq] = s.capturedPiece;
+        } else {
+             // Normal capture
+             board[m.dest] = s.capturedPiece; // Put captured piece back at dest
+        }
+
+        // Un-Castling
+        if (typeOf(movedPiece) == KING && abs(m.dest - m.from) == 2) {
+             int rStart, rDest;
+             if (m.dest > m.from) { // Kingside
+                 rStart = m.dest + 1;
+                 rDest = m.dest - 1;
+             } else { // Queenside
+                 rStart = m.dest - 2;
+                 rDest = m.dest + 1;
+             }
+             // Move rook back from Dest to Start
+             board[rStart] = board[rDest];
+             board[rDest] = NO_PIECE;
+        }
     }
 
 
