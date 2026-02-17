@@ -140,7 +140,7 @@ function App() {
     let depth = ANALYSIS_DEPTHS.DEFAULT;
     if (analysisMode === ANALYSIS_MODES.LOW) depth = ANALYSIS_DEPTHS.LOW;
     if (analysisMode === ANALYSIS_MODES.HIGH) depth = ANALYSIS_DEPTHS.HIGH;
-    if (analysisMode === ANALYSIS_MODES.HIGH) depth = ANALYSIS_DEPTHS.HIGH;
+
     if (analysisMode === ANALYSIS_MODES.CUSTOM) {
       depth = Math.max(1, Math.min(30, customDepth || ANALYSIS_DEPTHS.DEFAULT));
     }
