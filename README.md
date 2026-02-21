@@ -1,120 +1,84 @@
-# Chess Engine & Analysis App
+# Chess Analysis App (Native C++)
 
-A modern, web-based chess analysis application that leverages Stockfish (WASM) to provide deep insights into your games.
-
-> **Note:** This application is optimized for Desktop/PC browsers. Mobile responsiveness is not currently supported.
+A high-performance, native desktop chess application built with C++17 and [Raylib](https://www.raylib.com/), integrated with the Stockfish chess engine.
 
 ## Features
 
-- **Interactive Chessboard**: Smooth piece movement and board interaction using `react-chessboard`.
-- **Engine Analysis**: Powered by `stockfish.js` running in a Web Worker for high performance without blocking the UI.
-- **Move Classification**: Automatically evaluates moves based on centipawn loss (cp):
-    - ★ **Best**: The engine's top choice (0 cp loss).
-    - **Excellent**: Near-perfect move (≤ 20 cp loss).
-    - **Good**: Solid move (≤ 50 cp loss).
-    - **Inaccuracy (?! )**: Slight mistake that drops some advantage (≤ 100 cp loss).
-    - **Mistake (?)**: Significant drop in evaluation (≤ 300 cp loss).
-    - **Blunder (??)**: Critical error that changes the game state significantly (> 300 cp loss).
-- **Analysis Panel**: Detailed engine feedback including:
-    - **Evaluation**: Current score in centipawns or mate distance.
-    - **Bound Display**: Indicates if the score is a lower (≥) or upper (≤) bound, useful during partial search depths.
-    - **Depth**: The current search depth of the engine.
-    - **Principal Variation (PV)**: The best line of play calculated by the engine.
-- **Reasoning Modes**:
-    - **Low Reasoning (Fast)**: Quick evaluation at depth 12.
-    - **High Reasoning (Deep)**: Thorough analysis at depth 18.
-    - **Custom**: Specify your desired analysis depth (1-30).
-- **PGN Support**: Load games from PGN strings for full analysis. Includes a collapsible input section.
-- **Game Navigation**: Easily navigate through moves with start, back, forward, and end controls.
-- **Visual Feedback**: Best move arrows and move-by-move evaluation badges.
-- **Feedback Panel**: Displays the engine's best move suggestion when a Mistake or Blunder is played, helping users learn from their errors.
-- **Evaluation Bar**: Vertical bar showing the current advantage, visually representing who is winning.
-- **3-Column Layout**: Optimized UI with Evaluation Bar, Chessboard, and Analysis Panel side-by-side for a comprehensive view.
-- **Bound Display**: Clearly indicates if the score is a lower (≥) or upper (≤) bound relative to the side to move, providing context during partial search depths.
+- **Core Chess Engine**:
+  - Complete implementation of chess rules (Castling, En Passant, Promotion).
+  - Legal move generation and validation.
+  - Game End Detection: Checkmate, Stalemate, Insufficient Material, 50-Move Rule.
+- **Native GUI**:
+  - Fast, hardware-accelerated rendering using Raylib.
+  - Interactive board with click-to-move functionality.
+  - Real-time move animation.
+- **Stockfish Integration**:
+  - Automated analysis of current board positions using the Stockfish engine.
+  - Display of evaluation (cp/mate) and best move suggestions.
+- **File Support**:
+  - **PGN Loading**: Drag & drop `.pgn` files to parse and replay games automatically.
+  - **FEN Loading**: Drag & drop `.fen` files or text files containing FEN strings to load positions.
+  - **Clipboard Support**: "Paste PGN" button to load games directly from clipboard.
 
-## Architecture Overview
+## Platform Support
 
-The application is built with a clear separation of concerns:
+**Windows Only**
+This application currently relies on the Win32 API (`CreateProcess`, pipes) for communicating with the Stockfish engine. Linux and macOS are not currently supported.
 
-- **`App.jsx`**: The main React component that handles application state (game history, analysis results, UI interaction). It manages the `chess.js` game instance and orchestrates the analysis flow. Optimized PGN loading uses a backward undo loop (O(N) * StatePop) to bypass expensive move validation, significantly improving performance for long games. See [`chess-analysis-app/OPTIMIZATION_LOG.md`](chess-analysis-app/OPTIMIZATION_LOG.md) for details.
-- **`engine.js`**: A wrapper class for the `stockfish.js` Web Worker. It handles communication (sending UCI commands, receiving messages) and keeps the UI thread responsive. It implements lazy parsing, only invoking the parser when necessary.
-- **`uci-parser.js`**: A utility module dedicated to parsing raw UCI (Universal Chess Interface) messages from the engine. It extracts structured data like score, depth, bounds, and PV lines, using defensive programming to handle malformed inputs.
-- **`verification/`**: Contains Python scripts using Playwright for end-to-end verification of engine logic and UI elements.
+## Prerequisites
 
-### Verification & Testing
+- **CMake** (3.20 or newer)
+- **C++ Compiler** with C++17 support (MSVC recommended for Windows).
+- **Stockfish Executable**: You must have `stockfish.exe` available. A compatible binary is provided in the `stockfish/` directory.
 
-- **`verification/verify_bounds.py`**: Verifies that engine evaluation bounds (lower/upper) are correctly displayed in the UI.
-- **`verification/verify_pgn.py`**: Validates that PGN games load correctly and the analysis interface is visible.
-- **`verification/verify_pgn_analysis.py`**: Performs an end-to-end test to ensure engine analysis updates evaluations across different moves (e.g., moves 5, 15, and end of game).
-- **Unit Tests**: Run via `vitest` (or `bun test`) to ensure core logic stability.
+## Build Instructions
 
-## Technologies Used
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/yourusername/Chess-Engine.git
+    cd Chess-Engine
+    ```
 
-- **React** (v19): Frontend framework.
-- **Vite** (v7): Build tool and dev server.
-- **chess.js**: Move validation and game logic.
-- **react-chessboard**: Interactive UI component.
-- **stockfish.js**: WASM version of the Stockfish chess engine.
-- **ESLint**: Flat Config system (`eslint.config.js`) for code linting.
-- **Bun** (v1.2.14): Available environment for running tests and scripts.
+2.  **Navigate to the app source**:
+    ```bash
+    cd chess-analysis-app
+    ```
 
-## Known Issues
+3.  **Configure**:
+    ```bash
+    cmake -S . -B build
+    ```
+    *Note: Raylib will be automatically fetched and built.*
 
-- **Headless Mode Stability**: The `stockfish.js` engine worker may exhibit instability or fail to respond to subsequent commands after the first move when running in headless environments (like Playwright CI). Verification scripts may require a graphical environment or specific configuration adjustments.
-- **Security Headers**: The application is currently missing important security headers (like `X-Content-Type-Options`, `Referrer-Policy`) and has a relaxed Content Security Policy (CSP) allowing `unsafe-inline` and `unsafe-eval`.
-- **Synchronous PGN Parsing**: The `handlePgnLoad` function processes user-provided PGN strings synchronously without strict length limits, which could potentially freeze the browser with extremely large inputs.
-- **Redundant FEN Generation**: The backward undo loop for PGN loading, while faster than forward replay, might be redundant if `chess.js` history provides necessary state data directly.
+4.  **Build**:
+    ```bash
+    cmake --build build --config Release
+    ```
 
-## Getting Started
+5.  **Setup Stockfish**:
+    Copy `stockfish-windows-x86-64-avx2.exe` from the `../stockfish/` directory (or your own `stockfish.exe`) to the directory where the built executable is located (e.g., `chess-analysis-app/build/Release/`) and rename it to `stockfish.exe`.
 
-### Prerequisites
+6.  **Run**:
+    Execute `ChessApp.exe` from the build directory.
 
-- Node.js (v18 or higher recommended)
-- npm or yarn
+## Controls
 
-### Installation
+-   **Left Click**: Select a piece / Move to a valid square.
+-   **Click on Own Piece**: Reselect different piece.
+-   **Drag & Drop**: Drop a `.pgn` or `.fen` file onto the window to load it.
+-   **Arrow Keys**:
+    -   `Right`: Next move in loaded game record.
+    -   `Left`: Previous move (undo).
+-   **F11**: Toggle Fullscreen.
+-   **Paste PGN Button**: Click to load game from clipboard.
 
-1. Clone the repository.
-2. Navigate to the app directory:
-   ```bash
-   cd chess-analysis-app
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+## Project Structure
 
-### Running Locally
-
-To start the development server:
-```bash
-npm run dev
-```
-
-### Building for Production
-
-To create a production build:
-```bash
-npm run build
-```
-
-## Deployment
-
-The project is configured to automatically deploy to GitHub Pages using GitHub Actions.
-
-- **Workflow**: `.github/workflows/deploy.yml`
-- **Trigger**: Pushes to the `main` branch.
-- **Process**: Builds the React application and uploads the `chess-analysis-app/dist` artifact to the `gh-pages` environment.
-- **Live Demo**: Deployed to `https://<user>.github.io/Chess-Engine/` (replace `<user>` with the repository owner's username).
-
-## Future Roadmap
-
-- [ ] "Brilliant" move classification logic.
-- [ ] Multi-PV (multiple principal variations) support.
-- [x] Evaluation bar visualization.
-- [ ] Opening book integration.
-- [x] GitHub Actions deployment configuration.
-
-## License
-
-MIT
+-   `chess-analysis-app/src/core/`: Chess logic (Board representation, Move generation, Rules).
+    -   `board.hpp`: Header-only implementation of the Board logic.
+    -   `move_gen.cpp`: Move generation logic.
+    -   `types.hpp`: Basic types (Bitboard, Piece, Square).
+-   `chess-analysis-app/src/engine/`: Stockfish integration.
+    -   `stockfish.cpp`: Win32 process management for the engine.
+-   `chess-analysis-app/src/main.cpp`: Entry point, Game Loop, and Raylib GUI rendering.
+-   `chess-analysis-app/CMakeLists.txt`: Build configuration.
