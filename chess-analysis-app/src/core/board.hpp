@@ -484,22 +484,8 @@ private:
         history.pop_back();
 
         // Restore global state stuff first? No, we need current turn to know who moved.
-        // Current turn is Next Player. We need Previous Player (Mover).
-        // If current is Black, Mover was White.
-        // If we restore turn now, Mover is current turn.
         turn = (turn == White) ? Black : White;
-        if (turn == Black) fullMoveNumber--; // If we just moved back to Black's turn (White moved last? No)
-        // Logic:
-        // 1. White moves. Turn -> Black. Fullmove stays.
-        // 2. Black moves. Turn -> White. Fullmove++.
-        // Undo 2: Turn -> Black. Fullmove--.
-        // Undo 1: Turn -> White. Fullmove stays.
-        // So if we revert to Black (turn became Black), fullmove--? 
-        // No. If we revert to Black (Turn was White), it means Black just moved.
-        // Wait, "2. Black moves. Turn -> White. Fullmove++".
-        // So if Turn is White, we revert to Black. We must decrement Fullmove.
-        // If Turn is Black, we revert to White. Fullmove stays.
-        if (turn == Black) fullMoveNumber--;
+        if (turn == Black) fullMoveNumber--; 
 
         castlingRights = s.castlingRights;
         enPassantSquare = s.enPassantSquare;

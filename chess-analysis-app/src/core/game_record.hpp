@@ -10,17 +10,20 @@ class GameRecord {
 public:
     GameRecord() : currentIndex(0) {}
 
-    void addMove(Move m) {
+    void addMove(Move m, const std::string& san = "") {
         // If we differ from history (we are in past), truncate future
         if (currentIndex < moves.size()) {
             moves.resize(currentIndex);
+            sanMoves.resize(currentIndex);
         }
         moves.push_back(m);
+        sanMoves.push_back(san);
         currentIndex++;
     }
 
     void reset() {
         moves.clear();
+        sanMoves.clear();
         evaluations.clear();
         currentIndex = 0;
     }
@@ -65,6 +68,7 @@ public:
 
     // Public members for direct access if needed, or keeping simple
     std::vector<Move> moves;
+    std::vector<std::string> sanMoves;
     int currentIndex;
     std::map<int, std::string> evaluations;
 };

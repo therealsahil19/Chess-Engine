@@ -26,8 +26,16 @@ message(STATUS "CORE SOURCES: ${CORE_SOURCES}")
 add_executable(ChessApp src/main.cpp ${CORE_SOURCES} ${ENGINE_SOURCES} ${GUI_SOURCES})
 target_link_libraries(ChessApp PRIVATE raylib)
 
+# Copy stockfish.exe to the output directory
+add_custom_command(TARGET ChessApp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/stockfish.exe"
+    "$<TARGET_FILE_DIR:ChessApp>"
+)
+
 add_executable(ChessTests tests/test_runner.cpp ${CORE_SOURCES})
 add_executable(TestCheck test_check.cpp ${CORE_SOURCES})
 
 # Copy assets to build directory if needed (or just reference them)
 # file(COPY src/assets DESTINATION ${CMAKE_BINARY_DIR}/assets)
+

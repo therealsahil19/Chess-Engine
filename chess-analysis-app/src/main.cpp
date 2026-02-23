@@ -5,9 +5,11 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <sstream>
 #include <algorithm>
 #include <mutex>
+
+// Forward declaration of the platform-specific clipboard function
+std::string GetClipboardTextFallback();
 
 // Constants
 const int SCREEN_WIDTH = 1000; // Expanded for UI
@@ -42,17 +44,20 @@ void LoadPgnToRecord(const std::string& pgn, Chess::Board& board, Chess::GameRec
     record.reset();
     board.reset();
     for (const auto& m : moves) {
-        record.addMove(m);
+        std::string san = board.moveToSan(m);
+        record.addMove(m, san);
+        board.makeMove(m);
     }
-    record.currentIndex = 0;
 }
 
-void DrawBoardBackground(int selectedSq) {
+void DrawBoardBackground(int selectedSq, bool isFlipped) {
     for (int r = 0; r < 8; r++) {
         for (int f = 0; f < 8; f++) {
             Color c = ((r + f) % 2 == 0) ? COLOR_DARK : COLOR_LIGHT;
-            int drawX = BOARD_OFFSET_X + f * SQUARE_SIZE;
-            int drawY = BOARD_OFFSET_Y + (7 - r) * SQUARE_SIZE;
+            int drawR = isFlipped ? r : (7 - r);
+            int drawF = isFlipped ? (7 - f) : f;
+            int drawX = BOARD_OFFSET_X + drawF * SQUARE_SIZE;
+            int drawY = BOARD_OFFSET_Y + drawR * SQUARE_SIZE;
             DrawRectangle(drawX, drawY, SQUARE_SIZE, SQUARE_SIZE, c);
         }
     }
@@ -60,11 +65,13 @@ void DrawBoardBackground(int selectedSq) {
     if (selectedSq != -1) {
         int r = selectedSq / 8;
         int f = selectedSq % 8;
-        DrawRectangle(BOARD_OFFSET_X + f * SQUARE_SIZE, BOARD_OFFSET_Y + (7 - r) * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, COLOR_SELECTED);
+        int drawR = isFlipped ? r : (7 - r);
+        int drawF = isFlipped ? (7 - f) : f;
+        DrawRectangle(BOARD_OFFSET_X + drawF * SQUARE_SIZE, BOARD_OFFSET_Y + drawR * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, COLOR_SELECTED);
     }
 }
 
-void DrawPieces(const Chess::Board& board, const AnimState& anim) {
+void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped) {
     for (int i = 0; i < 64; i++) {
         Chess::Piece p = board.getPiece(i);
         if (p == Chess::NO_PIECE) continue;
@@ -73,12 +80,18 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim) {
         int f = i % 8;
         
         if (anim.active) {
-             int destSq = (int)((anim.endPos.x - BOARD_OFFSET_X)/SQUARE_SIZE) + 8 * (7 - (int)((anim.endPos.y - BOARD_OFFSET_Y)/SQUARE_SIZE));
+             int destF = (int)((anim.endPos.x - BOARD_OFFSET_X)/SQUARE_SIZE);
+             int destR = (int)((anim.endPos.y - BOARD_OFFSET_Y)/SQUARE_SIZE);
+             int realF = isFlipped ? (7 - destF) : destF;
+             int realR = isFlipped ? destR : (7 - destR);
+             int destSq = realR * 8 + realF;
              if (i == destSq) continue; 
         }
 
-        int drawX = BOARD_OFFSET_X + f * SQUARE_SIZE;
-        int drawY = BOARD_OFFSET_Y + (7 - r) * SQUARE_SIZE;
+        int drawR = isFlipped ? r : (7 - r);
+        int drawF = isFlipped ? (7 - f) : f;
+        int drawX = BOARD_OFFSET_X + drawF * SQUARE_SIZE;
+        int drawY = BOARD_OFFSET_Y + drawR * SQUARE_SIZE;
         
         const char* text = "?";
         switch(Chess::typeOf(p)) {
@@ -114,7 +127,7 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim) {
     }
 }
 
-void DrawInfoPanel(const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn) {
+void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Chess::GameRecord& gameRecord, const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn) {
     int infoX = SCREEN_WIDTH - 280;
     
     std::string displayEval, displayBestMove;
@@ -131,15 +144,127 @@ void DrawInfoPanel(const std::string& currentEval, const std::string& bestMoveSa
     if (turn == Chess::White) DrawText("White to Move", infoX, 150, 20, COLOR_TEXT_DIM);
     else DrawText("Black to Move", infoX, 150, 20, COLOR_TEXT_DIM);
     
-    DrawText("Controls:", infoX, 300, 20, COLOR_TEXT_MAIN);
-    DrawText("Arrow L/R: Navigate", infoX, 330, 15, COLOR_TEXT_DIM);
-    DrawText("Drag PGN: Load Game", infoX, 355, 15, COLOR_TEXT_DIM);
-    DrawText("F11: Full Screen", infoX, 380, 15, COLOR_TEXT_DIM);
+    if (!isAnalysisActive) {
+        if (!showDialog) {
+            int pasteButtonY = 420;
+            bool mouseOverPaste = CheckCollisionPointRec(GetMousePosition(), { (float)infoX, (float)pasteButtonY, 150, 40 });
+            DrawRectangle(infoX, pasteButtonY, 150, 40, mouseOverPaste ? COLOR_SELECTED : COLOR_DARK);
+            DrawText("Paste PGN", infoX + 25, pasteButtonY + 10, 20, COLOR_BG);
+        }
+    } else {
+        // Draw Move Table
+        int tableY = 200;
+        int tableWidth = 260;
+        int tableHeight = 400;
+        DrawRectangle(infoX, tableY, tableWidth, tableHeight, Fade(BLACK, 0.3f));
+        
+        DrawText("White", infoX + 40, tableY + 10, 20, COLOR_TEXT_MAIN);
+        DrawText("Black", infoX + tableWidth / 2 + 40, tableY + 10, 20, COLOR_TEXT_MAIN);
+        DrawLine(infoX + tableWidth / 2, tableY, infoX + tableWidth / 2, tableY + tableHeight, Fade(COLOR_TEXT_DIM, 0.5f));
+        DrawLine(infoX, tableY + 35, infoX + tableWidth, tableY + 35, Fade(COLOR_TEXT_DIM, 0.5f));
+        
+        int itemsY = tableY + 45;
+        int rowHeight = 25;
+        int visibleRows = (tableHeight - 45) / rowHeight;
+        int numRows = (gameRecord.sanMoves.size() + 1) / 2;
+        
+        if (numRows > visibleRows) {
+            int currentRow = gameRecord.currentIndex / 2;
+            if (currentRow > scroll + visibleRows - 1) scroll = currentRow - visibleRows + 1;
+            if (currentRow < scroll) scroll = currentRow;
+            if (scroll < 0) scroll = 0;
+            if (scroll > numRows - visibleRows) scroll = numRows - visibleRows;
+        } else {
+            scroll = 0;
+        }
+        
+        for (int i = 0; i < visibleRows; i++) {
+            int rowIndex = scroll + i;
+            if (rowIndex >= numRows) break;
+            
+            int moveNum = rowIndex + 1;
+            int whiteMoveIdx = rowIndex * 2;
+            int blackMoveIdx = rowIndex * 2 + 1;
+            
+            DrawText(std::to_string(moveNum).c_str(), infoX + 5, itemsY + i * rowHeight, 18, COLOR_TEXT_DIM);
+            
+            if (whiteMoveIdx == gameRecord.currentIndex - 1) DrawRectangle(infoX + 30, itemsY + i * rowHeight - 2, tableWidth / 2 - 30, rowHeight, Fade(COLOR_SELECTED, 0.5f));
+            if (blackMoveIdx == gameRecord.currentIndex - 1) DrawRectangle(infoX + tableWidth / 2 + 5, itemsY + i * rowHeight - 2, tableWidth / 2 - 10, rowHeight, Fade(COLOR_SELECTED, 0.5f));
 
-    int pasteButtonY = 420;
-    bool mouseOverPaste = CheckCollisionPointRec(GetMousePosition(), { (float)infoX, (float)pasteButtonY, 150, 40 });
-    DrawRectangle(infoX, pasteButtonY, 150, 40, mouseOverPaste ? COLOR_SELECTED : COLOR_DARK);
-    DrawText("Paste PGN", infoX + 25, pasteButtonY + 10, 20, COLOR_BG);
+            if (whiteMoveIdx < gameRecord.sanMoves.size()) {
+                DrawText(gameRecord.sanMoves[whiteMoveIdx].c_str(), infoX + 40, itemsY + i * rowHeight, 18, COLOR_TEXT_MAIN);
+            }
+            if (blackMoveIdx < gameRecord.sanMoves.size()) {
+                DrawText(gameRecord.sanMoves[blackMoveIdx].c_str(), infoX + tableWidth / 2 + 30, itemsY + i * rowHeight, 18, COLOR_TEXT_MAIN);
+            }
+        }
+
+        // Draw Playback Controls at bottom right
+        int btnW = 40;
+        int btnH = 30;
+        int startX = infoX + (tableWidth - (5 * btnW + 4 * 5)) / 2; // Center 5 buttons
+        int btnY = tableY + tableHeight + 20;
+
+        Vector2 mp = GetMousePosition();
+        const char* labels[] = {"|<", "<", "||", ">", ">|"};
+        for (int i = 0; i < 5; i++) {
+            int bx = startX + i * (btnW + 5);
+            bool hover = CheckCollisionPointRec(mp, { (float)bx, (float)btnY, (float)btnW, (float)btnH });
+            DrawRectangle(bx, btnY, btnW, btnH, hover ? COLOR_TEXT_DIM : Fade(BLACK, 0.5f));
+            DrawText(labels[i], bx + 12 - (i==2?4:0), btnY + 8, 14, COLOR_TEXT_MAIN);
+        }
+    }
+}
+
+void DrawPasteDialog(bool& showDialog, std::string& dialogText, bool& submitPastedPgn, Vector2 mousePos) {
+    if (!showDialog) return;
+    
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.6f));
+    
+    int dialogW = 600;
+    int dialogH = 400;
+    int dialogX = (SCREEN_WIDTH - dialogW) / 2;
+    int dialogY = (SCREEN_HEIGHT - dialogH) / 2;
+    
+    DrawRectangle(dialogX, dialogY, dialogW, dialogH, COLOR_BG);
+    DrawRectangleLines(dialogX, dialogY, dialogW, dialogH, COLOR_TEXT_DIM);
+    
+    DrawText("Paste PGN (Ctrl+V)", dialogX + 20, dialogY + 20, 20, COLOR_TEXT_MAIN);
+    
+    bool overX = CheckCollisionPointRec(mousePos, { (float)(dialogX + dialogW - 40), (float)(dialogY + 10), 30, 30 });
+    DrawText("X", dialogX + dialogW - 30, dialogY + 15, 20, overX ? RED : COLOR_TEXT_DIM);
+    if (overX && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        showDialog = false;
+        dialogText = "";
+    }
+    
+    DrawRectangle(dialogX + 20, dialogY + 60, dialogW - 40, dialogH - 140, Fade(BLACK, 0.3f));
+    std::string preview = dialogText;
+    if (preview.length() > 500) preview = preview.substr(0, 500) + "...";
+    
+    DrawText("Pasted text preview:", dialogX + 25, dialogY + 65, 15, COLOR_TEXT_DIM);
+    // Cheap text wrap rendering
+    int dY = 85;
+    for (size_t i = 0; i < preview.length(); i += 80) {
+        DrawText(preview.substr(i, 80).c_str(), dialogX + 25, dialogY + dY, 10, COLOR_TEXT_MAIN);
+        dY += 15;
+        if (dY > dialogH - 100) break;
+    }
+    
+    int btnW = 120;
+    int btnH = 40;
+    int btnX = dialogX + (dialogW - btnW) / 2;
+    int btnY = dialogY + dialogH - 60;
+    bool overBtn = CheckCollisionPointRec(mousePos, { (float)btnX, (float)btnY, (float)btnW, (float)btnH });
+    if (dialogText.empty()) overBtn = false; 
+    
+    DrawRectangle(btnX, btnY, btnW, btnH, overBtn ? COLOR_SELECTED : (dialogText.empty() ? Fade(COLOR_DARK, 0.5f) : COLOR_DARK));
+    DrawText("Analyze", btnX + 22, btnY + 10, 20, dialogText.empty() ? COLOR_TEXT_DIM : COLOR_BG);
+    
+    if (overBtn && !dialogText.empty() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        submitPastedPgn = true;
+        showDialog = false;
+    }
 }
 
 int main() {
@@ -160,48 +285,41 @@ int main() {
     std::string bestMoveSan = "";
     std::mutex evalMutex;
     
-    // Engine Callback
     engine.setEvalCallback([&](std::string score, std::string bestMove) {
         std::lock_guard<std::mutex> lock(evalMutex);
         currentEval = score;
         bestMoveSan = bestMove; 
     });
 
-    // Texture loading placeholder
-    // Texture2D piecesTexture = LoadTexture("assets/pieces.png");
-
     AnimState anim;
     
     bool gameOver = false;
     int selectedSq = -1;
+    bool isBoardFlipped = false;
+    bool isAnalysisActive = false;
+    bool showPasteDialog = false;
+    std::string dialogPgnText = "";
+    bool submitPastedPgn = false;
+    int tableScroll = 0;
+    std::string initialFen = board.getFen();
     
-    // Auto-analysis triggering
     auto triggerAnalysis = [&]() {
         engine.stopAnalysis();
         engine.setPosition(board.getFen());
-        engine.go(20); // Depth 20
+        engine.go(20); 
     };
 
     while (!WindowShouldClose()) {
-        // --- Update ---
         float dt = GetFrameTime();
+        Vector2 mousePos = GetMousePosition();
         
-        // Drag & Drop
         if (IsFileDropped()) {
             FilePathList droppedFiles = LoadDroppedFiles();
             if (droppedFiles.count > 0) {
                 char* text = LoadFileText(droppedFiles.paths[0]);
                 if (text) {
-                    std::string content(text);
-                    if (content.find("[Event") != std::string::npos || content.find("1.") != std::string::npos) {
-                        LoadPgnToRecord(content, board, gameRecord);
-                        triggerAnalysis();
-                    } else {
-                        // Assume FEN
-                        board.loadFen(content);
-                        gameRecord.reset();
-                        triggerAnalysis();
-                    }
+                    dialogPgnText = text;
+                    showPasteDialog = true;
                     UnloadFileText(text);
                 }
             }
@@ -209,175 +327,228 @@ int main() {
             selectedSq = -1;
         }
         
-        // Toggle Fullscreen
         if (IsKeyPressed(KEY_F11)) {
             ToggleFullscreen();
         }
 
-        // Animation
         if (anim.active) {
             anim.progress += dt * anim.speed;
             if (anim.progress >= 1.0f) {
                 anim.active = false;
-                // Ensure board state is final (it already is, visual only)
             }
         }
 
-        // Keyboard Navigation
-        if (!anim.active) { // Block nav during animation? Or cancel?
+        if (showPasteDialog && IsKeyPressed(KEY_V) && (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL))) {
+            std::string content = "";
+            const char* clipboardText = GetClipboardText();
+            if (clipboardText) content = clipboardText;
+            else content = GetClipboardTextFallback();
+            if (!content.empty()) dialogPgnText = content;
+        }
+
+        if (submitPastedPgn) {
+            submitPastedPgn = false;
+            if (dialogPgnText.find("[Event") != std::string::npos || dialogPgnText.find("1.") != std::string::npos) {
+                initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+                LoadPgnToRecord(dialogPgnText, board, gameRecord);
+            } else {
+                initialFen = dialogPgnText;
+                board.loadFen(dialogPgnText);
+                gameRecord.reset();
+            }
+            isAnalysisActive = true;
+            triggerAnalysis();
+            selectedSq = -1;
+        }
+
+        if (!anim.active && !showPasteDialog) {
             if (IsKeyPressed(KEY_RIGHT) && gameRecord.hasNext()) {
                 Chess::Move m = gameRecord.next();
-                
-                // Start animation
                 anim.active = true;
                 anim.piece = board.getPiece(m.from);
                 anim.progress = 0.0f;
-                
                 int f1 = m.from % 8; int r1 = m.from / 8;
                 int f2 = m.dest % 8; int r2 = m.dest / 8;
-                anim.startPos = {(float)(BOARD_OFFSET_X + f1 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + (7 - r1) * SQUARE_SIZE)};
-                anim.endPos = {(float)(BOARD_OFFSET_X + f2 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + (7 - r2) * SQUARE_SIZE)};
-                
+                int drawR1 = isBoardFlipped ? r1 : (7 - r1);
+                int drawF1 = isBoardFlipped ? (7 - f1) : f1;
+                int drawR2 = isBoardFlipped ? r2 : (7 - r2);
+                int drawF2 = isBoardFlipped ? (7 - f2) : f2;
+                anim.startPos = {(float)(BOARD_OFFSET_X + drawF1 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + drawR1 * SQUARE_SIZE)};
+                anim.endPos = {(float)(BOARD_OFFSET_X + drawF2 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + drawR2 * SQUARE_SIZE)};
                 board.makeMove(m);
                 triggerAnalysis();
                 selectedSq = -1;
             }
             else if (IsKeyPressed(KEY_LEFT) && gameRecord.hasPrev()) {
-                // For undo, we animate backwards? Or just snap? Snap is easier for now.
-                // To animate: undo first, then anim from dest to start.
-                // But `undoMove` restores piece at start.
-                
-                // Let's just snap for backward, or tricky logic.
-                // Let's snap.
                 board.undoMove();
-                gameRecord.prev(); // Decrement index
+                gameRecord.prev();
                 triggerAnalysis();
                 selectedSq = -1;
             }
         }
 
-        // Mouse Interaction
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !anim.active) {
-            Vector2 mousePos = GetMousePosition();
-            if (mousePos.x >= BOARD_OFFSET_X && mousePos.x < BOARD_OFFSET_X + BOARD_SIZE &&
-                mousePos.y >= BOARD_OFFSET_Y && mousePos.y < BOARD_OFFSET_Y + BOARD_SIZE) {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !showPasteDialog) {
+            bool clickedUI = false;
+            
+            // Top Right Buttons
+            if (CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 240, 10, 110, 30 })) {
+                 isBoardFlipped = !isBoardFlipped;
+                 clickedUI = true;
+            } else if (CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 120, 10, 110, 30 })) {
+                 board.loadFen(initialFen);
+                 gameRecord.reset();
+                 isAnalysisActive = false;
+                 triggerAnalysis();
+                 selectedSq = -1;
+                 clickedUI = true;
+            }
+            // Paste Button
+            else if (!isAnalysisActive && CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 280, 420, 150, 40 })) {
+                showPasteDialog = true;
+                clickedUI = true;
+            }
+            // Playback controls
+            else if (isAnalysisActive) {
+                int tableY = 200;
+                int tableWidth = 260;
+                int btnW = 40;
+                int btnH = 30;
+                int infoX = SCREEN_WIDTH - 280;
+                int startX = infoX + (tableWidth - (5 * btnW + 4 * 5)) / 2;
+                int btnY = tableY + 400 + 20;
                 
-                int file = (mousePos.x - BOARD_OFFSET_X) / SQUARE_SIZE;
-                int rank = 7 - (int)((mousePos.y - BOARD_OFFSET_Y) / SQUARE_SIZE);
-                int sq = rank * 8 + file;
-                
-                if (selectedSq == -1) {
-                    Chess::Piece p = board.getPiece(sq);
-                    if (p != Chess::NO_PIECE && Chess::colorOf(p) == board.getTurn()) {
-                        selectedSq = sq;
-                    }
-                } else {
-                    // Try move
-                    Chess::Move m;
-                    m.from = selectedSq;
-                    m.dest = sq;
-                    m.promotion = Chess::NO_PIECE_TYPE;
-                    
-                    Chess::Piece p = board.getPiece(selectedSq);
-                    if (Chess::typeOf(p) == Chess::PAWN) {
-                         int r = sq / 8;
-                         if (r == 0 || r == 7) m.promotion = Chess::QUEEN; 
-                    }
-                    
-                    // Validate
-                    std::vector<Chess::Move> legal = board.getLegalMoves();
-                    bool found = false;
-                    for (const auto& lm : legal) {
-                        if (lm.from == m.from && lm.dest == m.dest) {
-                            m = lm; 
-                            found = true; 
-                            break;
+                for (int i=0; i<5; i++) {
+                    int bx = startX + i * (btnW + 5);
+                    if (CheckCollisionPointRec(mousePos, { (float)bx, (float)btnY, (float)btnW, (float)btnH })) {
+                        clickedUI = true;
+                        if (i == 0) {
+                            while(gameRecord.hasPrev()) { board.undoMove(); gameRecord.prev(); }
+                            triggerAnalysis();
+                        } else if (i == 1) {
+                            if(gameRecord.hasPrev()) { board.undoMove(); gameRecord.prev(); triggerAnalysis(); }
+                        } else if (i == 2) {
+                            
+                        } else if (i == 3 && !anim.active) {
+                            if(gameRecord.hasNext()) {
+                                Chess::Move m = gameRecord.next();
+                                anim.active = true;
+                                anim.piece = board.getPiece(m.from);
+                                anim.progress = 0.0f;
+                                int f1 = m.from % 8; int r1 = m.from / 8;
+                                int f2 = m.dest % 8; int r2 = m.dest / 8;
+                                int drawR1 = isBoardFlipped ? r1 : (7 - r1);
+                                int drawF1 = isBoardFlipped ? (7 - f1) : f1;
+                                int drawR2 = isBoardFlipped ? r2 : (7 - r2);
+                                int drawF2 = isBoardFlipped ? (7 - f2) : f2;
+                                anim.startPos = {(float)(BOARD_OFFSET_X + drawF1 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + drawR1 * SQUARE_SIZE)};
+                                anim.endPos = {(float)(BOARD_OFFSET_X + drawF2 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + drawR2 * SQUARE_SIZE)};
+                                board.makeMove(m);
+                                triggerAnalysis();
+                            }
+                        } else if (i == 4) {
+                            while(gameRecord.hasNext()) { board.makeMove(gameRecord.next()); }
+                            triggerAnalysis();
                         }
-                    }
-                    
-                    if (found) {
-                        // User made a move -> deviation from record?
-                        // Truncate future record
-                        if (gameRecord.hasNext()) {
-                             // Logic: if new move matches next record move, keep it?
-                             // Else truncate.
-                             Chess::Move nextRec = gameRecord.moves[gameRecord.currentIndex];
-                             // Simple check: same from/dest/promo
-                             if (nextRec.from != m.from || nextRec.dest != m.dest || nextRec.promotion != m.promotion) {
-                                 // Diverged
-                                 gameRecord.addMove(m); // Truncates implicitly by index check in addMove? NO.
-                                 // My addMove logic: "if (currentIndex < moves.size()) moves.resize(currentIndex);"
-                                 // So it handles divergence.
-                             } else {
-                                 // Matched record, just advance
-                                 gameRecord.currentIndex++;
-                             }
-                        } else {
-                             gameRecord.addMove(m);
-                        }
-
-                        // Animate
-                        anim.active = true;
-                        anim.piece = p;
-                        anim.progress = 0.0f;
-                        int f1 = m.from % 8; int r1 = m.from / 8;
-                        int f2 = m.dest % 8; int r2 = m.dest / 8;
-                        anim.startPos = {(float)(BOARD_OFFSET_X + f1 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + (7 - r1) * SQUARE_SIZE)};
-                        anim.endPos = {(float)(BOARD_OFFSET_X + f2 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + (7 - r2) * SQUARE_SIZE)};
-
-                        board.makeMove(m);
-                        triggerAnalysis();
                         selectedSq = -1;
-                    } else {
-                        // Reselect?
-                        Chess::Piece target = board.getPiece(sq);
-                        if (target != Chess::NO_PIECE && Chess::colorOf(target) == board.getTurn()) {
-                            selectedSq = sq;
-                        } else {
-                            selectedSq = -1;
-                        }
                     }
                 }
             }
 
-            // "Paste PGN" Button Click Detection
-            int pasteButtonX = SCREEN_WIDTH - 280;
-            int pasteButtonY = 420;
-            int pasteButtonWidth = 150;
-            int pasteButtonHeight = 40;
+            if (!clickedUI && !anim.active) {
+                if (mousePos.x >= BOARD_OFFSET_X && mousePos.x < BOARD_OFFSET_X + BOARD_SIZE &&
+                    mousePos.y >= BOARD_OFFSET_Y && mousePos.y < BOARD_OFFSET_Y + BOARD_SIZE) {
+                    
+                    int uiF = (mousePos.x - BOARD_OFFSET_X) / SQUARE_SIZE;
+                    int uiR = (mousePos.y - BOARD_OFFSET_Y) / SQUARE_SIZE;
+                    int file = isBoardFlipped ? (7 - uiF) : uiF;
+                    int rank = isBoardFlipped ? uiR : (7 - uiR);
+                    int sq = (7 - rank) * 8 + file;
+                    
+                    if (selectedSq == -1) {
+                        Chess::Piece p = board.getPiece(sq);
+                        if (p != Chess::NO_PIECE && Chess::colorOf(p) == board.getTurn()) {
+                            selectedSq = sq;
+                        }
+                    } else {
+                        Chess::Move m;
+                        m.from = selectedSq;
+                        m.dest = sq;
+                        m.promotion = Chess::NO_PIECE_TYPE;
+                        
+                        Chess::Piece p = board.getPiece(selectedSq);
+                        if (Chess::typeOf(p) == Chess::PAWN) {
+                             int r = sq / 8;
+                             if (r == 0 || r == 7) m.promotion = Chess::QUEEN; 
+                        }
+                        
+                        std::vector<Chess::Move> legal = board.getLegalMoves();
+                        bool found = false;
+                        for (const auto& lm : legal) {
+                            if (lm.from == m.from && lm.dest == m.dest && (m.promotion == Chess::NO_PIECE_TYPE || lm.promotion == m.promotion)) {
+                                m = lm; 
+                                found = true; 
+                                break;
+                            }
+                        }
+                        
+                        if (found) {
+                            if (gameRecord.hasNext()) {
+                                 Chess::Move nextRec = gameRecord.moves[gameRecord.currentIndex];
+                                 if (nextRec.from != m.from || nextRec.dest != m.dest || nextRec.promotion != m.promotion) {
+                                     gameRecord.addMove(m, board.moveToSan(m)); 
+                                 } else {
+                                     gameRecord.currentIndex++;
+                                 }
+                            } else {
+                                 gameRecord.addMove(m, board.moveToSan(m));
+                            }
 
-            if (mousePos.x >= pasteButtonX && mousePos.x <= pasteButtonX + pasteButtonWidth &&
-                mousePos.y >= pasteButtonY && mousePos.y <= pasteButtonY + pasteButtonHeight) {
+                            anim.active = true;
+                            anim.piece = p;
+                            anim.progress = 0.0f;
+                            int f1 = m.from % 8; int r1 = m.from / 8;
+                            int f2 = m.dest % 8; int r2 = m.dest / 8;
+                            int drawR1 = isBoardFlipped ? r1 : (7 - r1);
+                            int drawF1 = isBoardFlipped ? (7 - f1) : f1;
+                            int drawR2 = isBoardFlipped ? r2 : (7 - r2);
+                            int drawF2 = isBoardFlipped ? (7 - f2) : f2;
+                            anim.startPos = {(float)(BOARD_OFFSET_X + drawF1 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + drawR1 * SQUARE_SIZE)};
+                            anim.endPos = {(float)(BOARD_OFFSET_X + drawF2 * SQUARE_SIZE), (float)(BOARD_OFFSET_Y + drawR2 * SQUARE_SIZE)};
 
-                const char* clipboardText = GetClipboardText();
-                if (clipboardText) {
-                    std::string content(clipboardText);
-                    if (content.find("[Event") != std::string::npos || content.find("1.") != std::string::npos) {
-                        LoadPgnToRecord(content, board, gameRecord);
-                        triggerAnalysis();
+                            board.makeMove(m);
+                            triggerAnalysis();
+                            selectedSq = -1;
+                        } else {
+                            Chess::Piece target = board.getPiece(sq);
+                            if (target != Chess::NO_PIECE && Chess::colorOf(target) == board.getTurn()) {
+                                selectedSq = sq;
+                            } else {
+                                selectedSq = -1;
+                            }
+                        }
                     }
-                    else if (content.length() > 20) { // Naive FEN length check
-                        board.loadFen(content);
-                        gameRecord.reset();
-                        triggerAnalysis();
-                    }
-                    selectedSq = -1;
                 }
             }
         }
 
-        // --- Draw ---
         BeginDrawing();
         ClearBackground(COLOR_BG);
         
-        DrawBoardBackground(selectedSq);
-        DrawPieces(board, anim);
-        DrawInfoPanel(currentEval, bestMoveSan, evalMutex, board.getTurn());
+        // Draw Top Right Buttons
+        DrawRectangle(SCREEN_WIDTH - 240, 10, 110, 30, CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 240, 10, 110, 30 }) ? COLOR_SELECTED : COLOR_DARK);
+        DrawText("Flip Board", SCREEN_WIDTH - 230, 16, 16, COLOR_TEXT_MAIN);
+
+        DrawRectangle(SCREEN_WIDTH - 120, 10, 110, 30, CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 120, 10, 110, 30 }) ? RED : COLOR_DARK);
+        DrawText("Reload", SCREEN_WIDTH - 90, 16, 16, COLOR_TEXT_MAIN);
+
+        DrawBoardBackground(selectedSq, isBoardFlipped);
+        DrawPieces(board, anim, isBoardFlipped);
+        DrawSidePanel(showPasteDialog, isAnalysisActive, tableScroll, gameRecord, currentEval, bestMoveSan, evalMutex, board.getTurn());
+        DrawPasteDialog(showPasteDialog, dialogPgnText, submitPastedPgn, mousePos);
         
         EndDrawing();
     }
     
-    // Cleanup
     engine.stop();
     CloseWindow();
     return 0;
