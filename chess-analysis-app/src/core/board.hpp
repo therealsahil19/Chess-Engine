@@ -30,19 +30,17 @@ public:
     
     // Inlined for linking
     bool isInsufficientMaterial() const {
-        int wPawn = 0, wKnight = 0, wBishop = 0, wRook = 0, wQueen = 0;
-        int bPawn = 0, bKnight = 0, bBishop = 0, bRook = 0, bQueen = 0;
+        int wPawn = pieceCounts[White][PAWN];
+        int wKnight = pieceCounts[White][KNIGHT];
+        int wBishop = pieceCounts[White][BISHOP];
+        int wRook = pieceCounts[White][ROOK];
+        int wQueen = pieceCounts[White][QUEEN];
 
-        for (int i = 0; i < 64; i++) {
-            Piece p = board[i];
-            if (p == NO_PIECE) continue;
-            
-            if (typeOf(p) == PAWN)   (colorOf(p) == White) ? wPawn++ : bPawn++;
-            if (typeOf(p) == ROOK)   (colorOf(p) == White) ? wRook++ : bRook++;
-            if (typeOf(p) == QUEEN)  (colorOf(p) == White) ? wQueen++ : bQueen++;
-            if (typeOf(p) == KNIGHT) (colorOf(p) == White) ? wKnight++ : bKnight++;
-            if (typeOf(p) == BISHOP) (colorOf(p) == White) ? wBishop++ : bBishop++;
-        }
+        int bPawn = pieceCounts[Black][PAWN];
+        int bKnight = pieceCounts[Black][KNIGHT];
+        int bBishop = pieceCounts[Black][BISHOP];
+        int bRook = pieceCounts[Black][ROOK];
+        int bQueen = pieceCounts[Black][QUEEN];
 
         if (wPawn + bPawn + wRook + bRook + wQueen + bQueen > 0) return false;
 
@@ -71,6 +69,11 @@ public:
     bool makeMove(Move move); 
     void undoMove(); 
     std::vector<Move> getLegalMoves() const;
+    std::vector<Move> getHistoryMoves() const {
+        std::vector<Move> mm;
+        for (const auto& s : history) mm.push_back(s.move);
+        return mm;
+    }
     void reset();
     void loadFen(const std::string& fen);
     
@@ -81,6 +84,7 @@ public:
 
 private:
     std::array<Piece, 64> board;
+    int pieceCounts[2][7]; // [Side][PieceType]
     Side turn;
     int halfMoveClock;
     int fullMoveNumber;
@@ -103,12 +107,36 @@ private:
     void clear();
     void setFen(const std::string& fen);
     bool isSquareAttacked(Square s, Side attacker) const;
+    bool isAttackedByPawn(Square s, Side attacker) const;
+    bool isAttackedByKnight(Square s, Side attacker) const;
+    bool isAttackedBySliding(Square s, Side attacker, const int* dirs, int numDirs, PieceType pt1, PieceType pt2) const;
+    bool isAttackedByKing(Square s, Side attacker) const;
     std::vector<Move> generatePseudoLegalMoves() const;
+    void addPiece(Square sq, Piece p);
+    void removePiece(Square sq);
 };
 
 
+    inline void Board::addPiece(Square sq, Piece p) {
+        board[sq] = p;
+        if (p != NO_PIECE) pieceCounts[colorOf(p)][typeOf(p)]++;
+    }
+
+    inline void Board::removePiece(Square sq) {
+        Piece p = board[sq];
+        if (p != NO_PIECE) {
+            pieceCounts[colorOf(p)][typeOf(p)]--;
+            board[sq] = NO_PIECE;
+        }
+    }
+
     inline void Board::clear() {
         board.fill(NO_PIECE);
+        for (int c = 0; c < 2; c++) {
+            for (int pt = 0; pt < 7; pt++) {
+                pieceCounts[c][pt] = 0;
+            }
+        }
         turn = White;
         castlingRights = 0;
         enPassantSquare = SQUARE_NONE;
@@ -144,7 +172,7 @@ private:
                     default: pt = NO_PIECE_TYPE; break;
                 }
                 if (pt != NO_PIECE_TYPE) {
-                    board[rank * 8 + file] = makePiece(color, pt);
+                    addPiece(rank * 8 + file, makePiece(color, pt));
                     file++;
                 }
             }
@@ -234,7 +262,7 @@ private:
 
     inline Side Board::getTurn() const { return turn; }
 
-    inline bool Board::isSquareAttacked(Square s, Side attacker) const {
+    inline bool Board::isAttackedByPawn(Square s, Side attacker) const {
         int pDir = (attacker == White) ? -1 : 1; 
         for (int dx : {-1, 1}) {
             int file = Square(s) % 8;
@@ -246,7 +274,10 @@ private:
                 }
             }
         }
+        return false;
+    }
 
+    inline bool Board::isAttackedByKnight(Square s, Side attacker) const {
         const int KnightOffsets[] = {-17, -15, -10, -6, 6, 10, 15, 17};
         int r = Square(s) / 8;
         int c = Square(s) % 8;
@@ -258,48 +289,36 @@ private:
                 if (typeOf(p) == KNIGHT && colorOf(p) == attacker) return true;
             }
         }
+        return false;
+    }
 
-        const int RookDir[4] = {8, 1, -8, -1};
-        for (int dir : RookDir) {
+    inline bool Board::isAttackedBySliding(Square s, Side attacker, const int* dirs, int numDirs, PieceType pt1, PieceType pt2) const {
+        for (int i = 0; i < numDirs; i++) {
+            int dir = dirs[i];
             int currSq = s;
             while (true) {
                 int f = currSq % 8;
                 int rank = currSq / 8;
-                if ( (dir == 1) && f == 7 ) break;
-                if ( (dir == -1) && f == 0 ) break;
-                if ( (dir == 8) && rank == 7 ) break;
-                if ( (dir == -8) && rank == 0 ) break;
+                if ( (dir == 1 || dir == 9 || dir == -7) && f == 7 ) break;
+                if ( (dir == -1 || dir == -9 || dir == 7) && f == 0 ) break;
+                if ( (dir == 8 || dir == 9 || dir == 7) && rank == 7 ) break;
+                if ( (dir == -8 || dir == -7 || dir == -9) && rank == 0 ) break;
                 currSq += dir;
                 if (currSq < 0 || currSq >= 64) break;
                 Piece p = board[currSq];
                 if (p != NO_PIECE) {
-                    if (colorOf(p) == attacker && (typeOf(p) == ROOK || typeOf(p) == QUEEN)) return true;
+                    if (colorOf(p) == attacker && (typeOf(p) == pt1 || typeOf(p) == pt2)) return true;
                     break;
                 }
             }
         }
+        return false;
+    }
 
-        const int BishopDir[4] = {9, -7, -9, 7};
-        for (int dir : BishopDir) {
-            int currSq = s;
-            while (true) {
-                int f = currSq % 8;
-                int rank = currSq / 8;
-                if ( (dir == 9 || dir == -7) && f == 7 ) break;
-                if ( (dir == -9 || dir == 7) && f == 0 ) break;
-                if ( (dir == 9 || dir == 7) && rank == 7 ) break;
-                if ( (dir == -7 || dir == -9) && rank == 0 ) break;
-                currSq += dir;
-                if (currSq < 0 || currSq >= 64) break;
-                Piece p = board[currSq];
-                if (p != NO_PIECE) {
-                    if (colorOf(p) == attacker && (typeOf(p) == BISHOP || typeOf(p) == QUEEN)) return true;
-                    break;
-                }
-            }
-        }
-
+    inline bool Board::isAttackedByKing(Square s, Side attacker) const {
         const int KingOffsets[] = {-9, -8, -7, -1, 1, 7, 8, 9};
+        int r = Square(s) / 8;
+        int c = Square(s) % 8;
         for (int offset : KingOffsets) {
             int from = s + offset;
             if (from < 0 || from >= 64) continue;
@@ -308,7 +327,21 @@ private:
                 if (typeOf(p) == KING && colorOf(p) == attacker) return true;
             }
         }
+        return false;
+    }
 
+    inline bool Board::isSquareAttacked(Square s, Side attacker) const {
+        if (isAttackedByPawn(s, attacker)) return true;
+        if (isAttackedByKnight(s, attacker)) return true;
+        
+        const int RookDir[4] = {8, 1, -8, -1};
+        if (isAttackedBySliding(s, attacker, RookDir, 4, ROOK, QUEEN)) return true;
+        
+        const int BishopDir[4] = {9, -7, -9, 7};
+        if (isAttackedBySliding(s, attacker, BishopDir, 4, BISHOP, QUEEN)) return true;
+        
+        if (isAttackedByKing(s, attacker)) return true;
+        
         return false;
     }
 
@@ -343,15 +376,17 @@ private:
              // Because White moves +8, so "behind" the dest is -8.
              epCapSq = move.dest + (turn == White ? -8 : 8);
              captured = board[epCapSq];
-             board[epCapSq] = NO_PIECE;
+             removePiece(epCapSq);
         }
 
-        board[move.dest] = p;
-        board[move.from] = NO_PIECE;
+        if (captured != NO_PIECE && !isEp) removePiece(move.dest);
+        removePiece(move.from);
         
         // Promotion
         if (typeOf(p) == PAWN && move.promotion != NO_PIECE_TYPE) {
-            board[move.dest] = makePiece(turn, move.promotion);
+            addPiece(move.dest, makePiece(turn, move.promotion));
+        } else {
+            addPiece(move.dest, p);
         }
         
         // Castling Move Handling
@@ -370,15 +405,19 @@ private:
             }
             
             Piece rook = board[rStart];
-            board[rDest] = rook;
-            board[rStart] = NO_PIECE;
+            removePiece(rStart);
+            addPiece(rDest, rook);
         }
 
         if (isCheck()) {
             // Undo changes
-            board[move.from] = p;
-            board[move.dest] = (isEp ? NO_PIECE : captured); // If EP, dest was empty
-            if (isEp) board[epCapSq] = captured;
+            removePiece(move.dest);
+            if (isEp) {
+                addPiece(epCapSq, captured);
+            } else if (captured != NO_PIECE) {
+                addPiece(move.dest, captured);
+            }
+            addPiece(move.from, p);
             
             if (isCastling) {
                 int rStart, rDest;
@@ -389,8 +428,9 @@ private:
                     rStart = move.dest - 2;
                     rDest = move.dest + 1;
                 }
-                board[rStart] = board[rDest];
-                board[rDest] = NO_PIECE;
+                Piece rook = board[rDest];
+                removePiece(rDest);
+                addPiece(rStart, rook);
             }
             return false;
         }
@@ -467,13 +507,14 @@ private:
 
         Move m = s.move;
         Piece movedPiece = board[m.dest]; 
+        removePiece(m.dest);
+        
         // Note: if promotion, board has Queen, but we need Pawn.
         if (m.promotion != NO_PIECE_TYPE) {
             movedPiece = makePiece(turn, PAWN);
         }
 
-        board[m.from] = movedPiece;
-        board[m.dest] = NO_PIECE;
+        addPiece(m.from, movedPiece);
 
         // Check for En Passant Capture Undo
         // If the moved piece was a Pawn, and dest was OLD Ep square...
@@ -485,10 +526,10 @@ private:
         
         if (isEp) {
              int capSq = m.dest + (turn == White ? -8 : 8);
-             board[capSq] = s.capturedPiece;
-        } else {
+             addPiece(capSq, s.capturedPiece);
+        } else if (s.capturedPiece != NO_PIECE) {
              // Normal capture
-             board[m.dest] = s.capturedPiece; // Put captured piece back at dest
+             addPiece(m.dest, s.capturedPiece); // Put captured piece back at dest
         }
 
         // Un-Castling
@@ -502,8 +543,9 @@ private:
                  rDest = m.dest + 1;
              }
              // Move rook back from Dest to Start
-             board[rStart] = board[rDest];
-             board[rDest] = NO_PIECE;
+             Piece rook = board[rDest];
+             removePiece(rDest);
+             addPiece(rStart, rook);
         }
     }
 

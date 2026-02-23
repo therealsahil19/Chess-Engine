@@ -1,4 +1,6 @@
 E:/Chess Engine/Chess-Engine/build/CMakeFiles/ChessApp.dir
+E:/Chess Engine/Chess-Engine/build/CMakeFiles/ChessTests.dir
+E:/Chess Engine/Chess-Engine/build/CMakeFiles/TestCheck.dir
 E:/Chess Engine/Chess-Engine/build/CMakeFiles/PACKAGE.dir
 E:/Chess Engine/Chess-Engine/build/CMakeFiles/INSTALL.dir
 E:/Chess Engine/Chess-Engine/build/CMakeFiles/ALL_BUILD.dir

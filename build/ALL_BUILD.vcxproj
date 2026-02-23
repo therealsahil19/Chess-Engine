@@ -178,6 +178,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{9DA5F9AF-7EE5-3AAB-A4AF-F7134D2E2A93}</Project>
       <Name>ChessApp</Name>
     </ProjectReference>
+    <ProjectReference Include="E:\Chess Engine\Chess-Engine\build\ChessTests.vcxproj">
+      <Project>{55DD909A-901A-31B4-921F-4D11302CBAA6}</Project>
+      <Name>ChessTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Chess Engine\Chess-Engine\build\TestCheck.vcxproj">
+      <Project>{3C283B23-564B-3E2B-8CD4-74940EC3BBE8}</Project>
+      <Name>TestCheck</Name>
+    </ProjectReference>
     <ProjectReference Include="E:\Chess Engine\Chess-Engine\build\_deps\raylib-build\raylib\external\glfw\src\glfw.vcxproj">
       <Project>{4B9C950A-583F-3435-B608-30E02D83CE50}</Project>
       <Name>glfw</Name>

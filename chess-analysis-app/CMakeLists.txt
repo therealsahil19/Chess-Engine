@@ -26,5 +26,8 @@ message(STATUS "CORE SOURCES: ${CORE_SOURCES}")
 add_executable(ChessApp src/main.cpp ${CORE_SOURCES} ${ENGINE_SOURCES} ${GUI_SOURCES})
 target_link_libraries(ChessApp PRIVATE raylib)
 
+add_executable(ChessTests tests/test_runner.cpp ${CORE_SOURCES})
+add_executable(TestCheck test_check.cpp ${CORE_SOURCES})
+
 # Copy assets to build directory if needed (or just reference them)
 # file(COPY src/assets DESTINATION ${CMAKE_BINARY_DIR}/assets)

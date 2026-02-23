@@ -5,17 +5,17 @@ namespace Chess {
 
 std::string squareToString(Square s) {
     if (s < 0 || s >= 64) return "-";
-    int rank = s / 8;
-    int file = s % 8;
-    // Standard notation: file 'a'..'h', rank '1'..'8'
-    // But internally usually rank 0 is 8th rank or 1st rank? Let's use standard Little-Endian Rank-File mapping
-    // Rank 0 = 1st rank (a1, b1...), Rank 7 = 8th rank
-    // File 0 = a, File 7 = h
-    // Square = rank * 8 + file
-    
-    char f = 'a' + file;
-    char r = '1' + rank;
-    return {f, r};
+    static const std::string sqStrings[64] = {
+        "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
+        "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
+        "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+        "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+        "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+        "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+        "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+        "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"
+    };
+    return sqStrings[s];
 }
 
 Square stringToSquare(std::string s) {
@@ -29,7 +29,7 @@ Square stringToSquare(std::string s) {
 std::string Move::toString() const {
     if (isNull()) return "0000";
     std::string s = squareToString(from) + squareToString(dest);
-    if (promotion != NO_PIECE_TYPE && promotion != NO_PIECE_TYPE) {
+    if (promotion != NO_PIECE_TYPE) {
         char p = ' ';
         switch(promotion) {
             case QUEEN: p = 'q'; break;

@@ -167,6 +167,42 @@ std::vector<Move> Board::generatePseudoLegalMoves() const {
                      }
                 }
              }
+
+             // Castling
+             Side opp = (turn == White) ? Black : White;
+             if (!isCheck()) {
+                 if (turn == White) {
+                     if (castlingRights & 1) { // K
+                         if (board[5] == NO_PIECE && board[6] == NO_PIECE) {
+                             if (!isSquareAttacked(5, opp)) {
+                                 moves.push_back({4, 6, NO_PIECE_TYPE});
+                             }
+                         }
+                     }
+                     if (castlingRights & 2) { // Q
+                         if (board[1] == NO_PIECE && board[2] == NO_PIECE && board[3] == NO_PIECE) {
+                             if (!isSquareAttacked(3, opp)) {
+                                 moves.push_back({4, 2, NO_PIECE_TYPE});
+                             }
+                         }
+                     }
+                 } else { // Black
+                     if (castlingRights & 4) { // k
+                         if (board[61] == NO_PIECE && board[62] == NO_PIECE) {
+                             if (!isSquareAttacked(61, opp)) {
+                                 moves.push_back({60, 62, NO_PIECE_TYPE});
+                             }
+                         }
+                     }
+                     if (castlingRights & 8) { // q
+                         if (board[57] == NO_PIECE && board[58] == NO_PIECE && board[59] == NO_PIECE) {
+                             if (!isSquareAttacked(59, opp)) {
+                                 moves.push_back({60, 58, NO_PIECE_TYPE});
+                             }
+                         }
+                     }
+                 }
+             }
         }
         else if (pt == BISHOP || pt == QUEEN) {
             addSlidingMoves(*this, from, BishopDir, 4, moves);
@@ -183,10 +219,11 @@ std::vector<Move> Board::getLegalMoves() const {
     std::vector<Move> pseudo = generatePseudoLegalMoves();
     std::vector<Move> legal;
     
+    Board copy = *this;
     for (const auto& m : pseudo) {
-        Board copy = *this;
         if (copy.makeMove(m)) {
             legal.push_back(m);
+            copy.undoMove();
         }
     }
     

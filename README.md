@@ -33,52 +33,73 @@ This application currently relies on the Win32 API (`CreateProcess`, pipes) for 
 
 ## Build Instructions
 
-1.  **Clone the repository**:
+1. **Clone the repository**:
+
     ```bash
     git clone https://github.com/yourusername/Chess-Engine.git
     cd Chess-Engine
     ```
 
-2.  **Navigate to the app source**:
+2. **Navigate to the app source**:
+
     ```bash
     cd chess-analysis-app
     ```
 
-3.  **Configure**:
+3. **Configure**:
+
     ```bash
     cmake -S . -B build
     ```
+
     *Note: Raylib will be automatically fetched and built.*
 
-4.  **Build**:
+4. **Build**:
+
     ```bash
     cmake --build build --config Release
     ```
 
-5.  **Setup Stockfish**:
+5. **Setup Stockfish**:
     Copy `stockfish-windows-x86-64-avx2.exe` from the `../stockfish/` directory (or your own `stockfish.exe`) to the directory where the built executable is located (e.g., `chess-analysis-app/build/Release/`) and rename it to `stockfish.exe`.
 
-6.  **Run**:
+6. **Run**:
     Execute `ChessApp.exe` from the build directory.
+
+## Testing
+
+The project includes a suite of unit tests for the core chess logic to guarantee robustness (including Perft testing).
+
+1. **Build Tests**:
+
+    ```bash
+    cmake --build build --config Release --target ChessTests
+    ```
+
+2. **Run Tests**:
+
+    ```bash
+    .\build\Release\ChessTests.exe
+    ```
 
 ## Controls
 
--   **Left Click**: Select a piece / Move to a valid square.
--   **Click on Own Piece**: Reselect different piece.
--   **Drag & Drop**: Drop a `.pgn` or `.fen` file onto the window to load it.
--   **Arrow Keys**:
-    -   `Right`: Next move in loaded game record.
-    -   `Left`: Previous move (undo).
--   **F11**: Toggle Fullscreen.
--   **Paste PGN Button**: Click to load game from clipboard.
+- **Left Click**: Select a piece / Move to a valid square.
+- **Click on Own Piece**: Reselect different piece.
+- **Drag & Drop**: Drop a `.pgn` or `.fen` file onto the window to load it.
+- **Arrow Keys**:
+  - `Right`: Next move in loaded game record.
+  - `Left`: Previous move (undo).
+- **F11**: Toggle Fullscreen.
+- **Paste PGN Button**: Click to load game from clipboard.
 
 ## Project Structure
 
--   `chess-analysis-app/src/core/`: Chess logic (Board representation, Move generation, Rules).
-    -   `board.hpp`: Header-only implementation of the Board logic.
-    -   `move_gen.cpp`: Move generation logic.
-    -   `types.hpp`: Basic types (Bitboard, Piece, Square).
--   `chess-analysis-app/src/engine/`: Stockfish integration.
-    -   `stockfish.cpp`: Win32 process management for the engine.
--   `chess-analysis-app/src/main.cpp`: Entry point, Game Loop, and Raylib GUI rendering.
--   `chess-analysis-app/CMakeLists.txt`: Build configuration.
+- `chess-analysis-app/src/core/`: Chess logic (Board representation, Move generation, Rules).
+  - `board.hpp`: Header-only implementation of the Board logic.
+  - `move_gen.cpp`: Move generation logic.
+  - `types.hpp`: Basic types (Bitboard, Piece, Square).
+- `chess-analysis-app/src/engine/`: Stockfish integration.
+  - `stockfish.cpp`: Win32 process management for the engine.
+- `chess-analysis-app/src/main.cpp`: Entry point, Game Loop, and Raylib GUI rendering.
+- `chess-analysis-app/CMakeLists.txt`: Build configuration.

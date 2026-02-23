@@ -45,7 +45,7 @@ bool StockfishClient::start() {
     siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
     // Create the child process.
-    std::string commandLine = exePath;
+    std::string commandLine = "\"" + exePath + "\"";
     std::vector<char> cmd(commandLine.begin(), commandLine.end());
     cmd.push_back(0);
 
@@ -119,7 +119,10 @@ void StockfishClient::stop() {
 
 void StockfishClient::sendCommand(const std::string& cmd) {
     if (!isRunning) return;
-    std::string fullCmd = cmd + "\n";
+    std::string fullCmd = cmd;
+    if (fullCmd.empty() || fullCmd.back() != '\n') {
+        fullCmd += "\n";
+    }
 #ifdef _WIN32
     DWORD dwWritten;
     WriteFile((HANDLE)hChildStd_IN_Wr, fullCmd.c_str(), fullCmd.size(), &dwWritten, NULL);
@@ -166,9 +169,12 @@ void StockfishClient::readOutputLoop() {
         size_t pos = 0;
         size_t nextPos;
         while ((nextPos = buffer.find('\n', pos)) != std::string::npos) {
-            std::string line = buffer.substr(pos, nextPos - pos);
-            if (!line.empty() && line.back() == '\r') line.pop_back();
-            parseOutput(line);
+            std::string_view line(buffer.data() + pos, nextPos - pos);
+            if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
+            
+            if (line.compare(0, 4, "info") == 0 && line.find("score") != std::string_view::npos) {
+                parseOutput(std::string(line));
+            }
             pos = nextPos + 1;
         }
         buffer.erase(0, pos);
