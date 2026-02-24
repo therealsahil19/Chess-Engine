@@ -8,17 +8,23 @@ A high-performance, native desktop chess application built with C++17 and [Rayli
   - Complete implementation of chess rules (Castling, En Passant, Promotion).
   - Legal move generation and validation.
   - Game End Detection: Checkmate, Stalemate, Insufficient Material, 50-Move Rule.
-- **Native GUI**:
+- **Native GUI with Modern Aesthetics**:
   - Fast, hardware-accelerated rendering using Raylib.
-  - Interactive board with click-to-move functionality.
-  - Real-time move animation.
-- **Stockfish Integration**:
+  - Custom dark theme UI (IntelliJ/Lichess inspired).
+  - High-res piece textures (128x128px PNGs with built-in sub-sampling and square fitting).
+  - Interactive board with slick click-to-move animations.
+- **Advanced Stockfish Integration**:
   - Automated analysis of current board positions using the Stockfish engine.
-  - Display of evaluation (cp/mate) and best move suggestions.
-- **File Support**:
+  - Vertical dynamic evaluation bar tied directly to Stockfish's real-time centipawn/mate score.
+  - Display of numerical evaluation and best move suggestions in the side panel.
+- **Comprehensive Game Controls**:
+  - `Flip Board` and `Reload` controls for board manipulation.
+  - Interactive media playback buttons (`|<`, `<`, `||`, `>`, `>|`) to traverse the game history.
+  - A scrollable "Move Table" displaying standard algebraic notation (SAN).
+- **File & Input Support**:
   - **PGN Loading**: Drag & drop `.pgn` files to parse and replay games automatically.
   - **FEN Loading**: Drag & drop `.fen` files or text files containing FEN strings to load positions.
-  - **Clipboard Support**: "Paste PGN" button to load games directly from clipboard.
+  - **Paste Dialog**: Advanced "Paste PGN" overlay dialog with preview wrapping. Supports standard `Ctrl+V` clipboard pasting.
 
 ## Platform Support
 
@@ -91,7 +97,9 @@ The project includes a suite of unit tests for the core chess logic to guarantee
   - `Right`: Next move in loaded game record.
   - `Left`: Previous move (undo).
 - **F11**: Toggle Fullscreen.
-- **Paste PGN Button**: Click to load game from clipboard.
+- **Scroll Wheel**: Scroll up and down inside the Move History table.
+- **Paste PGN Dialog**: Click "Paste PGN", then press `Ctrl+V` to load text from your clipboard. Hit "Analyze" to load it onto the board.
+- **Media Controls**: Navigate forwards, backwards, to start, or to end of move list.
 
 ## Project Structure
 

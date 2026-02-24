@@ -12,12 +12,12 @@
 std::string GetClipboardTextFallback();
 
 // Constants
-const int SCREEN_WIDTH = 1000; // Expanded for UI
-const int SCREEN_HEIGHT = 800;
-const int BOARD_SIZE = 640;
+const int SCREEN_WIDTH = 1280; // Expanded for UI
+const int SCREEN_HEIGHT = 960;
+const int BOARD_SIZE = 800;
 const int SQUARE_SIZE = BOARD_SIZE / 8;
-const int BOARD_OFFSET_X = 40;
-const int BOARD_OFFSET_Y = (SCREEN_HEIGHT - BOARD_SIZE) / 2;
+const int BOARD_OFFSET_X = 80;
+const int BOARD_OFFSET_Y = 80;
 
 // Colors - High Contrast Theme
 const Color COLOR_BG = { 43, 45, 48, 255 };        // IntelliJ-like Dark Gray
@@ -48,6 +48,46 @@ void LoadPgnToRecord(const std::string& pgn, Chess::Board& board, Chess::GameRec
         record.addMove(m, san);
         board.makeMove(m);
     }
+}
+
+float GetEvalFill(const std::string& evalStr) {
+    if (evalStr == "N/A" || evalStr.empty()) return 0.5f;
+    
+    if (evalStr.find("M") != std::string::npos || evalStr.find("mate") != std::string::npos) {
+        if (evalStr.find("-") != std::string::npos) return 0.0f;
+        return 1.0f;
+    }
+    
+    try {
+        float val = std::stof(evalStr);
+        if (val > 10.0f) val = 10.0f;
+        if (val < -10.0f) val = -10.0f;
+        return 0.5f + (val / 20.0f);
+    } catch (...) {
+        return 0.5f;
+    }
+}
+
+void DrawEvalBar(const std::string& evalStr, bool isFlipped) {
+    float fill = GetEvalFill(evalStr);
+    
+    int barX = 40;
+    int barY = BOARD_OFFSET_Y;
+    int barW = 20;
+    int barH = BOARD_SIZE;
+
+    // Black background (equivalent to Black advantage)
+    DrawRectangle(barX, barY, barW, barH, Fade(BLACK, 0.8f));
+    
+    float whiteHeight = barH * fill;
+    float whiteY = barY + (barH - whiteHeight);
+    
+    if (isFlipped) {
+        DrawRectangle(barX, barY, barW, whiteHeight, COLOR_LIGHT);
+    } else {
+        DrawRectangle(barX, whiteY, barW, whiteHeight, COLOR_LIGHT);
+    }
+    DrawRectangleLines(barX, barY, barW, barH, COLOR_DARK);
 }
 
 void DrawBoardBackground(int selectedSq, bool isFlipped) {
@@ -95,8 +135,15 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
         
         // Draw Texture
         if (p >= 0 && p < 14 && pieceTextures[p].id != 0) {
-            float scale = (float)SQUARE_SIZE / pieceTextures[p].width;
-            DrawTextureEx(pieceTextures[p], {(float)drawX, (float)drawY}, 0.0f, scale, WHITE);
+            float pieceScale = (p == Chess::W_PAWN || p == Chess::B_PAWN) ? 0.70f : 0.85f;
+            float scale = ((float)SQUARE_SIZE * pieceScale) / pieceTextures[p].width;
+            float offset = ((float)SQUARE_SIZE * (1.0f - pieceScale)) / 2.0f;
+            
+            // For pawns, we might want to also push them slightly lower since they are shorter
+            float yOffset = offset;
+            if (p == Chess::W_PAWN || p == Chess::B_PAWN) yOffset += (SQUARE_SIZE * 0.05f); 
+
+            DrawTextureEx(pieceTextures[p], {(float)drawX + offset, (float)drawY + yOffset}, 0.0f, scale, WHITE);
         }
     }
     
@@ -106,14 +153,22 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
         pos.y = anim.startPos.y + (anim.endPos.y - anim.startPos.y) * anim.progress;
         
         if (anim.piece >= 0 && anim.piece < 14 && pieceTextures[anim.piece].id != 0) {
-            float scale = (float)SQUARE_SIZE / pieceTextures[anim.piece].width;
+            float pieceScale = (anim.piece == Chess::W_PAWN || anim.piece == Chess::B_PAWN) ? 0.70f : 0.85f;
+            float scale = ((float)SQUARE_SIZE * pieceScale) / pieceTextures[anim.piece].width;
+            float offset = ((float)SQUARE_SIZE * (1.0f - pieceScale)) / 2.0f;
+            
+            float yOffset = offset;
+            if (anim.piece == Chess::W_PAWN || anim.piece == Chess::B_PAWN) yOffset += (SQUARE_SIZE * 0.05f); 
+
+            pos.x += offset;
+            pos.y += yOffset;
             DrawTextureEx(pieceTextures[anim.piece], pos, 0.0f, scale, WHITE);
         }
     }
 }
 
 void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Chess::GameRecord& gameRecord, const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn, Vector2 mousePos) {
-    int infoX = SCREEN_WIDTH - 280;
+    int infoX = SCREEN_WIDTH - 320;
     
     std::string displayEval, displayBestMove;
     {
@@ -139,8 +194,8 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
     } else {
         // Draw Move Table
         int tableY = 200;
-        int tableWidth = 260;
-        int tableHeight = 400;
+        int tableWidth = 280;
+        int tableHeight = 600;
         
         bool mouseOverTable = CheckCollisionPointRec(mousePos, { (float)infoX, (float)tableY, (float)tableWidth, (float)tableHeight });
         if (mouseOverTable) {
@@ -411,10 +466,10 @@ int main() {
             bool clickedUI = false;
             
             // Top Left Buttons
-            if (CheckCollisionPointRec(mousePos, { 10, 10, 110, 30 })) {
+            if (CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X, 20, 110, 40 })) {
                  isBoardFlipped = !isBoardFlipped;
                  clickedUI = true;
-            } else if (CheckCollisionPointRec(mousePos, { 130, 10, 110, 30 })) {
+            } else if (CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 130, 20, 110, 40 })) {
                  board.loadFen(initialFen);
                  gameRecord.reset();
                  isAnalysisActive = false;
@@ -423,7 +478,7 @@ int main() {
                  clickedUI = true;
             }
             // Paste Button
-            else if (!isAnalysisActive && CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 280, 420, 150, 40 })) {
+            else if (!isAnalysisActive && CheckCollisionPointRec(mousePos, { (float)(SCREEN_WIDTH - 320), 420, 150, 40 })) {
                 showPasteDialog = true;
                 clickedUI = true;
             }
@@ -553,14 +608,21 @@ int main() {
         ClearBackground(COLOR_BG);
         
         // Draw Top Left Buttons
-        DrawRectangle(10, 10, 110, 30, CheckCollisionPointRec(mousePos, { 10, 10, 110, 30 }) ? COLOR_SELECTED : COLOR_DARK);
-        DrawText("Flip Board", 20, 16, 16, COLOR_TEXT_MAIN);
+        DrawRectangle(BOARD_OFFSET_X, 20, 110, 40, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X, 20, 110, 40 }) ? COLOR_SELECTED : COLOR_DARK);
+        DrawText("Flip Board", BOARD_OFFSET_X + 10, 30, 18, COLOR_TEXT_MAIN);
 
-        DrawRectangle(130, 10, 110, 30, CheckCollisionPointRec(mousePos, { 130, 10, 110, 30 }) ? RED : COLOR_DARK);
-        DrawText("Reload", 160, 16, 16, COLOR_TEXT_MAIN);
+        DrawRectangle(BOARD_OFFSET_X + 130, 20, 110, 40, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 130, 20, 110, 40 }) ? RED : COLOR_DARK);
+        DrawText("Reload", BOARD_OFFSET_X + 150, 30, 18, COLOR_TEXT_MAIN);
 
         DrawBoardBackground(selectedSq, isBoardFlipped);
         DrawPieces(board, anim, isBoardFlipped, pieceTextures);
+
+        std::string safeEval;
+        {
+            std::lock_guard<std::mutex> lock(evalMutex);
+            safeEval = currentEval;
+        }
+        DrawEvalBar(safeEval, isBoardFlipped);
 
         // Draw new playback controls
         if (isAnalysisActive) {
