@@ -39,3 +39,9 @@ add_executable(TestCheck test_check.cpp ${CORE_SOURCES})
 # Copy assets to build directory if needed (or just reference them)
 # file(COPY src/assets DESTINATION ${CMAKE_BINARY_DIR}/assets)
 
+add_custom_command(TARGET ChessApp 
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/../textures"
+    "$<TARGET_FILE_DIR:ChessApp>/textures"
+)

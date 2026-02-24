@@ -71,7 +71,7 @@ void DrawBoardBackground(int selectedSq, bool isFlipped) {
     }
 }
 
-void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped) {
+void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped, Texture2D pieceTextures[14]) {
     for (int i = 0; i < 64; i++) {
         Chess::Piece p = board.getPiece(i);
         if (p == Chess::NO_PIECE) continue;
@@ -93,18 +93,11 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
         int drawX = BOARD_OFFSET_X + drawF * SQUARE_SIZE;
         int drawY = BOARD_OFFSET_Y + drawR * SQUARE_SIZE;
         
-        const char* text = "?";
-        switch(Chess::typeOf(p)) {
-            case Chess::PAWN: text = "P"; break;
-            case Chess::KNIGHT: text = "N"; break;
-            case Chess::BISHOP: text = "B"; break;
-            case Chess::ROOK: text = "R"; break;
-            case Chess::QUEEN: text = "Q"; break;
-            case Chess::KING: text = "K"; break;
-            default: break;
+        // Draw Texture
+        if (p >= 0 && p < 14 && pieceTextures[p].id != 0) {
+            float scale = (float)SQUARE_SIZE / pieceTextures[p].width;
+            DrawTextureEx(pieceTextures[p], {(float)drawX, (float)drawY}, 0.0f, scale, WHITE);
         }
-        Color textColor = (Chess::colorOf(p) == Chess::White) ? WHITE : BLACK;
-        DrawText(text, drawX + 35, drawY + 25, 40, textColor);
     }
     
     if (anim.active) {
@@ -112,18 +105,10 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
         pos.x = anim.startPos.x + (anim.endPos.x - anim.startPos.x) * anim.progress;
         pos.y = anim.startPos.y + (anim.endPos.y - anim.startPos.y) * anim.progress;
         
-        const char* text = "?";
-         switch(Chess::typeOf(anim.piece)) {
-            case Chess::PAWN: text = "P"; break;
-            case Chess::KNIGHT: text = "N"; break;
-            case Chess::BISHOP: text = "B"; break;
-            case Chess::ROOK: text = "R"; break;
-            case Chess::QUEEN: text = "Q"; break;
-            case Chess::KING: text = "K"; break;
-            default: break;
+        if (anim.piece >= 0 && anim.piece < 14 && pieceTextures[anim.piece].id != 0) {
+            float scale = (float)SQUARE_SIZE / pieceTextures[anim.piece].width;
+            DrawTextureEx(pieceTextures[anim.piece], pos, 0.0f, scale, WHITE);
         }
-        Color textColor = (Chess::colorOf(anim.piece) == Chess::White) ? WHITE : BLACK;
-        DrawText(text, (int)pos.x + 35, (int)pos.y + 25, 40, textColor);
     }
 }
 
@@ -287,6 +272,24 @@ int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Chess Analysis App (Stockfish Enabled)");
     SetExitKey(KEY_NULL); // Disable ESC to close
     SetTargetFPS(60);
+
+    // Load Textures
+    Texture2D pieceTextures[14] = {0};
+    std::string appDir = GetApplicationDirectory();
+    std::string textureDir = appDir + "textures/PNGs/No shadow/128h/";
+    pieceTextures[Chess::W_PAWN] = LoadTexture((textureDir + "w_pawn_png_128px.png").c_str());
+    pieceTextures[Chess::W_KNIGHT] = LoadTexture((textureDir + "w_knight_png_128px.png").c_str());
+    pieceTextures[Chess::W_BISHOP] = LoadTexture((textureDir + "w_bishop_png_128px.png").c_str());
+    pieceTextures[Chess::W_ROOK] = LoadTexture((textureDir + "w_rook_png_128px.png").c_str());
+    pieceTextures[Chess::W_QUEEN] = LoadTexture((textureDir + "w_queen_png_128px.png").c_str());
+    pieceTextures[Chess::W_KING] = LoadTexture((textureDir + "w_king_png_128px.png").c_str());
+
+    pieceTextures[Chess::B_PAWN] = LoadTexture((textureDir + "b_pawn_png_128px.png").c_str());
+    pieceTextures[Chess::B_KNIGHT] = LoadTexture((textureDir + "b_knight_png_128px.png").c_str());
+    pieceTextures[Chess::B_BISHOP] = LoadTexture((textureDir + "b_bishop_png_128px.png").c_str());
+    pieceTextures[Chess::B_ROOK] = LoadTexture((textureDir + "b_rook_png_128px.png").c_str());
+    pieceTextures[Chess::B_QUEEN] = LoadTexture((textureDir + "b_queen_png_128px.png").c_str());
+    pieceTextures[Chess::B_KING] = LoadTexture((textureDir + "b_king_png_128px.png").c_str());
 
     Chess::Board board;
     board.reset();
@@ -557,7 +560,7 @@ int main() {
         DrawText("Reload", 160, 16, 16, COLOR_TEXT_MAIN);
 
         DrawBoardBackground(selectedSq, isBoardFlipped);
-        DrawPieces(board, anim, isBoardFlipped);
+        DrawPieces(board, anim, isBoardFlipped, pieceTextures);
 
         // Draw new playback controls
         if (isAnalysisActive) {
@@ -584,6 +587,12 @@ int main() {
     }
     
     engine.stop();
+    for (int i = 0; i < 14; i++) {
+        if (pieceTextures[i].id != 0) {
+            UnloadTexture(pieceTextures[i]);
+        }
+    }
+    
     CloseWindow();
     return 0;
 }
