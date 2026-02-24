@@ -127,7 +127,7 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
     }
 }
 
-void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Chess::GameRecord& gameRecord, const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn) {
+void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Chess::GameRecord& gameRecord, const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn, Vector2 mousePos) {
     int infoX = SCREEN_WIDTH - 280;
     
     std::string displayEval, displayBestMove;
@@ -147,7 +147,7 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
     if (!isAnalysisActive) {
         if (!showDialog) {
             int pasteButtonY = 420;
-            bool mouseOverPaste = CheckCollisionPointRec(GetMousePosition(), { (float)infoX, (float)pasteButtonY, 150, 40 });
+            bool mouseOverPaste = CheckCollisionPointRec(mousePos, { (float)infoX, (float)pasteButtonY, 150, 40 });
             DrawRectangle(infoX, pasteButtonY, 150, 40, mouseOverPaste ? COLOR_SELECTED : COLOR_DARK);
             DrawText("Paste PGN", infoX + 25, pasteButtonY + 10, 20, COLOR_BG);
         }
@@ -156,6 +156,14 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
         int tableY = 200;
         int tableWidth = 260;
         int tableHeight = 400;
+        
+        bool mouseOverTable = CheckCollisionPointRec(mousePos, { (float)infoX, (float)tableY, (float)tableWidth, (float)tableHeight });
+        if (mouseOverTable) {
+            float wheel = GetMouseWheelMove();
+            if (wheel > 0) scroll -= 3;
+            if (wheel < 0) scroll += 3;
+        }
+
         DrawRectangle(infoX, tableY, tableWidth, tableHeight, Fade(BLACK, 0.3f));
         
         DrawText("White", infoX + 40, tableY + 10, 20, COLOR_TEXT_MAIN);
@@ -169,9 +177,12 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
         int numRows = (gameRecord.sanMoves.size() + 1) / 2;
         
         if (numRows > visibleRows) {
-            int currentRow = gameRecord.currentIndex / 2;
-            if (currentRow > scroll + visibleRows - 1) scroll = currentRow - visibleRows + 1;
-            if (currentRow < scroll) scroll = currentRow;
+            // Only auto-scroll if mouse isn't scrolling table manually
+            if (!mouseOverTable) {
+                int currentRow = gameRecord.currentIndex / 2;
+                if (currentRow > scroll + visibleRows - 1) scroll = currentRow - visibleRows + 1;
+                if (currentRow < scroll) scroll = currentRow;
+            }
             if (scroll < 0) scroll = 0;
             if (scroll > numRows - visibleRows) scroll = numRows - visibleRows;
         } else {
@@ -197,21 +208,6 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
             if (blackMoveIdx < gameRecord.sanMoves.size()) {
                 DrawText(gameRecord.sanMoves[blackMoveIdx].c_str(), infoX + tableWidth / 2 + 30, itemsY + i * rowHeight, 18, COLOR_TEXT_MAIN);
             }
-        }
-
-        // Draw Playback Controls at bottom right
-        int btnW = 40;
-        int btnH = 30;
-        int startX = infoX + (tableWidth - (5 * btnW + 4 * 5)) / 2; // Center 5 buttons
-        int btnY = tableY + tableHeight + 20;
-
-        Vector2 mp = GetMousePosition();
-        const char* labels[] = {"|<", "<", "||", ">", ">|"};
-        for (int i = 0; i < 5; i++) {
-            int bx = startX + i * (btnW + 5);
-            bool hover = CheckCollisionPointRec(mp, { (float)bx, (float)btnY, (float)btnW, (float)btnH });
-            DrawRectangle(bx, btnY, btnW, btnH, hover ? COLOR_TEXT_DIM : Fade(BLACK, 0.5f));
-            DrawText(labels[i], bx + 12 - (i==2?4:0), btnY + 8, 14, COLOR_TEXT_MAIN);
         }
     }
 }
@@ -239,16 +235,36 @@ void DrawPasteDialog(bool& showDialog, std::string& dialogText, bool& submitPast
     }
     
     DrawRectangle(dialogX + 20, dialogY + 60, dialogW - 40, dialogH - 140, Fade(BLACK, 0.3f));
+    
     std::string preview = dialogText;
     if (preview.length() > 500) preview = preview.substr(0, 500) + "...";
     
-    DrawText("Pasted text preview:", dialogX + 25, dialogY + 65, 15, COLOR_TEXT_DIM);
-    // Cheap text wrap rendering
-    int dY = 85;
-    for (size_t i = 0; i < preview.length(); i += 80) {
-        DrawText(preview.substr(i, 80).c_str(), dialogX + 25, dialogY + dY, 10, COLOR_TEXT_MAIN);
-        dY += 15;
-        if (dY > dialogH - 100) break;
+    if (dialogText.empty()) {
+        int blink = (int)(GetTime() * 2) % 2;
+        if (blink == 0) DrawText("_", dialogX + 25, dialogY + 85, 20, COLOR_TEXT_MAIN);
+    } else {
+        DrawText("Pasted text preview:", dialogX + 25, dialogY + 65, 15, COLOR_TEXT_DIM);
+        // Better text wrap rendering
+        int dY = 85;
+        std::string currentLine = "";
+        for (size_t i = 0; i < preview.length(); i++) {
+             if (preview[i] == '\n') {
+                 DrawText(currentLine.c_str(), dialogX + 25, dialogY + dY, 15, COLOR_TEXT_MAIN);
+                 currentLine = "";
+                 dY += 20;
+             } else {
+                 currentLine += preview[i];
+                 if (MeasureText(currentLine.c_str(), 15) > dialogW - 60) {
+                      DrawText(currentLine.c_str(), dialogX + 25, dialogY + dY, 15, COLOR_TEXT_MAIN);
+                      currentLine = "";
+                      dY += 20;
+                 }
+             }
+             if (dY > dialogH - 80) break;
+        }
+        if (!currentLine.empty() && dY <= dialogH - 80) {
+             DrawText(currentLine.c_str(), dialogX + 25, dialogY + dY, 15, COLOR_TEXT_MAIN);
+        }
     }
     
     int btnW = 120;
@@ -269,6 +285,7 @@ void DrawPasteDialog(bool& showDialog, std::string& dialogText, bool& submitPast
 
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Chess Analysis App (Stockfish Enabled)");
+    SetExitKey(KEY_NULL); // Disable ESC to close
     SetTargetFPS(60);
 
     Chess::Board board;
@@ -390,11 +407,11 @@ int main() {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !showPasteDialog) {
             bool clickedUI = false;
             
-            // Top Right Buttons
-            if (CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 240, 10, 110, 30 })) {
+            // Top Left Buttons
+            if (CheckCollisionPointRec(mousePos, { 10, 10, 110, 30 })) {
                  isBoardFlipped = !isBoardFlipped;
                  clickedUI = true;
-            } else if (CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 120, 10, 110, 30 })) {
+            } else if (CheckCollisionPointRec(mousePos, { 130, 10, 110, 30 })) {
                  board.loadFen(initialFen);
                  gameRecord.reset();
                  isAnalysisActive = false;
@@ -407,18 +424,16 @@ int main() {
                 showPasteDialog = true;
                 clickedUI = true;
             }
-            // Playback controls
+            // Playback controls (Now under the board)
             else if (isAnalysisActive) {
-                int tableY = 200;
-                int tableWidth = 260;
-                int btnW = 40;
-                int btnH = 30;
-                int infoX = SCREEN_WIDTH - 280;
-                int startX = infoX + (tableWidth - (5 * btnW + 4 * 5)) / 2;
-                int btnY = tableY + 400 + 20;
+                int btnW = 80;
+                int btnH = 50;
+                // Center relative to the board: X: BOARD_OFFSET_X to BOARD_OFFSET_X + BOARD_SIZE
+                int startX = BOARD_OFFSET_X + (BOARD_SIZE - (5 * btnW + 4 * 10)) / 2;
+                int btnY = BOARD_OFFSET_Y + BOARD_SIZE + 20;
                 
                 for (int i=0; i<5; i++) {
-                    int bx = startX + i * (btnW + 5);
+                    int bx = startX + i * (btnW + 10);
                     if (CheckCollisionPointRec(mousePos, { (float)bx, (float)btnY, (float)btnW, (float)btnH })) {
                         clickedUI = true;
                         if (i == 0) {
@@ -534,16 +549,35 @@ int main() {
         BeginDrawing();
         ClearBackground(COLOR_BG);
         
-        // Draw Top Right Buttons
-        DrawRectangle(SCREEN_WIDTH - 240, 10, 110, 30, CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 240, 10, 110, 30 }) ? COLOR_SELECTED : COLOR_DARK);
-        DrawText("Flip Board", SCREEN_WIDTH - 230, 16, 16, COLOR_TEXT_MAIN);
+        // Draw Top Left Buttons
+        DrawRectangle(10, 10, 110, 30, CheckCollisionPointRec(mousePos, { 10, 10, 110, 30 }) ? COLOR_SELECTED : COLOR_DARK);
+        DrawText("Flip Board", 20, 16, 16, COLOR_TEXT_MAIN);
 
-        DrawRectangle(SCREEN_WIDTH - 120, 10, 110, 30, CheckCollisionPointRec(mousePos, { SCREEN_WIDTH - 120, 10, 110, 30 }) ? RED : COLOR_DARK);
-        DrawText("Reload", SCREEN_WIDTH - 90, 16, 16, COLOR_TEXT_MAIN);
+        DrawRectangle(130, 10, 110, 30, CheckCollisionPointRec(mousePos, { 130, 10, 110, 30 }) ? RED : COLOR_DARK);
+        DrawText("Reload", 160, 16, 16, COLOR_TEXT_MAIN);
 
         DrawBoardBackground(selectedSq, isBoardFlipped);
         DrawPieces(board, anim, isBoardFlipped);
-        DrawSidePanel(showPasteDialog, isAnalysisActive, tableScroll, gameRecord, currentEval, bestMoveSan, evalMutex, board.getTurn());
+
+        // Draw new playback controls
+        if (isAnalysisActive) {
+            int btnW = 80;
+            int btnH = 50;
+            int startX = BOARD_OFFSET_X + (BOARD_SIZE - (5 * btnW + 4 * 10)) / 2;
+            int btnY = BOARD_OFFSET_Y + BOARD_SIZE + 20;
+
+            const char* labels[] = {"|<", "<", "||", ">", ">|"};
+            for (int i = 0; i < 5; i++) {
+                int bx = startX + i * (btnW + 10);
+                bool hover = CheckCollisionPointRec(mousePos, { (float)bx, (float)btnY, (float)btnW, (float)btnH });
+                DrawRectangle(bx, btnY, btnW, btnH, hover ? COLOR_TEXT_DIM : Fade(BLACK, 0.5f));
+                
+                int textW = MeasureText(labels[i], 24);
+                DrawText(labels[i], bx + (btnW - textW) / 2, btnY + 13, 24, COLOR_TEXT_MAIN);
+            }
+        }
+
+        DrawSidePanel(showPasteDialog, isAnalysisActive, tableScroll, gameRecord, currentEval, bestMoveSan, evalMutex, board.getTurn(), mousePos);
         DrawPasteDialog(showPasteDialog, dialogPgnText, submitPastedPgn, mousePos);
         
         EndDrawing();
