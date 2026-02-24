@@ -136,14 +136,17 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
         // Draw Texture
         if (p >= 0 && p < 14 && pieceTextures[p].id != 0) {
             float pieceScale = (p == Chess::W_PAWN || p == Chess::B_PAWN) ? 0.70f : 0.85f;
-            float scale = ((float)SQUARE_SIZE * pieceScale) / pieceTextures[p].width;
-            float offset = ((float)SQUARE_SIZE * (1.0f - pieceScale)) / 2.0f;
+            float texW = (float)pieceTextures[p].width;
+            float texH = (float)pieceTextures[p].height;
             
-            // For pawns, we might want to also push them slightly lower since they are shorter
-            float yOffset = offset;
-            if (p == Chess::W_PAWN || p == Chess::B_PAWN) yOffset += (SQUARE_SIZE * 0.05f); 
+            float scale = ((float)SQUARE_SIZE * pieceScale) / std::max(texW, texH);
+            float drawnW = texW * scale;
+            float drawnH = texH * scale;
 
-            DrawTextureEx(pieceTextures[p], {(float)drawX + offset, (float)drawY + yOffset}, 0.0f, scale, WHITE);
+            float offsetX = ((float)SQUARE_SIZE - drawnW) / 2.0f;
+            float offsetY = ((float)SQUARE_SIZE - drawnH) / 2.0f;
+
+            DrawTextureEx(pieceTextures[p], {(float)drawX + offsetX, (float)drawY + offsetY}, 0.0f, scale, WHITE);
         }
     }
     
@@ -154,14 +157,18 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
         
         if (anim.piece >= 0 && anim.piece < 14 && pieceTextures[anim.piece].id != 0) {
             float pieceScale = (anim.piece == Chess::W_PAWN || anim.piece == Chess::B_PAWN) ? 0.70f : 0.85f;
-            float scale = ((float)SQUARE_SIZE * pieceScale) / pieceTextures[anim.piece].width;
-            float offset = ((float)SQUARE_SIZE * (1.0f - pieceScale)) / 2.0f;
-            
-            float yOffset = offset;
-            if (anim.piece == Chess::W_PAWN || anim.piece == Chess::B_PAWN) yOffset += (SQUARE_SIZE * 0.05f); 
+            float texW = (float)pieceTextures[anim.piece].width;
+            float texH = (float)pieceTextures[anim.piece].height;
 
-            pos.x += offset;
-            pos.y += yOffset;
+            float scale = ((float)SQUARE_SIZE * pieceScale) / std::max(texW, texH);
+            float drawnW = texW * scale;
+            float drawnH = texH * scale;
+
+            float offsetX = ((float)SQUARE_SIZE - drawnW) / 2.0f;
+            float offsetY = ((float)SQUARE_SIZE - drawnH) / 2.0f;
+
+            pos.x += offsetX;
+            pos.y += offsetY;
             DrawTextureEx(pieceTextures[anim.piece], pos, 0.0f, scale, WHITE);
         }
     }
