@@ -77,6 +77,8 @@ This application specifically relies on the Win32 API (`CreateProcess`, `CreateP
 
 The project incorporates a robust suite of unit tests for the core chess logic. Testing includes standard FEN setups, check states, material draw rules, and 'Perft' (Performance Test) node counting for move generation verification.
 
+> **Important:** Please check the [tests.md](tests.md) document each time a test is made or updated. It contains vital information on current test coverage, missing coverage, and recommendations for test efficiency.
+
 1. **Build Tests**:
     ```bash
     cmake --build build --config Release --target ChessTests
