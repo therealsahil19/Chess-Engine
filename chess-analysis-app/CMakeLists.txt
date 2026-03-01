@@ -34,7 +34,6 @@ add_custom_command(TARGET ChessApp POST_BUILD
 )
 
 add_executable(ChessTests tests/test_runner.cpp ${CORE_SOURCES})
-add_executable(TestCheck test_check.cpp ${CORE_SOURCES})
 
 # Copy assets to build directory if needed (or just reference them)
 # file(COPY src/assets DESTINATION ${CMAKE_BINARY_DIR}/assets)

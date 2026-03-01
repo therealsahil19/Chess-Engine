@@ -1,113 +1,114 @@
 # Chess Analysis App (Native C++)
 
-A high-performance, native desktop chess application built with C++17 and [Raylib](https://www.raylib.com/), integrated with the Stockfish chess engine.
+A high-performance, native desktop chess application built with C++17 and [Raylib](https://www.raylib.com/), seamlessly integrated with the renowned Stockfish chess engine.
 
 ## Features
 
-- **Core Chess Engine**:
-  - Complete implementation of chess rules (Castling, En Passant, Promotion).
-  - Legal move generation and validation.
-  - Game End Detection: Checkmate, Stalemate, Insufficient Material, 50-Move Rule.
-- **Native GUI with Modern Aesthetics**:
-  - Fast, hardware-accelerated rendering using Raylib.
-  - Custom dark theme UI (IntelliJ/Lichess inspired).
-  - High-res piece textures (128x128px PNGs with built-in sub-sampling and square fitting).
-  - Interactive board with slick click-to-move animations.
-- **Advanced Stockfish Integration**:
-  - Automated analysis of current board positions using the Stockfish engine.
-  - Vertical dynamic evaluation bar tied directly to Stockfish's real-time centipawn/mate score.
-  - Display of numerical evaluation and best move suggestions in the side panel.
-- **Comprehensive Game Controls**:
-  - `Flip Board` and `Reload` controls for board manipulation.
-  - Interactive media playback buttons (`|<`, `<`, `||`, `>`, `>|`) to traverse the game history.
-  - A scrollable "Move Table" displaying standard algebraic notation (SAN).
-- **File & Input Support**:
-  - **PGN Loading**: Drag & drop `.pgn` files to parse and replay games automatically.
-  - **FEN Loading**: Drag & drop `.fen` files or text files containing FEN strings to load positions.
-  - **Paste Dialog**: Advanced "Paste PGN" overlay dialog with preview wrapping. Supports standard `Ctrl+V` clipboard pasting.
+### Core Chess Engine
+- **Robust Rules Implementation**: Complete support for core chess rules including Castling, En Passant, and Pawn Promotion.
+- **Accurate Move Generation**: Fully verified pseudo-legal and legal move generation, backed by perft testing.
+- **Game State Detection**: Native detection for Checkmate, Stalemate, and Insufficient Material draws.
+- **FEN and PGN Parsing**: Native capability to parse Forsyth-Edwards Notation (FEN) state and Standard Algebraic Notation (SAN) for move logging.
+
+### Native GUI with Modern Aesthetics
+- **Hardware-Accelerated Rendering**: Fast and smooth UI powered by Raylib.
+- **High-Contrast Dark Theme**: A sleek Lichess/IntelliJ-inspired dark UI.
+- **High-Resolution Textures**: Utilizes 128x128px high-quality PNG textures for chess pieces, providing crisp visuals.
+- **Interactive Board**: Intuitive click-to-move animations, board flipping, and piece selection highlighting.
+- **Dynamic Board Flipping**: Toggleable board orientation for both White and Black perspectives.
+
+### Advanced Stockfish Integration
+- **Automated Deep Analysis**: Connects automatically to the `stockfish.exe` engine via standard Windows pipes.
+- **Real-Time Evaluation Bar**: A dynamic visual evaluation bar tied directly to Stockfish's centipawn/mate score.
+- **Best Move Indicators**: Displays numerical evaluation and best move suggestions directly in the right-side analysis panel.
+- **Multi-Threaded**: Runs the engine synchronously in a background thread, ensuring smooth UI performance during deep calculations.
+
+### Comprehensive Game Controls
+- **Interactive Move Navigation**: On-screen playback controls (`|<`, `<`, `||`, `>`, `>|`) to effortlessly step forwards and backwards through game history.
+- **Move History Table**: A fully scrollable "Move Table" displaying the standard algebraic notation (SAN) for both players.
+- **Keyboard Shortcuts**: Arrow keys for quick move undo/redo, and `F11` for fullscreen mode.
+
+### Advanced Input & File Support
+- **Drag & Drop Loading**: Drag a `.pgn` or `.fen` file straight into the application window to load game history or positions.
+- **Intelligent Paste Dialog**: A dedicated "Paste PGN" overlay. Use standard `Ctrl+V` to parse PGN/FEN strings from your clipboard directly into the application with wrapped text previews.
 
 ## Platform Support
 
 **Windows Only**
-This application currently relies on the Win32 API (`CreateProcess`, pipes) for communicating with the Stockfish engine. Linux and macOS are not currently supported.
+This application specifically relies on the Win32 API (`CreateProcess`, `CreatePipe`, `SECURITY_ATTRIBUTES`) for managing and communicating with the external Stockfish engine child process.
 
 ## Prerequisites
 
 - **CMake** (3.20 or newer)
 - **C++ Compiler** with C++17 support (MSVC recommended for Windows).
-- **Stockfish Executable**: You must have `stockfish.exe` available. A compatible binary is provided in the `stockfish/` directory.
+- **Stockfish Executable**: You must have `stockfish.exe` available. A compatible binary should be provided in the project root or `stockfish/` directory.
 
 ## Build Instructions
 
 1. **Clone the repository**:
-
     ```bash
     git clone https://github.com/yourusername/Chess-Engine.git
     cd Chess-Engine
     ```
 
-2. **Navigate to the app source**:
-
+2. **Navigate to the application source**:
     ```bash
     cd chess-analysis-app
     ```
 
-3. **Configure**:
-
+3. **Configure the build using CMake**:
     ```bash
     cmake -S . -B build
     ```
+    *Note: Raylib will be automatically fetched and built from source via CMake FetchContent.*
 
-    *Note: Raylib will be automatically fetched and built.*
-
-4. **Build**:
-
+4. **Build the application**:
     ```bash
     cmake --build build --config Release
     ```
 
 5. **Setup Stockfish**:
-    Copy `stockfish-windows-x86-64-avx2.exe` from the `../stockfish/` directory (or your own `stockfish.exe`) to the directory where the built executable is located (e.g., `chess-analysis-app/build/Release/`) and rename it to `stockfish.exe`.
+    Ensure the `stockfish.exe` binary is available in the output directory (e.g., `chess-analysis-app/build/Release/`). A custom CMake post-build step automatically copies `stockfish.exe` to the target directory if it exists in the source root. The build step also copies the `textures/` directory.
 
 6. **Run**:
-    Execute `ChessApp.exe` from the build directory.
+    Execute `ChessApp.exe` from the built directory!
 
 ## Testing
 
-The project includes a suite of unit tests for the core chess logic to guarantee robustness (including Perft testing).
+The project incorporates a robust suite of unit tests for the core chess logic. Testing includes standard FEN setups, check states, material draw rules, and 'Perft' (Performance Test) node counting for move generation verification.
 
 1. **Build Tests**:
-
     ```bash
     cmake --build build --config Release --target ChessTests
     ```
 
 2. **Run Tests**:
-
     ```bash
     .\build\Release\ChessTests.exe
     ```
 
-## Controls
+## Controls Overview
 
-- **Left Click**: Select a piece / Move to a valid square.
+- **Left Click**: Select a piece / Move to a valid square / Interact with UI buttons.
 - **Click on Own Piece**: Reselect different piece.
-- **Drag & Drop**: Drop a `.pgn` or `.fen` file onto the window to load it.
+- **Drag & Drop**: Drop a `.pgn` or `.fen` file onto the window.
 - **Arrow Keys**:
-  - `Right`: Next move in loaded game record.
+  - `Right`: Next move in the game record.
   - `Left`: Previous move (undo).
 - **F11**: Toggle Fullscreen.
 - **Scroll Wheel**: Scroll up and down inside the Move History table.
-- **Paste PGN Dialog**: Click "Paste PGN", then press `Ctrl+V` to load text from your clipboard. Hit "Analyze" to load it onto the board.
-- **Media Controls**: Navigate forwards, backwards, to start, or to end of move list.
+- **Paste PGN Dialog**: Click the "Paste PGN" button, press `Ctrl+V` to load text from your clipboard, and click "Analyze" to execute it.
+- **Media Controls**: Navigate forwards, backwards, to start, or to the end of the move list directly from the GUI.
 
 ## Project Structure
 
-- `chess-analysis-app/src/core/`: Chess logic (Board representation, Move generation, Rules).
-  - `board.hpp`: Header-only implementation of the Board logic.
-  - `move_gen.cpp`: Move generation logic.
-  - `types.hpp`: Basic types (Bitboard, Piece, Square).
-- `chess-analysis-app/src/engine/`: Stockfish integration.
-  - `stockfish.cpp`: Win32 process management for the engine.
-- `chess-analysis-app/src/main.cpp`: Entry point, Game Loop, and Raylib GUI rendering.
-- `chess-analysis-app/CMakeLists.txt`: Build configuration.
+- `chess-analysis-app/src/core/`: The foundational chess logic independent of any graphical or engine concerns.
+  - `board.hpp` / `game_record.hpp`: Board representation, game history tracking, and piece movement.
+  - `move_gen.cpp` / `move_utils.hpp`: Move generation, validation, and SAN/FEN conversion helpers.
+  - `types.hpp` / `types.cpp`: Primitive chess types (Square, Move, Piece, Side).
+- `chess-analysis-app/src/engine/`: Interface for external engine communication.
+  - `stockfish.cpp` / `stockfish.hpp`: Win32 native child process management and standard I/O pipe reading.
+- `chess-analysis-app/src/main.cpp`: The central entry point, rendering game loop (Raylib), and application state management.
+- `chess-analysis-app/tests/`: Unit testing suite including `test_runner.cpp`.
+- `chess-analysis-app/CMakeLists.txt`: Project definitions, FetchContent, and target building.
+- `textures/`: High-resolution visual assets.
