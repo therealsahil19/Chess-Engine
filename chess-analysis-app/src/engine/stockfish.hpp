@@ -5,8 +5,14 @@
 #include <functional>
 #include <vector>
 #include <mutex>
+#include <condition_variable>
 
 namespace Engine {
+
+struct EngineResult {
+    float centipawns = 0.0f;
+    std::string best_move;
+};
 
 class StockfishClient {
 public:
@@ -22,6 +28,9 @@ public:
     void go(int depth = 20);
     void stopAnalysis();
 
+    // Blocking analysis for Game Review
+    EngineResult analyzePosition(const std::string& fen, int depth);
+
     // Callbacks
     using EvalCallback = std::function<void(const std::string& score, const std::string& bestMove)>;
     void setEvalCallback(EvalCallback cb);
@@ -33,6 +42,11 @@ private:
     
     EvalCallback onEval;
     std::mutex callbackMutex;
+    
+    // Sync analysis state
+    std::condition_variable syncCv;
+    bool syncMode = false;
+    EngineResult syncResult;
 
     // Use void* to avoid including windows.h in header (Raylib conflict)
     void* hChildStd_IN_Wr = nullptr;

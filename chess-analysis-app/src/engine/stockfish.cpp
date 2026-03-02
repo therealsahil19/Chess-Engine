@@ -172,7 +172,8 @@ void StockfishClient::readOutputLoop() {
             std::string_view line(buffer.data() + pos, nextPos - pos);
             if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
             
-            if (line.compare(0, 4, "info") == 0 && line.find("score") != std::string_view::npos) {
+            if ((line.compare(0, 4, "info") == 0 && line.find("score") != std::string_view::npos) ||
+                line.compare(0, 8, "bestmove") == 0) {
                 parseOutput(std::string(line));
             }
             pos = nextPos + 1;
@@ -189,6 +190,7 @@ void StockfishClient::parseOutput(const std::string& line) {
     if (line.rfind("info", 0) == 0 && line.find("score") != std::string::npos) {
         std::string score = "";
         std::string bestMove = ""; // "pv" usually follows
+        float current_cp = 0.0f;
         
         std::istringstream iss(line);
         std::string token;
@@ -199,8 +201,10 @@ void StockfishClient::parseOutput(const std::string& line) {
                 iss >> type >> val;
                 if (type == "cp") {
                     score = (val > 0 ? "+" : "") + std::to_string((float)val / 100.0f);
+                    current_cp = (float)val;
                 } else if (type == "mate") {
                     score = "#" + std::to_string(val);
+                    current_cp = (val > 0) ? 30000.0f - val : -30000.0f - val;
                 }
             }
              else if (token == "pv") {
@@ -211,7 +215,37 @@ void StockfishClient::parseOutput(const std::string& line) {
         // Callback
         std::lock_guard<std::mutex> lock(callbackMutex);
         if (onEval) onEval(score, bestMove);
+        if (syncMode) {
+            syncResult.centipawns = current_cp;
+        }
+    } else if (line.rfind("bestmove", 0) == 0) {
+        std::istringstream iss(line);
+        std::string token, bmove;
+        iss >> token >> bmove;
+        
+        std::lock_guard<std::mutex> lock(callbackMutex);
+        if (syncMode) {
+            syncResult.best_move = bmove;
+            syncMode = false;
+            syncCv.notify_all();
+        }
     }
+}
+
+EngineResult StockfishClient::analyzePosition(const std::string& fen, int depth) {
+    {
+        std::lock_guard<std::mutex> lock(callbackMutex);
+        syncMode = true;
+        syncResult = EngineResult{};
+    }
+
+    sendCommand("position fen " + fen);
+    sendCommand("go depth " + std::to_string(depth));
+
+    std::unique_lock<std::mutex> lock(callbackMutex);
+    syncCv.wait(lock, [this]{ return !syncMode; });
+    
+    return syncResult;
 }
 
 } // namespace Engine

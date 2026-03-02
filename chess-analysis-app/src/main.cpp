@@ -2,6 +2,7 @@
 #include "core/board.hpp"
 #include "core/game_record.hpp"
 #include "engine/stockfish.hpp"
+#include "engine/game_reviewer.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -10,6 +11,8 @@
 
 // Forward declaration of the platform-specific clipboard function
 std::string GetClipboardTextFallback();
+
+enum class ReviewState { IDLE, REVIEWING, REVIEW_DONE };
 
 // Constants
 const int SCREEN_WIDTH = 1280; // Expanded for UI
@@ -27,6 +30,54 @@ const Color COLOR_HIGHLIGHT = { 255, 246, 126, 180 }; // Yellow highlight
 const Color COLOR_SELECTED = { 186, 202, 43, 200 };   // Lime-ish green for selection
 const Color COLOR_TEXT_MAIN = { 205, 205, 205, 255 }; 
 const Color COLOR_TEXT_DIM = { 150, 150, 150, 255 };
+
+const char* classificationSymbol(Chess::MoveClassification c) {
+    switch(c) {
+        case Chess::MoveClassification::Brilliant:  return "!!";
+        case Chess::MoveClassification::Best:       return "!";
+        case Chess::MoveClassification::Excellent:  return "!?"; 
+        case Chess::MoveClassification::Good:       return "";
+        case Chess::MoveClassification::Inaccuracy: return "?!";
+        case Chess::MoveClassification::Mistake:    return "?";
+        case Chess::MoveClassification::Blunder:    return "??";
+        default:                                    return "";
+    }
+}
+
+Color classificationColor(Chess::MoveClassification c) {
+    switch(c) {
+        case Chess::MoveClassification::Brilliant:  return {0, 200, 255, 255};   
+        case Chess::MoveClassification::Best:       return {100, 230, 100, 255}; 
+        case Chess::MoveClassification::Good:       return {180, 230, 120, 255}; 
+        case Chess::MoveClassification::Inaccuracy: return {240, 200, 50, 255};  
+        case Chess::MoveClassification::Mistake:    return {240, 140, 50, 255};  
+        case Chess::MoveClassification::Blunder:    return {220, 50, 50, 255};   
+        default:                                    return COLOR_TEXT_MAIN;
+    }
+}
+
+void drawEvalGraph(const std::vector<Chess::MoveReview>& reviews, int current_ply, Rectangle bounds) {
+    DrawRectangleRec(bounds, Fade(BLACK, 0.3f));
+    float mid_y = bounds.y + bounds.height / 2.0f;
+    DrawLineEx({bounds.x, mid_y}, {bounds.x + bounds.width, mid_y}, 1.0f, Fade(WHITE, 0.2f));
+
+    if (reviews.empty()) return;
+
+    float x_step = bounds.width / (float)reviews.size();
+
+    for (size_t i = 0; i < reviews.size(); ++i) {
+        float eval = reviews[i].eval_after; 
+        eval = std::clamp(eval, -800.0f, 800.0f);
+        float norm = (eval + 800.0f) / 1600.0f; 
+        float bar_height = norm * bounds.height;
+        float y = bounds.y + bounds.height - bar_height;
+
+        Color fill = (eval >= 0) ? WHITE : Fade(WHITE, 0.2f);
+        DrawRectangle(bounds.x + i * x_step, y, x_step, bar_height, fill);
+    }
+    float cx = bounds.x + current_ply * x_step;
+    DrawLineEx({cx, bounds.y}, {cx, bounds.y + bounds.height}, 2.0f, COLOR_HIGHLIGHT);
+}
 
 struct AnimState {
     bool active = false;
@@ -174,7 +225,7 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
     }
 }
 
-void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Chess::GameRecord& gameRecord, const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn, Vector2 mousePos) {
+void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Chess::GameRecord& gameRecord, const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn, Vector2 mousePos, ReviewState reviewState, const Chess::GameReviewer& gameReviewer) {
     int infoX = SCREEN_WIDTH - 320;
     
     std::string displayEval, displayBestMove;
@@ -236,6 +287,24 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
             scroll = 0;
         }
         
+        auto drawAnnotatedMove = [&](int idx, int drawX, int drawY) {
+            if (idx < gameRecord.sanMoves.size()) {
+                std::string text = gameRecord.sanMoves[idx];
+                DrawText(text.c_str(), drawX, drawY, 18, COLOR_TEXT_MAIN);
+                if (reviewState == ReviewState::REVIEW_DONE) {
+                    const auto& results = gameReviewer.getResults();
+                    if (idx < results.size()) {
+                        auto cls = results[idx].classification;
+                        const char* sym = classificationSymbol(cls);
+                        if (sym[0] != '\0') {
+                            int textW = MeasureText(text.c_str(), 18);
+                            DrawText(sym, drawX + textW + 2, drawY, 16, classificationColor(cls));
+                        }
+                    }
+                }
+            }
+        };
+
         for (int i = 0; i < visibleRows; i++) {
             int rowIndex = scroll + i;
             if (rowIndex >= numRows) break;
@@ -249,12 +318,21 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
             if (whiteMoveIdx == gameRecord.currentIndex - 1) DrawRectangle(infoX + 30, itemsY + i * rowHeight - 2, tableWidth / 2 - 30, rowHeight, Fade(COLOR_SELECTED, 0.5f));
             if (blackMoveIdx == gameRecord.currentIndex - 1) DrawRectangle(infoX + tableWidth / 2 + 5, itemsY + i * rowHeight - 2, tableWidth / 2 - 10, rowHeight, Fade(COLOR_SELECTED, 0.5f));
 
-            if (whiteMoveIdx < gameRecord.sanMoves.size()) {
-                DrawText(gameRecord.sanMoves[whiteMoveIdx].c_str(), infoX + 40, itemsY + i * rowHeight, 18, COLOR_TEXT_MAIN);
-            }
-            if (blackMoveIdx < gameRecord.sanMoves.size()) {
-                DrawText(gameRecord.sanMoves[blackMoveIdx].c_str(), infoX + tableWidth / 2 + 30, itemsY + i * rowHeight, 18, COLOR_TEXT_MAIN);
-            }
+            drawAnnotatedMove(whiteMoveIdx, infoX + 40, itemsY + i * rowHeight);
+            drawAnnotatedMove(blackMoveIdx, infoX + tableWidth / 2 + 30, itemsY + i * rowHeight);
+        }
+
+        if (reviewState == ReviewState::REVIEW_DONE) {
+            drawEvalGraph(gameReviewer.getResults(), gameRecord.currentIndex, { (float)infoX, (float)(tableY + tableHeight + 10), (float)tableWidth, 100 });
+            auto wSum = Chess::computeSummary(gameReviewer.getResults(), true);
+            auto bSum = Chess::computeSummary(gameReviewer.getResults(), false);
+            DrawText(TextFormat("W Acc: %.1f%%  B Acc: %.1f%%", wSum.accuracy, bSum.accuracy), infoX, 920, 18, COLOR_TEXT_MAIN);
+            DrawText(TextFormat("W Err: %d?? %d? %d?!", wSum.blunders, wSum.mistakes, wSum.inaccuracies), infoX, 940, 14, COLOR_TEXT_DIM);
+            DrawText(TextFormat("B Err: %d?? %d? %d?!", bSum.blunders, bSum.mistakes, bSum.inaccuracies), infoX + 150, 940, 14, COLOR_TEXT_DIM);
+        } else if (reviewState == ReviewState::REVIEWING) {
+            DrawRectangle(infoX, 920, tableWidth, 20, Fade(BLACK, 0.5f));
+            DrawRectangle(infoX, 920, tableWidth * gameReviewer.getProgress(), 20, COLOR_SELECTED);
+            DrawText("Analyzing...", infoX + 5, 922, 16, COLOR_BG);
         }
     }
 }
@@ -359,6 +437,9 @@ int main() {
     Chess::GameRecord gameRecord;
     Engine::StockfishClient engine("stockfish.exe");
     
+    Chess::GameReviewer gameReviewer;
+    ReviewState reviewState = ReviewState::IDLE;
+
     if (!engine.start()) {
         std::cerr << "Warning: Could not start stockfish.exe. Analysis disabled." << std::endl;
     }
@@ -386,6 +467,7 @@ int main() {
     std::string initialFen = board.getFen();
     
     auto triggerAnalysis = [&]() {
+        if (reviewState == ReviewState::REVIEWING) return;
         engine.stopAnalysis();
         engine.setPosition(board.getFen());
         engine.go(20); 
@@ -394,6 +476,13 @@ int main() {
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
         Vector2 mousePos = GetMousePosition();
+        
+        if (reviewState == ReviewState::REVIEWING) {
+            if (gameReviewer.isReviewComplete()) {
+                reviewState = ReviewState::REVIEW_DONE;
+                triggerAnalysis();
+            }
+        }
         
         if (IsFileDropped()) {
             FilePathList droppedFiles = LoadDroppedFiles();
@@ -443,7 +532,7 @@ int main() {
             selectedSq = -1;
         }
 
-        if (!anim.active && !showPasteDialog) {
+        if (!anim.active && !showPasteDialog && reviewState != ReviewState::REVIEWING) {
             if (IsKeyPressed(KEY_RIGHT) && gameRecord.hasNext()) {
                 Chess::Move m = gameRecord.next();
                 anim.active = true;
@@ -480,8 +569,23 @@ int main() {
                  board.loadFen(initialFen);
                  gameRecord.reset();
                  isAnalysisActive = false;
+                 reviewState = ReviewState::IDLE;
                  triggerAnalysis();
                  selectedSq = -1;
+                 clickedUI = true;
+            } else if (isAnalysisActive && CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 260, 20, 130, 40 })) {
+                 if (reviewState != ReviewState::REVIEWING) {
+                     std::vector<std::string> fens;
+                     Chess::Board tempBoard;
+                     tempBoard.loadFen(initialFen);
+                     fens.push_back(tempBoard.getFen());
+                     for (const auto& m : gameRecord.moves) {
+                         tempBoard.makeMove(m);
+                         fens.push_back(tempBoard.getFen());
+                     }
+                     gameReviewer.startReview(fens, engine, 18);
+                     reviewState = ReviewState::REVIEWING;
+                 }
                  clickedUI = true;
             }
             // Paste Button
@@ -534,7 +638,7 @@ int main() {
                 }
             }
 
-            if (!clickedUI && !anim.active) {
+            if (!clickedUI && !anim.active && reviewState != ReviewState::REVIEWING) {
                 if (mousePos.x >= BOARD_OFFSET_X && mousePos.x < BOARD_OFFSET_X + BOARD_SIZE &&
                     mousePos.y >= BOARD_OFFSET_Y && mousePos.y < BOARD_OFFSET_Y + BOARD_SIZE) {
                     
@@ -621,6 +725,11 @@ int main() {
         DrawRectangle(BOARD_OFFSET_X + 130, 20, 110, 40, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 130, 20, 110, 40 }) ? RED : COLOR_DARK);
         DrawText("Reload", BOARD_OFFSET_X + 150, 30, 18, COLOR_TEXT_MAIN);
 
+        if (isAnalysisActive) {
+            DrawRectangle(BOARD_OFFSET_X + 260, 20, 130, 40, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 260, 20, 130, 40 }) ? COLOR_SELECTED : COLOR_DARK);
+            DrawText("Review", BOARD_OFFSET_X + 295, 30, 18, COLOR_TEXT_MAIN);
+        }
+
         DrawBoardBackground(selectedSq, isBoardFlipped);
         DrawPieces(board, anim, isBoardFlipped, pieceTextures);
 
@@ -649,7 +758,7 @@ int main() {
             }
         }
 
-        DrawSidePanel(showPasteDialog, isAnalysisActive, tableScroll, gameRecord, currentEval, bestMoveSan, evalMutex, board.getTurn(), mousePos);
+        DrawSidePanel(showPasteDialog, isAnalysisActive, tableScroll, gameRecord, currentEval, bestMoveSan, evalMutex, board.getTurn(), mousePos, reviewState, gameReviewer);
         DrawPasteDialog(showPasteDialog, dialogPgnText, submitPastedPgn, mousePos);
         
         EndDrawing();
