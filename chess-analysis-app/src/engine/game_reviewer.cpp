@@ -23,27 +23,31 @@ void GameReviewer::startReview(const std::vector<std::string>& fens, Engine::Sto
         // Phase 1: get eval for every position
         for (size_t i = 0; i < fens.size(); ++i) {
             auto res = engine.analyzePosition(fens[i], depth);
-            evals[i] = res.centipawns;
+            bool black_to_move = fens[i].find(" b ") != std::string::npos;
+            evals[i] = black_to_move ? -res.centipawns : res.centipawns;
             best_moves[i] = res.best_move;
             progress_ = (float)i / fens.size() * 0.9f;
         }
 
         // Phase 2: classify each move
         for (size_t i = 0; i < results_.size(); ++i) {
-            bool white_to_move = (i % 2 == 0);
-            float before = evals[i];
-            float after  = evals[i + 1];
+            bool white_to_move = (fens[i].find(" w ") != std::string::npos);
+            float before_white = evals[i];
+            float after_white  = evals[i + 1];
 
-            float cp_loss = white_to_move ? (before - after) : (after - before);
+            float before_mover = white_to_move ? before_white : -before_white;
+            float after_mover  = white_to_move ? after_white  : -after_white;
+
+            float cp_loss = white_to_move ? (before_white - after_white) : (after_white - before_white);
             cp_loss = std::max(0.0f, cp_loss);
 
             results_[i] = {
                 (int)i,
-                before,
-                after,
+                before_white,
+                after_white,
                 cp_loss,
                 best_moves[i],
-                classifyMove(cp_loss, before)
+                classifyMove(cp_loss, before_mover)
             };
         }
         progress_ = 1.0f;
@@ -60,7 +64,7 @@ float GameReviewer::getProgress() const {
 }
 
 MoveClassification GameReviewer::classifyMove(float cp_loss, float eval_before) {
-    if (std::abs(eval_before) > 300.0f) {
+    if (eval_before < -300.0f) {
         cp_loss *= 0.5f;
     }
 
