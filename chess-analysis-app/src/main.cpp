@@ -40,6 +40,7 @@ const char* classificationSymbol(Chess::MoveClassification c) {
         case Chess::MoveClassification::Inaccuracy: return "?!";
         case Chess::MoveClassification::Mistake:    return "?";
         case Chess::MoveClassification::Blunder:    return "??";
+        case Chess::MoveClassification::GameEnd:    return "";
         default:                                    return "";
     }
 }
@@ -52,6 +53,7 @@ Color classificationColor(Chess::MoveClassification c) {
         case Chess::MoveClassification::Inaccuracy: return {240, 200, 50, 255};  
         case Chess::MoveClassification::Mistake:    return {240, 140, 50, 255};  
         case Chess::MoveClassification::Blunder:    return {220, 50, 50, 255};   
+        case Chess::MoveClassification::GameEnd:    return COLOR_TEXT_DIM;
         default:                                    return COLOR_TEXT_MAIN;
     }
 }
@@ -583,7 +585,15 @@ int main() {
                          tempBoard.makeMove(m);
                          fens.push_back(tempBoard.getFen());
                      }
-                     gameReviewer.startReview(fens, engine, 18);
+                     std::string game_result = "";
+                     size_t resPos = dialogPgnText.find("[Result \"");
+                     if (resPos != std::string::npos) {
+                         size_t endPos = dialogPgnText.find("\"", resPos + 9);
+                         if (endPos != std::string::npos) {
+                             game_result = dialogPgnText.substr(resPos + 9, endPos - (resPos + 9));
+                         }
+                     }
+                     gameReviewer.startReview(fens, engine, 18, game_result);
                      reviewState = ReviewState::REVIEWING;
                  }
                  clickedUI = true;

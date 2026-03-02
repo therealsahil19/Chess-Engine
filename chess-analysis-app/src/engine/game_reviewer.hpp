@@ -16,7 +16,8 @@ enum class MoveClassification {
     Inaccuracy,
     Mistake,
     Blunder,
-    Book
+    Book,
+    GameEnd
 };
 
 struct MoveReview {
@@ -38,7 +39,7 @@ struct ReviewSummary {
 
 class GameReviewer {
 public:
-    void startReview(const std::vector<std::string>& fens, Engine::StockfishClient& engine, int depth = 18);
+    void startReview(const std::vector<std::string>& fens, Engine::StockfishClient& engine, int depth = 18, const std::string& game_result = "");
     bool isReviewComplete() const;
     float getProgress() const;
     const std::vector<MoveReview>& getResults() const { return results_; }
