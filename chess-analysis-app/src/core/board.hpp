@@ -19,13 +19,22 @@ public:
     Side getTurn() const;
     bool isCheck() const;
 
+    bool hasLegalMoves() const {
+        std::vector<Move> pseudo = generatePseudoLegalMoves();
+        Board copy = *this;
+        for (const auto& m : pseudo) {
+            if (copy.makeMove(m)) return true;
+        }
+        return false;
+    }
+
     // Inlined for linking
     bool isCheckmate() const {
-        return isCheck() && getLegalMoves().empty();
+        return isCheck() && !hasLegalMoves();
     }
 
     bool isStalemate() const {
-        return !isCheck() && getLegalMoves().empty();
+        return !isCheck() && !hasLegalMoves();
     }
     
     // Inlined for linking
@@ -560,19 +569,24 @@ private:
         }
         
         // Disambiguation
-        std::vector<Move> moves = getLegalMoves();
+        std::vector<Move> pseudoMoves = generatePseudoLegalMoves();
         bool anySameFile = false;
         bool anySameRank = false; // "rank" means row here (0-7)
         bool ambiguous = false;
 
-        for (const auto& other : moves) {
+        Board copy = *this;
+        for (const auto& other : pseudoMoves) {
             if (other.from == m.from) continue;
             if (other.dest != m.dest) continue;
             if (typeOf(board[other.from]) != pt) continue; // Should be same type if we are here
             
-            ambiguous = true;
-            if ( (other.from % 8) == (m.from % 8) ) anySameFile = true;
-            if ( (other.from / 8) == (m.from / 8) ) anySameRank = true;
+            // Check if this competing pseudo-legal move is actually legal
+            if (copy.makeMove(other)) {
+                copy.undoMove();
+                ambiguous = true;
+                if ( (other.from % 8) == (m.from % 8) ) anySameFile = true;
+                if ( (other.from / 8) == (m.from / 8) ) anySameRank = true;
+            }
         }
 
         if (pt == PAWN) {

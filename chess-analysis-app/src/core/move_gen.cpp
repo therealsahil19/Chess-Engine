@@ -15,26 +15,6 @@ bool isSquareValid(int sq) {
     return sq >= 0 && sq < 64;
 }
 
-// Check if moving 'step' from 'current' crosses board edge
-// For 1D representation, we need to be careful about file wrapping.
-// We can check if file index changes by more than 1 or wraps.
-bool isWrap(int from, int destSq) {
-    int f1 = from % 8;
-    int f2 = destSq % 8;
-    // If we moved horizontally/diagonally, file diff should be small
-    // Actually, simpler approach:
-    // Precompute distances to edge for every square/direction? 
-    // Or just robust coordinate math.
-    int r1 = from / 8;
-    int r2 = destSq / 8;
-    int dr = r2 - r1;
-    int df = f2 - f1;
-    // If it's a valid sliding move, abs(dr) == abs(df) (diag) or one is 0 (straight)
-    if (abs(dr) == abs(df)) return false; // Diag OK
-    if (dr == 0 || df == 0) return false; // Straight OK
-    return true; // Invalid jump (wrap)
-}
-
 // Improved direction logic
 // Directions: N=8, S=-8, E=1, W=-1, NE=9, NW=7, SE=-7, SW=-9
 // We need to check if we cross file boundaries for E/W components.

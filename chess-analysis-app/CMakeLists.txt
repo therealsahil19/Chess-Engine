@@ -33,7 +33,7 @@ add_custom_command(TARGET ChessApp POST_BUILD
     "$<TARGET_FILE_DIR:ChessApp>"
 )
 
-add_executable(ChessTests tests/test_runner.cpp ${CORE_SOURCES})
+add_executable(ChessTests tests/test_runner.cpp ${CORE_SOURCES} ${ENGINE_SOURCES})
 add_executable(TestCheck test_check.cpp ${CORE_SOURCES})
 
 # Copy assets to build directory if needed (or just reference them)

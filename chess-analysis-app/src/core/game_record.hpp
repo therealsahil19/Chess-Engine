@@ -51,7 +51,7 @@ public:
          // We might need a temp board to generate correct notations if we want SAN, 
          // but for engine communication, coordinate notation (which we can derive from Move) is best.
          // `Move` struct has indices, `squareToString` helper exists in board.hpp logic?
-         // We need to implement `moveToCoord` helper.
+
          return moveStrs;
     }
     
@@ -60,11 +60,6 @@ public:
         evaluations[moveIndex] = eval;
     }
     
-    std::string getEval(int moveIndex) const {
-        auto it = evaluations.find(moveIndex);
-        if (it != evaluations.end()) return it->second;
-        return "";
-    }
 
     // Public members for direct access if needed, or keeping simple
     std::vector<Move> moves;

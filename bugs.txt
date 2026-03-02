@@ -1,489 +1,242 @@
 EASY
 
 Description
-The application creates a child process using an unquoted path, which can lead to the execution of a malicious executable placed in the file system.
+The addMove() function manages game history and truncates future moves if adding a move in the past, but it lacks unit tests.
 
 Location
-chess-analysis-app/src/engine/stockfish.cpp:48
+chess-analysis-app/src/core/game_record.hpp:13
 
 Rationale
-The `CreateProcessA` function is called with `exePath` as the command line without surrounding quotes. If the path contains spaces, Windows may misinterpret the executable path.
+The addMove function logic is self-contained. Adding a test requires instantiating GameRecord, adding a few dummy moves, changing the currentIndex, and adding a new move to verify truncation. This is simple state verification.
 
 Code context
-    std::string commandLine = exePath;
-    std::vector<char> cmd(commandLine.begin(), commandLine.end());
-    cmd.push_back(0);
+    GameRecord() : currentIndex(0) {}
 
-    if (!CreateProcessA(NULL, 
-        cmd.data(),     
-        NULL,          
-        NULL,          
-        TRUE,          
-        CREATE_NO_WINDOW, 
-        NULL,          
-        NULL,          
-        &siStartInfo,  
-        &piProcInfo    
-    )) {
+    void addMove(Move m, const std::string& san = "") {
+        // If we differ from history (we are in past), truncate future
+        if (currentIndex < moves.size()) {
+            moves.resize(currentIndex);
+            sanMoves.resize(currentIndex);
+        }
+        moves.push_back(m);
+        sanMoves.push_back(san);
+        currentIndex++;
+    }
 
 Description
-Verify that `parseSan` correctly converts SAN strings (e.g., "e4", "Nf3", "O-O") back into valid `Move` objects.
+The isCheckmate() function checks if the current side is in checkmate, but lacks dedicated unit tests.
 
 Location
-chess-analysis-app/src/core/board.hpp:588
+chess-analysis-app/src/core/board.hpp:23
 
 Rationale
-High confidence as testing parsing involves providing a string and checking if the returned move matches expectations.
+Testing this simply requires setting up a checkmate FEN and asserting the result is true. It can easily be done in under 10 lines of code using the existing testing macros.
 
 Code context
-    inline Move Board::parseSan(const std::string& san) const {
-        std::vector<Move> moves = getLegalMoves();
-        std::string cleanIn = san;
+    Piece getPiece(Square s) const;
+    Side getTurn() const;
+    bool isCheck() const;
+
+    // Inlined for linking
+    bool isCheckmate() const {
+        return isCheck() && getLegalMoves().empty();
+    }
+
+    bool isStalemate() const {
+        return !isCheck() && getLegalMoves().empty();
+    }
 
 Description
-Verify the `isInsufficientMaterial` function correctly identifies draw scenarios like King vs King, King+Knight vs King, etc.
+Calling getLegalMoves().empty() forces the allocation of multiple std::vector objects and validates all pseudo-legal moves, instead of returning true early on the first found legal move.
 
 Location
-chess-analysis-app/src/core/board.hpp:32
+chess-analysis-app/src/core/board.hpp:24
 
 Rationale
-High confidence as the logic for material counting is explicit and easy to test with specific board setups.
+We can add a `hasLegalMoves()` function that returns `true` as soon as `copy.makeMove(m)` is valid, avoiding full generation and allocation of vectors. The change is simple and self-contained within board class.
 
 Code context
-    bool isInsufficientMaterial() const {
-        int wPawn = 0, wKnight = 0, wBishop = 0, wRook = 0, wQueen = 0;
-        int bPawn = 0, bKnight = 0, bBishop = 0, bRook = 0, bQueen = 0;
+    // Inlined for linking
+    bool isCheckmate() const {
+        return isCheck() && getLegalMoves().empty();
+    }
+
+    bool isStalemate() const {
+        return !isCheck() && getLegalMoves().empty();
+    }
 
 Description
-The `generatePseudoLegalMoves` function in `move_gen.cpp` appears to be missing castling logic entirely. Add a test case to verify castling moves (e.g., `e1g1`) are generated, which will currently fail.
+The variables hChildStd_IN_Rd and hChildStd_OUT_Wr are declared in StockfishClient but never used.
 
 Location
-chess-analysis-app/src/core/move_gen.cpp:82
+chess-analysis-app/src/engine/stockfish.hpp:38
 
 Rationale
-High confidence as manual inspection shows missing castling generation logic, making this a critical bug to test and fix.
+A search for 'hChildStd_IN_Rd' and 'hChildStd_OUT_Wr' shows they are only declared in the header file and never used in the implementation file.
 
 Code context
-std::vector<Move> Board::generatePseudoLegalMoves() const {
-    std::vector<Move> moves;
-    moves.reserve(50); 
+    EvalCallback onEval;
+    std::mutex callbackMutex;
+
+    // Use void* to avoid including windows.h in header (Raylib conflict)
+    void* hChildStd_IN_Rd = nullptr;
+    void* hChildStd_IN_Wr = nullptr;
+    void* hChildStd_OUT_Rd = nullptr;
+    void* hChildStd_OUT_Wr = nullptr;
+    void* hProcess = nullptr;
+
+    void readOutputLoop();
+
+Description
+The inline function moveToCoord is defined but never used in the codebase.
+
+Location
+chess-analysis-app/src/core/move_utils.hpp:7
+
+Rationale
+A search for 'moveToCoord' reveals no usages other than its definition and a comment mentioning it. It can be safely removed or kept if intended for future use, but currently it is dead code.
+
+Code context
+#pragma once
+#include "types.hpp"
+#include <string>
+
+namespace Chess {
+
+inline std::string moveToCoord(const Move& m) {
+    std::string s = squareToString(m.from) + squareToString(m.dest);
+    if (m.promotion != NO_PIECE_TYPE) {
+        char p;
+        switch(m.promotion) {
+            case QUEEN: p = 'q'; break;
+            case ROOK: p = 'r'; break;
+            case BISHOP: p = 'b'; break;
+            case KNIGHT: p = 'n'; break;
+            default: p = 'q'; break;
+        }
+        s += p;
+    }
+    return s;
+}
+
+}
+
+Description
+The function isWrap is defined but never called, representing dead code that can be removed.
+
+Location
+chess-analysis-app/src/core/move_gen.cpp:21
+
+Rationale
+The function 'isWrap' is completely unused in the entire codebase based on a text search, making it safe to delete.
+
+Code context
+// Check if moving 'step' from 'current' crosses board edge
+// For 1D representation, we need to be careful about file wrapping.
+// We can check if file index changes by more than 1 or wraps.
+bool isWrap(int from, int destSq) {
+    int f1 = from % 8;
+    int f2 = destSq % 8;
+    // If we moved horizontally/diagonally, file diff should be small
+    // Actually, simpler approach:
+    // Precompute distances to edge for every square/direction? 
+    // Or just robust coordinate math.
+    int r1 = from / 8;
+    int r2 = destSq / 8;
+    int dr = r2 - r1;
+    int df = f2 - f1;
+    // If it's a valid sliding move, abs(dr) == abs(df) (diag) or one is 0 (straight)
+    if (abs(dr) == abs(df)) return false; // Diag OK
+    if (dr == 0 || df == 0) return false; // Straight OK
+    return true; // Invalid jump (wrap)
+}
+
+Description
+The method getEval is declared and defined in GameRecord but never used.
+
+Location
+chess-analysis-app/src/core/game_record.hpp:63
+
+Rationale
+A search for 'getEval' shows it is never used anywhere in the codebase. It can be safely removed.
+
+Code context
+    // Store eval
+    void setEval(int moveIndex, const std::string& eval) {
+        evaluations[moveIndex] = eval;
+    }
     
-    for (int from = 0; from < 64; from++) {
+    std::string getEval(int moveIndex) const {
+        auto it = evaluations.find(moveIndex);
+        if (it != evaluations.end()) return it->second;
+        return "";
+    }
 
-Description
-The project lacks a testing framework. Integrate a lightweight C++ testing library (like Catch2 or doctest) or create a simple `test_runner.cpp` to enable unit testing.
-
-Location
-chess-analysis-app/CMakeLists.txt:1
-
-Rationale
-High confidence as setting up a basic test runner is a standard procedure and essential for verifying the codebase.
-
-Code context
-cmake_minimum_required(VERSION 3.20)
-project(ChessEngineNative)
-
-set(CMAKE_CXX_STANDARD 17)
-
-Description
-Verify the `squareToString` and `stringToSquare` helper functions in `types.cpp` correctly convert between integer squares and algebraic notation.
-
-Location
-chess-analysis-app/src/core/types.cpp:6
-
-Rationale
-High confidence as these are pure functions with simple input/output mappings.
-
-Code context
-std::string squareToString(Square s) {
-    if (s < 0 || s >= 64) return "-";
-    int rank = s / 8;
-
-Description
-The `isCheck` function is critical for move validation. Add tests with various board positions where the king is under attack to ensure accuracy.
-
-Location
-chess-analysis-app/src/core/board.hpp:303
-
-Rationale
-High confidence as setting up a check scenario via FEN and asserting `isCheck()` is true/false is simple.
-
-Code context
-    inline bool Board::isCheck() const {
-        Square kingSq = -1;
-        Piece ourKing = makePiece(turn, KING);
-        for (int i = 0; i < 64; i++) {
-
-Description
-The `loadFen` function performs complex string parsing to set up the board state. Add tests with valid and invalid FEN strings to ensure correct parsing and error handling.
-
-Location
-chess-analysis-app/src/core/board.hpp:117
-
-Rationale
-High confidence as testing FEN parsing is straightforward: provide input string, assert resulting board state.
-
-Code context
-    inline void Board::loadFen(const std::string& fen) {
-        clear();
-        std::istringstream ss(fen);
-        std::string token;
-
-Description
-The `Board` class encapsulates the entire game state but currently has no tests. Create `tests/board_test.cpp` to cover its core functionality.
-
-Location
-chess-analysis-app/src/core/board.hpp:10
-
-Rationale
-High confidence as the Board class has a clear interface and logic that can be isolated and tested.
-
-Code context
-class Board {
-public:
-    Board();
-    Board(const std::string& fen);
-
-    // Getters
-    std::string getFen() const;
-
-Description
-The condition checking `promotion != NO_PIECE_TYPE` is repeated twice in the same `if` statement.
-
-Location
-chess-analysis-app/src/core/types.cpp:31
-
-Rationale
-A simple deletion of the redundant check is all that is needed.
-
-Code context
-    if (isNull()) return "0000";
-    std::string s = squareToString(from) + squareToString(dest);
-    if (promotion != NO_PIECE_TYPE && promotion != NO_PIECE_TYPE) {
-        char p = ' ';
-        switch(promotion) {
-
-Description
-getLegalMoves creates a full copy of the Board for every pseudo-legal move to check legality, which is highly inefficient compared to make/undo on a single board.
-
-Location
-chess-analysis-app/src/core/move_gen.cpp:149
-
-Rationale
-Using make/undo on a single temporary board eliminates N memory allocations/copies per move generation call.
-
-Code context
-    for (const auto& m : pseudo) {
-        Board copy = *this;
-        if (copy.makeMove(m)) {
-            legal.push_back(m);
-
-Description
-isInsufficientMaterial iterates the entire board to count pieces every time isDraw is called, which could be optimized by tracking piece counts incrementally.
-
-Location
-chess-analysis-app/src/core/board.hpp:44
-
-Rationale
-Incremental updates (keeping track of material count) are O(1) vs O(64).
-
-Code context
-    bool isInsufficientMaterial() const {
-        int wPawn = 0, wKnight = 0, wBishop = 0, wRook = 0, wQueen = 0;
-        int bPawn = 0, bKnight = 0, bBishop = 0, bRook = 0, bQueen = 0;
-
-Description
-squareToString allocates a new std::string for every call, adding overhead to move generation and SAN conversion.
-
-Location
-chess-analysis-app/src/core/types.cpp:6
-
-Rationale
-There are only 64 squares; precomputing their string representations eliminates allocation overhead.
-
-Code context
-std::string squareToString(Square s) {
-    if (s < 0 || s >= 64) return "-";
-    int rank = s / 8;
+    // Public members for direct access if needed, or keeping simple
 
 
 MEDIUM
-
 Description
-Same as above, but in update_accumulator_incremental.
+The loadPgn() function in the Board class parses PGN strings to recreate a board state but has no dedicated unit tests.
 
 Location
-stockfish/src/nnue/nnue_accumulator.cpp:603
+chess-analysis-app/src/core/board.hpp:646
 
 Rationale
-It is a clear instruction but depends on external factors (compiler updates or verifying if it's still needed).
+Testing loadPgn requires passing a valid PGN string and verifying the final board FEN or piece positions. While straightforward, it requires a bit more setup for test fixtures compared to simple boolean checks.
 
 Code context
-        // Workaround compiler warning for uninitialized variables, replicated
-        // on profile builds on windows with gcc 14.2.0.
-        // TODO remove once unneeded
-        sf_assume(added.size() == 1 || added.size() == 2);
-        sf_assume(removed.size() == 1 || removed.size() == 2);
+            if (cleanMy == cleanIn) return m;
+        }
+        return {}; 
+    }
+
+    inline void Board::loadPgn(const std::string& pgn) {
+        reset();
+        std::string cleanPgn = pgn;
+        for(char& c : cleanPgn) if (c == '\n' || c == '\r') c = ' ';
+        
+        std::string movesOnly;
 
 Description
-Code uses std::make_unique for thread-local buffer on Clang/Apple to avoid a bug reported with Xcode 12.
+moveToSan calls getLegalMoves() to get all valid moves on the board just to check if disambiguation is required for a single move, allocating vectors and checking king safety repeatedly.
 
 Location
-stockfish/src/nnue/nnue_architecture.h:116
+chess-analysis-app/src/core/board.hpp:563
 
 Rationale
-It is a workaround. The action would be to verify if Xcode 12+ still needs this or if it can be removed/simplified.
+Disambiguation logic could just use pseudo-legal moves and verify if those ambiguous moves are actually legal, rather than generating all legal moves globally. Still requires a moderate refactor of how ambiguous moves are filtered.
 
 Code context
-#if defined(__clang__) && (__APPLE__)
-        // workaround for a bug reported with xcode 12
-        static thread_local auto tlsBuffer = std::make_unique<Buffer>();
-        // Access TLS only once, cache result.
-        Buffer& buffer = *tlsBuffer;
-#else
+        }
+        
+        // Disambiguation
+        std::vector<Move> moves = getLegalMoves();
+        bool anySameFile = false;
+        bool anySameRank = false; // "rank" means row here (0-7)
+        bool ambiguous = false;
+
+        for (const auto& other : moves) {
+            if (other.from == m.from) continue;
 
 Description
-There is a workaround using sf_assume to silence a compiler warning about uninitialized variables on Windows with GCC 14.2.0. This should be removed once the compiler issue is fixed or the workaround is no longer needed.
+The StockfishClient engine integration class is entirely untested, including the start() method that initializes the background process.
 
 Location
-stockfish/src/nnue/nnue_accumulator.cpp:515
+chess-analysis-app/src/engine/stockfish.hpp:15
 
 Rationale
-It is a clear instruction but depends on external factors (compiler updates or verifying if it's still needed).
+Testing this requires integration with a separate executable (stockfish.exe) or creating mocks for Win32 pipe interactions. This requires significant setup and structural changes to the test harness.
 
 Code context
-    // Workaround compiler warning for uninitialized variables, replicated on
-    // profile builds on windows with gcc 14.2.0.
-    // TODO remove once unneeded
-    sf_assume(added.size() == 1);
-    sf_assume(removed.size() == 2 || removed.size() == 3);
+class StockfishClient {
+public:
+    StockfishClient(const std::string& path = "stockfish.exe");
+    ~StockfishClient();
 
-Description
-`undoMove` must perfectly restore the board state (including castling rights and En Passant square). Add a test that makes a move and undoes it, verifying the state returns to the original.
-
-Location
-chess-analysis-app/src/core/board.hpp:427
-
-Rationale
-Medium confidence as validating full state restoration requires checking multiple fields (board array, rights, EP square, clocks).
-
-Code context
-    inline void Board::undoMove() {
-        if (history.empty()) return;
-        State s = history.back();
-        history.pop_back();
-
-Description
-Implement a 'Perft' (Performance Test) function to count the number of leaf nodes at a given depth. This is the standard method to verify move generation correctness against known values.
-
-Location
-chess-analysis-app/src/core/move_gen.cpp:82
-
-Rationale
-Medium confidence as writing a Perft function requires implementing a recursive node counter, but it's a standard and highly effective test for chess engines.
-
-Code context
-// Re-implementing generatePseudoLegalMoves to include sliding pieces
-std::vector<Move> Board::generatePseudoLegalMoves() const {
-
-Description
-The PGN parsing logic in `LoadPgnToRecord` is largely duplicated from `Board::loadPgn`, leading to potential inconsistencies and double maintenance.
-
-Location
-chess-analysis-app/src/main.cpp:33
-
-Rationale
-Refactoring requires unifying the two implementations into a single utility function, likely in a new file or existing utility header, and updating both call sites.
-
-Code context
-void LoadPgnToRecord(const std::string& pgn, Chess::Board& board, Chess::GameRecord& record) {
-    record.reset();
-    board.reset();
+    bool start();
+    void stop();
     
-    std::string cleanPgn = pgn;
-    // Simple cleanup
-
-Description
-Several TODO comments suggest removing `sf_assume` calls once a specific compiler warning is fixed or no longer needed.
-
-Location
-stockfish/src/nnue/nnue_accumulator.cpp:453
-
-Rationale
-Requires verifying if the compiler warning persists with current toolchains before removing the workaround.
-
-Code context
-    // Workaround compiler warning for uninitialized variables, replicated on
-    // profile builds on windows with gcc 14.2.0.
-    // TODO remove once unneeded
-    sf_assume(added.size() == 1);
-    sf_assume(removed.size() == 2 || removed.size() == 3);
-
-
-Description
-The `isSquareAttacked` function is long and contains nested loops for different piece types, making it hard to read and verify.
-
-Location
-chess-analysis-app/src/core/board.hpp:235
-
-Rationale
-Refactoring involves extracting logic for each piece type (pawns, knights, sliding pieces) into separate helper functions.
-
-Code context
-    inline bool Board::isSquareAttacked(Square s, Side attacker) const {
-        int pDir = (attacker == White) ? -1 : 1; 
-        for (int dx : {-1, 1}) {
-            int file = Square(s) % 8;
-
-Description
-The `main` function is excessively long (~300 lines) and mixes UI initialization, game logic, and event handling, making it difficult to maintain and test.
-
-Location
-chess-analysis-app/src/main.cpp:72
-
-Rationale
-Refactoring requires splitting the function into smaller components and potentially introducing new classes for state management, exceeding a simple cleanup.
-
-Code context
-int main() {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Chess Analysis App (Stockfish Enabled)");
-    SetTargetFPS(60);
-
-    Chess::Board board;
-    board.reset();
-    
-    Chess::GameRecord gameRecord;
-
-
-Description
-The currentEval string is modified in a background thread callback and read in the main thread without synchronization, leading to potential crashes or garbage data.
-
-Location
-chess-analysis-app/src/main.cpp:86
-
-Rationale
-Accessing std::string from multiple threads is undefined behavior; a mutex is required.
-
-Code context
-    // Engine Callback
-    engine.setEvalCallback([&](std::string score, std::string bestMove) {
-        currentEval = score;
-
-Description
-The call to Tablebases::init(options["SyzygyPath"]) within search_clear might cause issues if multiple Engine instances are running in the same process, likely because Tablebases relies on global state or static members that are shared across instances.
-
-Location
-stockfish/src/engine.cpp:174
-
-Rationale
-The comment is explicit. Tablebases typically use global state in Stockfish. Fixing it would require checking Tablebases implementation and potentially refactoring it to be instance-specific or adding a lock/refcount. It is solvable but requires investigation into Tablebases.
-
-Code context
-    tt.clear(threads);
-    threads.clear();
-
-    // @TODO wont work with multiple instances
-    Tablebases::init(options["SyzygyPath"]);  // Free mapped files
-}
-
-Description
-StockfishClient::readOutputLoop performs excessive string searching, substring creation, and erasing on the buffer in a hot loop.
-
-Location
-chess-analysis-app/src/engine/stockfish.cpp:140
-
-Rationale
-Minimizing string allocations in the I/O loop improves responsiveness and reduces CPU usage.
-
-Code context
-        while ((nextPos = buffer.find('\n', pos)) != std::string::npos) {
-            std::string line = buffer.substr(pos, nextPos - pos);
-            if (!line.empty() && line.back() == '\r') line.pop_back();
-
-Description
-The `sendCommand` function blindly appends a newline to the command string, potentially allowing command injection if the input contains newline characters.
-
-Location
-chess-analysis-app/src/engine/stockfish.cpp:120
-
-Rationale
-The function appends `\n` to the input command. If the input `cmd` already contains `\n` followed by another command, multiple commands are sent to the engine. While current usage seems safe, the library function is unsafe.
-
-Code context
-void StockfishClient::sendCommand(const std::string& cmd) {
-    if (!isRunning) return;
-    std::string fullCmd = cmd + "\n";
-#ifdef _WIN32
-    DWORD dwWritten;
-    WriteFile((HANDLE)hChildStd_IN_Wr, fullCmd.c_str(), fullCmd.size(), &dwWritten, NULL);
-#endif
-}
-
-Description
-Verify that `moveToSan` correctly generates Standard Algebraic Notation strings for moves, handling disambiguation and checks/mates correctly.
-
-Location
-chess-analysis-app/src/core/board.hpp:510
-
-Rationale
-Medium confidence as disambiguation logic (e.g. Nge2 vs Nce2) requires careful setup of board positions.
-
-Code context
-    inline std::string Board::moveToSan(const Move& m) const {
-        Piece p = board[m.from];
-        PieceType pt = typeOf(p);
-
-HARD
-
-Description
-The script defaults to 'armv8-dotprod' for Windows ARM64, but older chips might only be 'armv8'. Currently, there's no reliable way to detect this as /proc/cpuinfo shows x86 info due to emulation/compat layer.
-
-Location
-stockfish/scripts/get_native_properties.sh:138
-
-Rationale
-The comment explicitly states "we have no good way to detect". Requires knowledge of how to properly detect CPU features on Windows ARM64 under MinGW/MSYS, possibly needing external tools or Windows API calls which might not be available in this shell script environment.
-
-Code context
-  'MINGW'*'ARM64'*) # Windows ARM64 system with POSIX compatibility layer
-    # TODO: older chips might be armv8, but we have no good way to detect, /proc/cpuinfo shows x86 info
-    file_os='windows'
-    true_arch='armv8-dotprod'
-    file_ext='zip'
-    ;;
-
-Description
-A TODO comment indicates that `Tablebases::init` may not work correctly with multiple engine instances.
-
-Location
-stockfish/src/engine.cpp:170
-
-Rationale
-Addressing this likely requires deep investigation into the `Tablebases` singleton or global state, which is a significant architectural change.
-
-Code context
-    tt.clear(threads);
-    threads.clear();
-
-    // @TODO wont work with multiple instances
-    Tablebases::init(options["SyzygyPath"]);  // Free mapped files
-}
-
-Description
-The `StockfishClient::start` method uses Windows-specific APIs (`CreatePipe`, `CreateProcessA`) without a cross-platform alternative, limiting the application to Windows.
-
-Location
-chess-analysis-app/src/engine/stockfish.cpp:18
-
-Rationale
-Fixing this requires implementing POSIX-compliant process management (fork/exec/pipe) which is non-trivial and likely exceeds 50 lines of new code.
-
-Code context
-#ifdef _WIN32
-    SECURITY_ATTRIBUTES saAttr;
-    saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
-    saAttr.bInheritHandle = TRUE;
-    saAttr.lpSecurityDescriptor = NULL;
-
-    HANDLE hOutRd, hOutWr;
-    HANDLE hInRd, hInWr;
+    // Non-blocking commands
+    void sendCommand(const std::string& cmd);
+    void setPosition(const std::string& fen, const std::vector<std::string>& moves = {});
