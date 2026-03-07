@@ -150,7 +150,7 @@ private:
         std::istringstream ss(fen);
         std::string token;
         
-        ss >> token;
+        if (!(ss >> token)) return;
         int rank = 7;
         int file = 0;
         for (char c : token) {
@@ -172,16 +172,18 @@ private:
                     default: pt = NO_PIECE_TYPE; break;
                 }
                 if (pt != NO_PIECE_TYPE) {
-                    addPiece(rank * 8 + file, makePiece(color, pt));
+                    if (rank >= 0 && rank < 8 && file >= 0 && file < 8) {
+                        addPiece(rank * 8 + file, makePiece(color, pt));
+                    }
                     file++;
                 }
             }
         }
         
-        ss >> token;
+        if (!(ss >> token)) return;
         turn = (token == "w") ? White : Black;
         
-        ss >> token;
+        if (!(ss >> token)) return;
         if (token != "-") {
             for (char c : token) {
                 if (c == 'K') castlingRights |= 1;
@@ -191,13 +193,13 @@ private:
             }
         }
         
-        ss >> token;
+        if (!(ss >> token)) return;
         if (token != "-") {
             enPassantSquare = stringToSquare(token);
         }
         
-        if (ss >> token) halfMoveClock = std::stoi(token);
-        if (ss >> token) fullMoveNumber = std::stoi(token);
+        if (!(ss >> halfMoveClock)) halfMoveClock = 0;
+        if (!(ss >> fullMoveNumber)) fullMoveNumber = 1;
     }
 
     inline Board::Board() { reset(); }

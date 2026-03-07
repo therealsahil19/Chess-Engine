@@ -50,6 +50,27 @@ void test_loadFen() {
     EXPECT_EQ(b.getPiece(63), makePiece(Black, ROOK));
 }
 
+void test_loadFen_invalid() {
+    Board b;
+    // File overflow via many pieces
+    b.loadFen("pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp w - - 0 1");
+
+    // File overflow via digits
+    b.loadFen("99999999999999999999999999999 w - - 0 1");
+
+    // Rank underflow
+    b.loadFen("//////////////////////////// w - - 0 1");
+
+    // Malformed clock/move number
+    b.loadFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - abc def");
+
+    // Empty FEN
+    b.loadFen("");
+
+    // Partial FEN
+    b.loadFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+}
+
 void test_undoMove() {
     Board b;
     b.reset();
@@ -119,6 +140,7 @@ int main() {
     test_isInsufficientMaterial();
     test_isCheck();
     test_loadFen();
+    test_loadFen_invalid();
     test_undoMove();
     test_parseSan_moveToSan();
     test_castling();
