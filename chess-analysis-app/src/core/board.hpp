@@ -79,7 +79,7 @@ public:
     
     // Inlined for linking
     void loadPgn(const std::string& pgn);
-    std::string moveToSan(const Move& m) const;
+    std::string moveToSan(const Move& m, const std::vector<Move>* legalMovesPtr = nullptr, bool checkCheckmate = true) const;
     Move parseSan(const std::string& san) const;
 
 private:
@@ -536,7 +536,7 @@ private:
     }
 
 
-    inline std::string Board::moveToSan(const Move& m) const {
+    inline std::string Board::moveToSan(const Move& m, const std::vector<Move>* legalMovesPtr, bool checkCheckmate) const {
         Piece p = board[m.from];
         PieceType pt = typeOf(p);
         
@@ -560,19 +560,26 @@ private:
         }
         
         // Disambiguation
-        std::vector<Move> moves = getLegalMoves();
         bool anySameFile = false;
         bool anySameRank = false; // "rank" means row here (0-7)
         bool ambiguous = false;
 
-        for (const auto& other : moves) {
-            if (other.from == m.from) continue;
-            if (other.dest != m.dest) continue;
-            if (typeOf(board[other.from]) != pt) continue; // Should be same type if we are here
-            
-            ambiguous = true;
-            if ( (other.from % 8) == (m.from % 8) ) anySameFile = true;
-            if ( (other.from / 8) == (m.from / 8) ) anySameRank = true;
+        auto checkAmbiguity = [&](const std::vector<Move>& moves) {
+            for (const auto& other : moves) {
+                if (other.from == m.from) continue;
+                if (other.dest != m.dest) continue;
+                if (typeOf(board[other.from]) != pt) continue;
+
+                ambiguous = true;
+                if ( (other.from % 8) == (m.from % 8) ) anySameFile = true;
+                if ( (other.from / 8) == (m.from / 8) ) anySameRank = true;
+            }
+        };
+
+        if (legalMovesPtr) {
+            checkAmbiguity(*legalMovesPtr);
+        } else {
+            checkAmbiguity(getLegalMoves());
         }
 
         if (pt == PAWN) {
@@ -615,13 +622,15 @@ private:
         }
         
         // Check/Mate
-        Board nextState = *this;
-        nextState.makeMove(m);
-        if (nextState.isCheck()) {
-            if (nextState.getLegalMoves().empty()) {
-                san += "#";
-            } else {
-                san += "+";
+        if (checkCheckmate) {
+            Board nextState = *this;
+            nextState.makeMove(m);
+            if (nextState.isCheck()) {
+                if (nextState.getLegalMoves().empty()) {
+                    san += "#";
+                } else {
+                    san += "+";
+                }
             }
         }
         
@@ -634,7 +643,7 @@ private:
         if (!cleanIn.empty() && (cleanIn.back() == '+' || cleanIn.back() == '#')) cleanIn.pop_back();
 
         for (const auto& m : moves) {
-            std::string mySan = moveToSan(m);
+            std::string mySan = moveToSan(m, &moves, false);
             std::string cleanMy = mySan;
             if (!cleanMy.empty() && (cleanMy.back() == '+' || cleanMy.back() == '#')) cleanMy.pop_back();
             
