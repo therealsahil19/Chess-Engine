@@ -9,7 +9,7 @@ A high-performance, native desktop chess application built with C++17 and [Rayli
 - **Robust Rules Implementation**: Complete support for core chess rules including Castling, En Passant, and Pawn Promotion.
 - **Accurate Move Generation**: Fully verified pseudo-legal and legal move generation, backed by perft testing.
 - **Game State Detection**: Native detection for Checkmate, Stalemate, and Insufficient Material draws.
-- **FEN and PGN Parsing**: Native capability to parse Forsyth-Edwards Notation (FEN) state and Standard Algebraic Notation (SAN) for move logging.
+- **FEN and PGN Parsing**: Native capability to parse Forsyth-Edwards Notation (FEN) state and Standard Algebraic Notation (SAN) for move logging. The FEN parser is hardened against buffer overflows (via rank/file bounds checks) and malformed numeric inputs (via stream-based extraction instead of exception-throwing string conversions).
 
 ### Native GUI with Modern Aesthetics
 
@@ -46,11 +46,21 @@ A high-performance, native desktop chess application built with C++17 and [Rayli
 **Windows Only**
 This application specifically relies on the Win32 API (`CreateProcess`, `CreatePipe`, `SECURITY_ATTRIBUTES`) for managing and communicating with the external Stockfish engine child process.
 
+## Linux Compatibility (Core Logic & Tests Only)
+
+The core chess logic in `src/core` can be compiled and tested on Linux independently of the Raylib GUI (which relies on Win32 APIs in `stockfish.cpp`). To compile and run the core test suite on Linux:
+
+```bash
+g++ chess-analysis-app/tests/test_runner.cpp chess-analysis-app/src/core/types.cpp chess-analysis-app/src/core/move_gen.cpp chess-analysis-app/src/engine/stockfish.cpp -Ichess-analysis-app/src/core -Ichess-analysis-app/src/engine -std=c++17 -Wall -Wextra -lpthread -o ChessTests
+```
+*Note: The Windows-specific `test_stockfish_integration()` call in `test_runner.cpp` must be disabled or skipped when running tests on Linux.*
+
 ## Prerequisites
 
 - **CMake** (3.20 or newer)
 - **C++ Compiler** with C++17 support (MSVC recommended for Windows).
 - **Stockfish Executable**: You must have `stockfish.exe` available. A compatible binary should be provided in the project root or `stockfish/` directory.
+- **Git LFS**: The `stockfish.exe` files in the repository are tracked via Git LFS. Ensure you have Git LFS installed and pulled the binaries, otherwise engine integration tests will fail to start the process.
 
 ## Build Instructions
 
@@ -89,7 +99,7 @@ This application specifically relies on the Win32 API (`CreateProcess`, `CreateP
 
 ## Testing
 
-The project incorporates a robust suite of unit tests for the core chess logic. Testing includes standard FEN setups, check states, material draw rules, and 'Perft' (Performance Test) node counting for move generation verification.
+The project incorporates a robust suite of unit tests for the core chess logic. Testing includes standard FEN setups, check states, Checkmate detection, material draw rules, PGN loading, Game Record navigation, basic Stockfish integration, and 'Perft' (Performance Test) node counting for move generation verification.
 
 > **Important:** Please check the [tests.md](tests.md) document each time a test is made or updated. It contains vital information on current test coverage, missing coverage, and recommendations for test efficiency.
 
