@@ -24,8 +24,8 @@ A high-performance, native desktop chess application built with C++17 and [Rayli
 - **Automated Deep Analysis**: Connects automatically to the `stockfish.exe` engine via standard Windows pipes.
 - **Real-Time Evaluation Bar**: A dynamic visual evaluation bar tied directly to Stockfish's centipawn/mate score.
 - **Best Move Indicators**: Displays numerical evaluation and best move suggestions directly in the right-side analysis panel.
-- **Automated Game Review**: Select "Review Game" to perform a full-game batch analysis asynchronously.
-  - **Move Classification**: Grades player moves (Best `✓`, Excellent `✓`, Good, Inaccuracy `?!`, Mistake `?`, Blunder `??`) using intelligent centipawn-loss heuristics modeled after Lichess/chess.com.
+- **Automated Game Review**: Select "Review" to perform a full-game batch analysis asynchronously.
+  - **Move Classification**: Grades player moves (Brilliant `!!`, Best `!`, Excellent `!?`, Good, Inaccuracy `?!`, Mistake `?`, Blunder `??`) using intelligent centipawn-loss heuristics modeled after Lichess/chess.com.
   - **Evaluation Graph**: View a plotted timeline graph of the game's centipawn evaluation history to see where advantages swung.
   - **Accuracy Report**: Displays an overall accuracy percentage for White and Black based on Average Centipawn Loss (ACPL), plus error tallies.
 - **Multi-Threaded**: Runs the engine synchronously in a background thread, ensuring smooth UI performance during deep calculations.
@@ -43,8 +43,8 @@ A high-performance, native desktop chess application built with C++17 and [Rayli
 
 ## Platform Support
 
-**Windows Only**
-This application specifically relies on the Win32 API (`CreateProcess`, `CreatePipe`, `SECURITY_ATTRIBUTES`) for managing and communicating with the external Stockfish engine child process.
+**Windows and Linux**
+The GUI application is Windows-only due to reliance on the Win32 API (`CreateProcess`, `CreatePipe`, `SECURITY_ATTRIBUTES`) for managing and communicating with the external Stockfish engine child process. However, the core chess logic (`src/core`) and engine interfaces can be compiled and tested on Linux using `g++`.
 
 ## Prerequisites
 
@@ -115,16 +115,18 @@ The project incorporates a robust suite of unit tests for the core chess logic. 
   - `Left`: Previous move (undo).
 - **F11**: Toggle Fullscreen.
 - **Scroll Wheel**: Scroll up and down inside the Move History table.
-- **Paste PGN Dialog**: Click the "Paste PGN" button, press `Ctrl+V` to load text from your clipboard, and click "Analyze" to execute it.
-- **Game Review**: Click "Review Game" on the right panel to automatically evaluate all past moves and display the analysis graph and accuracy summary.
-- **Media Controls**: Navigate forwards, backwards, to start, or to the end of the move list directly from the GUI.
+- **Paste PGN Dialog**: Click the "Paste PGN" button (or trigger via `Ctrl+V` dynamically), paste text from your clipboard, and click "Analyze" to execute it.
+- **Game Review**: Click "Review" on the top panel (when analysis is active) to automatically evaluate all past moves and display the analysis graph and accuracy summary.
+- **Media Controls**: Navigate forwards (`>`), backwards (`<`), to start (`|<`), or to the end (`>|`) of the move list directly from the GUI below the board.
 
 ## Project Structure
 
 - `chess-analysis-app/src/core/`: The foundational chess logic independent of any graphical or engine concerns.
   - `board.hpp` / `game_record.hpp`: Board representation, game history tracking, and piece movement.
-  - `move_gen.cpp` / `move_utils.hpp`: Move generation, validation, and SAN/FEN conversion helpers.
+  - `move_gen.cpp`: Move generation and validation.
+  - `move_utils.hpp`: Forward declarations and utility structures for moves.
   - `types.hpp` / `types.cpp`: Primitive chess types (Square, Move, Piece, Side).
+  - `clipboard_win32.cpp`: Win32 clipboard utility for pasting PGN/FEN strings.
 - `chess-analysis-app/src/engine/`: Interface for external engine communication.
   - `stockfish.cpp` / `stockfish.hpp`: Win32 native child process management and standard I/O pipe reading, and position analysis logic.
   - `game_reviewer.cpp` / `game_reviewer.hpp`: Orchestrates asynchronous full-game analysis, move quality classification, and accuracy calculation.

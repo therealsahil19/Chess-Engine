@@ -160,6 +160,7 @@ void test_loadPgn() {
 }
 
 void test_stockfish_integration() {
+#ifdef _WIN32
     Engine::StockfishClient sf("../chess-analysis-app/stockfish.exe");
     bool started = sf.start();
     EXPECT_TRUE(started);
@@ -180,6 +181,9 @@ void test_stockfish_integration() {
     
     sf.stop();
     EXPECT_TRUE(callbackFired);
+#else
+    std::cout << "Skipping test_stockfish_integration on non-Windows platform.\n";
+#endif
 }
 
 int main() {
