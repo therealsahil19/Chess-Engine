@@ -43,10 +43,9 @@ public:
     bool isReviewComplete() const;
     float getProgress() const;
     const std::vector<MoveReview>& getResults() const { return results_; }
-
-private:
     MoveClassification classifyMove(float cp_loss, float eval_before);
 
+private:
     std::vector<MoveReview> results_;
     bool complete_ = false;
     float progress_ = 0.0f;
