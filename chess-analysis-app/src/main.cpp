@@ -3,6 +3,7 @@
 #include "core/game_record.hpp"
 #include "engine/stockfish.hpp"
 #include "engine/game_reviewer.hpp"
+#include "gui/layout.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -14,22 +15,7 @@ std::string GetClipboardTextFallback();
 
 enum class ReviewState { IDLE, REVIEWING, REVIEW_DONE };
 
-// Constants
-const int SCREEN_WIDTH = 1280; // Expanded for UI
-const int SCREEN_HEIGHT = 960;
-const int BOARD_SIZE = 800;
-const int SQUARE_SIZE = BOARD_SIZE / 8;
-const int BOARD_OFFSET_X = 80;
-const int BOARD_OFFSET_Y = 80;
-
-// Colors - High Contrast Theme
-const Color COLOR_BG = { 43, 45, 48, 255 };        // IntelliJ-like Dark Gray
-const Color COLOR_LIGHT = { 235, 236, 208, 255 };  // Cream / Lichess Light
-const Color COLOR_DARK = { 119, 149, 86, 255 };   // Green / Lichess Dark
-const Color COLOR_HIGHLIGHT = { 255, 246, 126, 180 }; // Yellow highlight
-const Color COLOR_SELECTED = { 186, 202, 43, 200 };   // Lime-ish green for selection
-const Color COLOR_TEXT_MAIN = { 205, 205, 205, 255 }; 
-const Color COLOR_TEXT_DIM = { 150, 150, 150, 255 };
+using namespace Gui::Layout;
 
 const char* classificationSymbol(Chess::MoveClassification c) {
     switch(c) {
@@ -124,9 +110,9 @@ float GetEvalFill(const std::string& evalStr) {
 void DrawEvalBar(const std::string& evalStr, bool isFlipped) {
     float fill = GetEvalFill(evalStr);
     
-    int barX = 40;
+    int barX = EVAL_BAR_OFFSET_X;
     int barY = BOARD_OFFSET_Y;
-    int barW = 20;
+    int barW = EVAL_BAR_WIDTH;
     int barH = BOARD_SIZE;
 
     // Black background (equivalent to Black advantage)
@@ -228,7 +214,7 @@ void DrawPieces(const Chess::Board& board, const AnimState& anim, bool isFlipped
 }
 
 void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Chess::GameRecord& gameRecord, const std::string& currentEval, const std::string& bestMoveSan, std::mutex& evalMutex, Chess::Side turn, Vector2 mousePos, ReviewState reviewState, const Chess::GameReviewer& gameReviewer) {
-    int infoX = SCREEN_WIDTH - 320;
+    int infoX = INFO_X;
     
     std::string displayEval, displayBestMove;
     {
@@ -246,16 +232,16 @@ void DrawSidePanel(bool showDialog, bool isAnalysisActive, int& scroll, const Ch
     
     if (!isAnalysisActive) {
         if (!showDialog) {
-            int pasteButtonY = 420;
-            bool mouseOverPaste = CheckCollisionPointRec(mousePos, { (float)infoX, (float)pasteButtonY, 150, 40 });
-            DrawRectangle(infoX, pasteButtonY, 150, 40, mouseOverPaste ? COLOR_SELECTED : COLOR_DARK);
+            int pasteButtonY = BTN_PASTE_Y;
+            bool mouseOverPaste = CheckCollisionPointRec(mousePos, { (float)infoX, (float)pasteButtonY, (float)BTN_PASTE_W, (float)BTN_HEIGHT });
+            DrawRectangle(infoX, pasteButtonY, BTN_PASTE_W, BTN_HEIGHT, mouseOverPaste ? COLOR_SELECTED : COLOR_DARK);
             DrawText("Paste PGN", infoX + 25, pasteButtonY + 10, 20, COLOR_BG);
         }
     } else {
         // Draw Move Table
-        int tableY = 200;
-        int tableWidth = 280;
-        int tableHeight = 600;
+        int tableY = TABLE_Y;
+        int tableWidth = TABLE_WIDTH;
+        int tableHeight = TABLE_HEIGHT;
         
         bool mouseOverTable = CheckCollisionPointRec(mousePos, { (float)infoX, (float)tableY, (float)tableWidth, (float)tableHeight });
         if (mouseOverTable) {
@@ -344,8 +330,8 @@ void DrawPasteDialog(bool& showDialog, std::string& dialogText, bool& submitPast
     
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.6f));
     
-    int dialogW = 600;
-    int dialogH = 400;
+    int dialogW = DIALOG_W;
+    int dialogH = DIALOG_H;
     int dialogX = (SCREEN_WIDTH - dialogW) / 2;
     int dialogY = (SCREEN_HEIGHT - dialogH) / 2;
     
@@ -564,10 +550,10 @@ int main() {
             bool clickedUI = false;
             
             // Top Left Buttons
-            if (CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X, 20, 110, 40 })) {
+        if (CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X, (float)BTN_MARGIN, (float)BTN_WIDTH, (float)BTN_HEIGHT })) {
                  isBoardFlipped = !isBoardFlipped;
                  clickedUI = true;
-            } else if (CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 130, 20, 110, 40 })) {
+        } else if (CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + BTN_WIDTH + BTN_MARGIN, (float)BTN_MARGIN, (float)BTN_WIDTH, (float)BTN_HEIGHT })) {
                  board.loadFen(initialFen);
                  gameRecord.reset();
                  isAnalysisActive = false;
@@ -575,7 +561,7 @@ int main() {
                  triggerAnalysis();
                  selectedSq = -1;
                  clickedUI = true;
-            } else if (isAnalysisActive && CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 260, 20, 130, 40 })) {
+        } else if (isAnalysisActive && CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 2 * (BTN_WIDTH + BTN_MARGIN), (float)BTN_MARGIN, (float)BTN_WIDTH + 20, (float)BTN_HEIGHT })) {
                  if (reviewState != ReviewState::REVIEWING) {
                      std::vector<std::string> fens;
                      Chess::Board tempBoard;
@@ -599,17 +585,17 @@ int main() {
                  clickedUI = true;
             }
             // Paste Button
-            else if (!isAnalysisActive && CheckCollisionPointRec(mousePos, { (float)(SCREEN_WIDTH - 320), 420, 150, 40 })) {
+            else if (!isAnalysisActive && CheckCollisionPointRec(mousePos, { (float)(INFO_X), (float)BTN_PASTE_Y, (float)BTN_PASTE_W, (float)BTN_HEIGHT })) {
                 showPasteDialog = true;
                 clickedUI = true;
             }
             // Playback controls (Now under the board)
             else if (isAnalysisActive) {
-                int btnW = 80;
-                int btnH = 50;
+                int btnW = BTN_PLAYBACK_WIDTH;
+                int btnH = BTN_PLAYBACK_HEIGHT;
                 // Center relative to the board: X: BOARD_OFFSET_X to BOARD_OFFSET_X + BOARD_SIZE
                 int startX = BOARD_OFFSET_X + (BOARD_SIZE - (5 * btnW + 4 * 10)) / 2;
-                int btnY = BOARD_OFFSET_Y + BOARD_SIZE + 20;
+                int btnY = BOARD_OFFSET_Y + BOARD_SIZE + BTN_MARGIN;
                 
                 for (int i=0; i<5; i++) {
                     int bx = startX + i * (btnW + 10);
@@ -729,15 +715,15 @@ int main() {
         ClearBackground(COLOR_BG);
         
         // Draw Top Left Buttons
-        DrawRectangle(BOARD_OFFSET_X, 20, 110, 40, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X, 20, 110, 40 }) ? COLOR_SELECTED : COLOR_DARK);
-        DrawText("Flip Board", BOARD_OFFSET_X + 10, 30, 18, COLOR_TEXT_MAIN);
+        DrawRectangle(BOARD_OFFSET_X, BTN_MARGIN, BTN_WIDTH, BTN_HEIGHT, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X, (float)BTN_MARGIN, (float)BTN_WIDTH, (float)BTN_HEIGHT }) ? COLOR_SELECTED : COLOR_DARK);
+        DrawText("Flip Board", BOARD_OFFSET_X + 10, BTN_MARGIN + 10, 18, COLOR_TEXT_MAIN);
 
-        DrawRectangle(BOARD_OFFSET_X + 130, 20, 110, 40, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 130, 20, 110, 40 }) ? RED : COLOR_DARK);
-        DrawText("Reload", BOARD_OFFSET_X + 150, 30, 18, COLOR_TEXT_MAIN);
+        DrawRectangle(BOARD_OFFSET_X + BTN_WIDTH + BTN_MARGIN, BTN_MARGIN, BTN_WIDTH, BTN_HEIGHT, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + BTN_WIDTH + BTN_MARGIN, (float)BTN_MARGIN, (float)BTN_WIDTH, (float)BTN_HEIGHT }) ? RED : COLOR_DARK);
+        DrawText("Reload", BOARD_OFFSET_X + BTN_WIDTH + BTN_MARGIN + 20, BTN_MARGIN + 10, 18, COLOR_TEXT_MAIN);
 
         if (isAnalysisActive) {
-            DrawRectangle(BOARD_OFFSET_X + 260, 20, 130, 40, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 260, 20, 130, 40 }) ? COLOR_SELECTED : COLOR_DARK);
-            DrawText("Review", BOARD_OFFSET_X + 295, 30, 18, COLOR_TEXT_MAIN);
+            DrawRectangle(BOARD_OFFSET_X + 2 * (BTN_WIDTH + BTN_MARGIN), BTN_MARGIN, BTN_WIDTH + 20, BTN_HEIGHT, CheckCollisionPointRec(mousePos, { (float)BOARD_OFFSET_X + 2 * (BTN_WIDTH + BTN_MARGIN), (float)BTN_MARGIN, (float)BTN_WIDTH + 20, (float)BTN_HEIGHT }) ? COLOR_SELECTED : COLOR_DARK);
+            DrawText("Review", BOARD_OFFSET_X + 2 * (BTN_WIDTH + BTN_MARGIN) + 35, BTN_MARGIN + 10, 18, COLOR_TEXT_MAIN);
         }
 
         DrawBoardBackground(selectedSq, isBoardFlipped);
@@ -752,10 +738,10 @@ int main() {
 
         // Draw new playback controls
         if (isAnalysisActive) {
-            int btnW = 80;
-            int btnH = 50;
+            int btnW = BTN_PLAYBACK_WIDTH;
+            int btnH = BTN_PLAYBACK_HEIGHT;
             int startX = BOARD_OFFSET_X + (BOARD_SIZE - (5 * btnW + 4 * 10)) / 2;
-            int btnY = BOARD_OFFSET_Y + BOARD_SIZE + 20;
+            int btnY = BOARD_OFFSET_Y + BOARD_SIZE + BTN_MARGIN;
 
             const char* labels[] = {"|<", "<", "||", ">", ">|"};
             for (int i = 0; i < 5; i++) {
