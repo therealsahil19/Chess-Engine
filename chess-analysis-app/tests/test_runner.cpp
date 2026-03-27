@@ -2,6 +2,7 @@
 #include "../src/core/types.hpp"
 #include "../src/core/game_record.hpp"
 #include "../src/engine/stockfish.hpp"
+#include "../src/engine/game_reviewer.hpp"
 #include <iostream>
 #include <cassert>
 #include <chrono>
@@ -12,7 +13,27 @@ using namespace Chess;
 
 #define EXPECT_TRUE(cond) if (!(cond)) { std::cerr << "FAIL: " << #cond << " at " << __LINE__ << std::endl; exit(1); }
 #define EXPECT_FALSE(cond) if (cond) { std::cerr << "FAIL: " << #cond << " at " << __LINE__ << std::endl; exit(1); }
-#define EXPECT_EQ(a, b) if ((a) != (b)) { std::cerr << "FAIL: " << #a << " != " << #b << " (" << (a) << " != " << (b) << ") at " << __LINE__ << std::endl; exit(1); }
+template<typename T1, typename T2>
+void expect_eq(const T1& a, const T2& b, const char* a_str, const char* b_str, int line) {
+    if (a != b) {
+        std::cerr << "FAIL: " << a_str << " != " << b_str;
+        if constexpr (std::is_enum_v<T1> || std::is_integral_v<T1>) {
+            std::cerr << " (" << static_cast<long long>(a);
+        } else {
+            std::cerr << " (" << a;
+        }
+        std::cerr << " != ";
+        if constexpr (std::is_enum_v<T2> || std::is_integral_v<T2>) {
+            std::cerr << static_cast<long long>(b);
+        } else {
+            std::cerr << b;
+        }
+        std::cerr << ") at " << line << std::endl;
+        exit(1);
+    }
+}
+
+#define EXPECT_EQ(a, b) expect_eq(a, b, #a, #b, __LINE__)
 
 // Test cases
 void test_squareToString_and_stringToSquare() {
@@ -160,6 +181,7 @@ void test_loadPgn() {
 }
 
 void test_stockfish_integration() {
+#ifdef _WIN32
     Engine::StockfishClient sf("../chess-analysis-app/stockfish.exe");
     bool started = sf.start();
     EXPECT_TRUE(started);
@@ -180,6 +202,44 @@ void test_stockfish_integration() {
     
     sf.stop();
     EXPECT_TRUE(callbackFired);
+#endif
+}
+
+void test_game_reviewer_classification() {
+    GameReviewer gr;
+
+    // Normal evaluation cases (eval_before >= -300)
+    EXPECT_EQ(gr.classifyMove(2.0f, 10.0f), MoveClassification::Best);
+    EXPECT_EQ(gr.classifyMove(10.0f, 10.0f), MoveClassification::Excellent);
+    EXPECT_EQ(gr.classifyMove(30.0f, 10.0f), MoveClassification::Good);
+    EXPECT_EQ(gr.classifyMove(70.0f, 10.0f), MoveClassification::Inaccuracy);
+    EXPECT_EQ(gr.classifyMove(150.0f, 10.0f), MoveClassification::Mistake);
+    EXPECT_EQ(gr.classifyMove(250.0f, 10.0f), MoveClassification::Blunder);
+
+    // Bad evaluation adjustment (eval_before < -300, cp_loss is halved)
+    // 250 -> 125, which should be Mistake (< 200)
+    EXPECT_EQ(gr.classifyMove(250.0f, -400.0f), MoveClassification::Mistake);
+    // 50 -> 25, which should be Good (< 50)
+    EXPECT_EQ(gr.classifyMove(50.0f, -400.0f), MoveClassification::Good);
+}
+
+void test_game_reviewer_summary() {
+    std::vector<MoveReview> reviews;
+    // White moves at even ply: 0, 2
+    reviews.push_back({0, 10.0f, 5.0f, 5.0f, "e2e4", MoveClassification::Best}); // White
+    reviews.push_back({1, 5.0f, -20.0f, 25.0f, "e7e5", MoveClassification::Good}); // Black
+    reviews.push_back({2, -20.0f, -150.0f, 130.0f, "d2d4", MoveClassification::Mistake}); // White
+    reviews.push_back({3, -150.0f, -150.0f, 0.0f, "d7d5", MoveClassification::GameEnd}); // Black
+
+    ReviewSummary white_summary = computeSummary(reviews, true);
+    EXPECT_EQ(white_summary.mistakes, 1);
+    EXPECT_EQ(white_summary.good_moves, 1); // Best is categorized under good_moves in computeSummary
+    EXPECT_EQ(white_summary.blunders, 0);
+
+    ReviewSummary black_summary = computeSummary(reviews, false);
+    EXPECT_EQ(black_summary.good_moves, 1);
+    EXPECT_EQ(black_summary.inaccuracies, 0);
+    // GameEnd should be skipped
 }
 
 int main() {
@@ -196,6 +256,8 @@ int main() {
     test_addMove();
     test_loadPgn();
     test_stockfish_integration();
+    test_game_reviewer_classification();
+    test_game_reviewer_summary();
     std::cout << "All tests passed!\n";
     return 0;
 }
