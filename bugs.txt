@@ -1,52 +1,6 @@
 EASY
 
 Description
-The addMove() function manages game history and truncates future moves if adding a move in the past, but it lacks unit tests.
-
-Location
-chess-analysis-app/src/core/game_record.hpp:13
-
-Rationale
-The addMove function logic is self-contained. Adding a test requires instantiating GameRecord, adding a few dummy moves, changing the currentIndex, and adding a new move to verify truncation. This is simple state verification.
-
-Code context
-    GameRecord() : currentIndex(0) {}
-
-    void addMove(Move m, const std::string& san = "") {
-        // If we differ from history (we are in past), truncate future
-        if (currentIndex < moves.size()) {
-            moves.resize(currentIndex);
-            sanMoves.resize(currentIndex);
-        }
-        moves.push_back(m);
-        sanMoves.push_back(san);
-        currentIndex++;
-    }
-
-Description
-The isCheckmate() function checks if the current side is in checkmate, but lacks dedicated unit tests.
-
-Location
-chess-analysis-app/src/core/board.hpp:23
-
-Rationale
-Testing this simply requires setting up a checkmate FEN and asserting the result is true. It can easily be done in under 10 lines of code using the existing testing macros.
-
-Code context
-    Piece getPiece(Square s) const;
-    Side getTurn() const;
-    bool isCheck() const;
-
-    // Inlined for linking
-    bool isCheckmate() const {
-        return isCheck() && getLegalMoves().empty();
-    }
-
-    bool isStalemate() const {
-        return !isCheck() && getLegalMoves().empty();
-    }
-
-Description
 Calling getLegalMoves().empty() forces the allocation of multiple std::vector objects and validates all pseudo-legal moves, instead of returning true early on the first found legal move.
 
 Location
@@ -176,28 +130,6 @@ Code context
 
 
 MEDIUM
-Description
-The loadPgn() function in the Board class parses PGN strings to recreate a board state but has no dedicated unit tests.
-
-Location
-chess-analysis-app/src/core/board.hpp:646
-
-Rationale
-Testing loadPgn requires passing a valid PGN string and verifying the final board FEN or piece positions. While straightforward, it requires a bit more setup for test fixtures compared to simple boolean checks.
-
-Code context
-            if (cleanMy == cleanIn) return m;
-        }
-        return {}; 
-    }
-
-    inline void Board::loadPgn(const std::string& pgn) {
-        reset();
-        std::string cleanPgn = pgn;
-        for(char& c : cleanPgn) if (c == '\n' || c == '\r') c = ' ';
-        
-        std::string movesOnly;
-
 Description
 moveToSan calls getLegalMoves() to get all valid moves on the board just to check if disambiguation is required for a single move, allocating vectors and checking king safety repeatedly.
 
