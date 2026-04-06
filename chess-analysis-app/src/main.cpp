@@ -360,18 +360,33 @@ void DrawPasteDialog(bool& showDialog, std::string& dialogText, bool& submitPast
         // Better text wrap rendering
         int dY = 85;
         std::string currentLine = "";
-        for (size_t i = 0; i < preview.length(); i++) {
-             if (preview[i] == '\n') {
+        int maxWidth = dialogW - 60;
+        const char* textPtr = preview.c_str();
+        int textLen = (int)preview.length();
+        int i = 0;
+
+        int currentLineWidth = 0;
+        while (i < textLen) {
+             int codepointByteSize = 0;
+             int codepoint = GetCodepointNext(&textPtr[i], &codepointByteSize);
+             if (codepoint == '\n') {
                  DrawText(currentLine.c_str(), dialogX + 25, dialogY + dY, 15, COLOR_TEXT_MAIN);
                  currentLine = "";
+                 currentLineWidth = 0;
                  dY += 20;
+                 i += codepointByteSize;
              } else {
-                 currentLine += preview[i];
-                 if (MeasureText(currentLine.c_str(), 15) > dialogW - 60) {
+                 std::string nextPart = preview.substr(i, codepointByteSize);
+                 int nextPartWidth = MeasureText(nextPart.c_str(), 15);
+                 currentLine += nextPart;
+                 currentLineWidth += nextPartWidth;
+                 if (currentLineWidth > maxWidth) {
                       DrawText(currentLine.c_str(), dialogX + 25, dialogY + dY, 15, COLOR_TEXT_MAIN);
                       currentLine = "";
+                      currentLineWidth = 0;
                       dY += 20;
                  }
+                 i += codepointByteSize;
              }
              if (dY > dialogH - 80) break;
         }
