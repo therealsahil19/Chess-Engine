@@ -19,13 +19,20 @@ public:
     Side getTurn() const;
     bool isCheck() const;
 
+    template<typename F>
+    bool enumeratePseudoLegalMoves(F callback) const;
+
     bool hasLegalMoves() const {
-        std::vector<Move> pseudo = generatePseudoLegalMoves();
-        Board copy = *this;
-        for (const auto& m : pseudo) {
-            if (copy.makeMove(m)) return true;
-        }
-        return false;
+        bool found = false;
+        enumeratePseudoLegalMoves([&](const Move& m) {
+            Board copy = *this;
+            if (copy.makeMove(m)) {
+                found = true;
+                return true; // Stop enumeration
+            }
+            return false; // Continue enumeration
+        });
+        return found;
     }
 
     // Inlined for linking
@@ -120,6 +127,9 @@ private:
     bool isAttackedByKnight(Square s, Side attacker) const;
     bool isAttackedBySliding(Square s, Side attacker, const int* dirs, int numDirs, PieceType pt1, PieceType pt2) const;
     bool isAttackedByKing(Square s, Side attacker) const;
+    template<typename F>
+    bool enumerateSlidingMoves(int from, const int* dirs, int numDirs, F callback) const;
+
     std::vector<Move> generatePseudoLegalMoves() const;
     void addPiece(Square sq, Piece p);
     void removePiece(Square sq);
@@ -569,25 +579,23 @@ private:
         }
         
         // Disambiguation
-        std::vector<Move> pseudoMoves = generatePseudoLegalMoves();
         bool anySameFile = false;
         bool anySameRank = false; // "rank" means row here (0-7)
         bool ambiguous = false;
 
-        Board copy = *this;
-        for (const auto& other : pseudoMoves) {
-            if (other.from == m.from) continue;
-            if (other.dest != m.dest) continue;
-            if (typeOf(board[other.from]) != pt) continue; // Should be same type if we are here
+        enumeratePseudoLegalMoves([&](const Move& other) {
+            if (other.from == m.from) return false;
+            if (other.dest != m.dest) return false;
+            if (typeOf(board[other.from]) != pt) return false;
             
-            // Check if this competing pseudo-legal move is actually legal
+            Board copy = *this;
             if (copy.makeMove(other)) {
-                copy.undoMove();
                 ambiguous = true;
                 if ( (other.from % 8) == (m.from % 8) ) anySameFile = true;
                 if ( (other.from / 8) == (m.from / 8) ) anySameRank = true;
             }
-        }
+            return false; // Check all
+        });
 
         if (pt == PAWN) {
             if (board[m.dest] != NO_PIECE || m.dest == enPassantSquare) {
@@ -632,7 +640,7 @@ private:
         Board nextState = *this;
         nextState.makeMove(m);
         if (nextState.isCheck()) {
-            if (nextState.getLegalMoves().empty()) {
+            if (!nextState.hasLegalMoves()) {
                 san += "#";
             } else {
                 san += "+";
@@ -655,6 +663,166 @@ private:
             if (cleanMy == cleanIn) return m;
         }
         return {}; 
+    }
+
+    template<typename F>
+    inline bool Board::enumerateSlidingMoves(int from, const int* dirs, int numDirs, F callback) const {
+        Piece p = getPiece(from);
+        Side us = colorOf(p);
+
+        for (int d = 0; d < numDirs; d++) {
+            int dir = dirs[d];
+            int targetSq = from;
+
+            while (true) {
+                int file = targetSq % 8;
+                int rank = targetSq / 8;
+
+                if ( (dir == 1 || dir == 9 || dir == -7) && file == 7 ) break;
+                if ( (dir == -1 || dir == -9 || dir == 7) && file == 0 ) break;
+                if ( (dir == 8 || dir == 9 || dir == 7) && rank == 7 ) break;
+                if ( (dir == -8 || dir == -9 || dir == -7) && rank == 0 ) break;
+
+                targetSq += dir;
+                if (targetSq < 0 || targetSq >= 64) break;
+
+                Piece target = board[targetSq];
+                if (target == NO_PIECE) {
+                    if (callback({from, targetSq, NO_PIECE_TYPE})) return true;
+                } else {
+                    if (colorOf(target) != us) {
+                        if (callback({from, targetSq, NO_PIECE_TYPE})) return true;
+                    }
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    template<typename F>
+    inline bool Board::enumeratePseudoLegalMoves(F callback) const {
+        const int RDir[4] = {8, 1, -8, -1};
+        const int BDir[4] = {9, -7, -9, 7};
+
+        for (int from = 0; from < 64; from++) {
+            Piece p = board[from];
+            if (p == NO_PIECE || colorOf(p) != turn) continue;
+
+            PieceType pt = typeOf(p);
+            int r = from / 8;
+            int c = from % 8;
+            int direction = (turn == White) ? 1 : -1;
+
+            if (pt == PAWN) {
+                int forward = from + 8 * direction;
+                if (forward >= 0 && forward < 64 && board[forward] == NO_PIECE) {
+                    if ((turn == White && r == 6) || (turn == Black && r == 1)) {
+                        if (callback({from, forward, QUEEN})) return true;
+                        if (callback({from, forward, KNIGHT})) return true;
+                        if (callback({from, forward, ROOK})) return true;
+                        if (callback({from, forward, BISHOP})) return true;
+                    } else {
+                        if (callback({from, forward, NO_PIECE_TYPE})) return true;
+                        if ((turn == White && r == 1) || (turn == Black && r == 6)) {
+                            int forward2 = forward + 8 * direction;
+                            if (forward2 >= 0 && forward2 < 64 && board[forward2] == NO_PIECE) {
+                                if (callback({from, forward2, NO_PIECE_TYPE})) return true;
+                            }
+                        }
+                    }
+                }
+                for (int dx : {-1, 1}) {
+                    if (c + dx >= 0 && c + dx <= 7) {
+                        int capSq = from + 8 * direction + dx;
+                        if (capSq >= 0 && capSq < 64) {
+                            Piece target = board[capSq];
+                            if (target != NO_PIECE && colorOf(target) != turn) {
+                                 if ((turn == White && r == 6) || (turn == Black && r == 1)) {
+                                    if (callback({from, capSq, QUEEN})) return true;
+                                    if (callback({from, capSq, KNIGHT})) return true;
+                                    if (callback({from, capSq, ROOK})) return true;
+                                    if (callback({from, capSq, BISHOP})) return true;
+                                 } else {
+                                    if (callback({from, capSq, NO_PIECE_TYPE})) return true;
+                                 }
+                            }
+                            if (capSq == enPassantSquare) {
+                                if (callback({from, capSq, NO_PIECE_TYPE})) return true;
+                            }
+                        }
+                    }
+                }
+            } else if (pt == KNIGHT) {
+                static const int KnightOffsets[] = {-17, -15, -10, -6, 6, 10, 15, 17};
+                for (int offset : KnightOffsets) {
+                    int targetSq = from + offset;
+                    if (targetSq < 0 || targetSq >= 64) continue;
+                    int dr = abs((targetSq/8) - r);
+                    int dc = abs((targetSq%8) - c);
+                    if (dr + dc == 3) {
+                         Piece target = board[targetSq];
+                         if (target == NO_PIECE || colorOf(target) != turn) {
+                             if (callback({from, targetSq, NO_PIECE_TYPE})) return true;
+                         }
+                    }
+                }
+            } else if (pt == KING) {
+                static const int KingOffsets[] = {-9, -8, -7, -1, 1, 7, 8, 9};
+                for (int offset : KingOffsets) {
+                    int targetSq = from + offset;
+                    if (targetSq < 0 || targetSq >= 64) continue;
+                    int dr = abs((targetSq/8) - r);
+                    int dc = abs((targetSq%8) - c);
+                    if (dr <= 1 && dc <= 1) {
+                         Piece target = board[targetSq];
+                         if (target == NO_PIECE || colorOf(target) != turn) {
+                             if (callback({from, targetSq, NO_PIECE_TYPE})) return true;
+                         }
+                    }
+                }
+                Side opp = (turn == White) ? Black : White;
+                if (!isCheck()) {
+                    if (turn == White) {
+                        if (castlingRights & 1) {
+                            if (board[5] == NO_PIECE && board[6] == NO_PIECE) {
+                                if (!isSquareAttacked(5, opp)) {
+                                    if (callback({4, 6, NO_PIECE_TYPE})) return true;
+                                }
+                            }
+                        }
+                        if (castlingRights & 2) {
+                            if (board[1] == NO_PIECE && board[2] == NO_PIECE && board[3] == NO_PIECE) {
+                                if (!isSquareAttacked(3, opp)) {
+                                    if (callback({4, 2, NO_PIECE_TYPE})) return true;
+                                }
+                            }
+                        }
+                    } else {
+                        if (castlingRights & 4) {
+                            if (board[61] == NO_PIECE && board[62] == NO_PIECE) {
+                                if (!isSquareAttacked(61, opp)) {
+                                    if (callback({60, 62, NO_PIECE_TYPE})) return true;
+                                }
+                            }
+                        }
+                        if (castlingRights & 8) {
+                            if (board[57] == NO_PIECE && board[58] == NO_PIECE && board[59] == NO_PIECE) {
+                                if (!isSquareAttacked(59, opp)) {
+                                    if (callback({60, 58, NO_PIECE_TYPE})) return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (pt == BISHOP || pt == QUEEN) {
+                if (enumerateSlidingMoves(from, BDir, 4, callback)) return true;
+            }
+            if (pt == ROOK || pt == QUEEN) {
+                if (enumerateSlidingMoves(from, RDir, 4, callback)) return true;
+            }
+        }
+        return false;
     }
 
     inline void Board::loadPgn(const std::string& pgn) {
