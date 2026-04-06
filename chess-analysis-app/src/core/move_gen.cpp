@@ -4,208 +4,30 @@
 
 namespace Chess {
 
-// Direction offsets for sliding pieces
-// Rooks: N, E, S, W
-// Bishops: NE, SE, SW, NW
-const int RookDir[4] = {8, 1, -8, -1};
-const int BishopDir[4] = {9, -7, -9, 7};
-
-// Helper to check board boundaries properly
-bool isSquareValid(int sq) {
-    return sq >= 0 && sq < 64;
-}
-
-// Improved direction logic
-// Directions: N=8, S=-8, E=1, W=-1, NE=9, NW=7, SE=-7, SW=-9
-// We need to check if we cross file boundaries for E/W components.
-// E (+1): file cannot be 7
-// W (-1): file cannot be 0
-// NE (+9): file != 7, rank != 7
-// NW (+7): file != 0, rank != 7
-// etc.
-
-void addSlidingMoves(const Board& b, int from, const int* dirs, int numDirs, std::vector<Move>& moves) {
-    Piece p = b.getPiece(from);
-    Side us = colorOf(p);
-    
-    for (int d = 0; d < numDirs; d++) {
-        int dir = dirs[d];
-        int targetSq = from;
-        
-        while (true) {
-            // Check boundary before adding
-            int file = targetSq % 8;
-            int rank = targetSq / 8;
-            
-            // Check if adding dir would wrap
-            // E/W/NE/SE/NW/SW components
-            if ( (dir == 1 || dir == 9 || dir == -7) && file == 7 ) break; // East-ward blocked
-            if ( (dir == -1 || dir == -9 || dir == 7) && file == 0 ) break; // West-ward blocked
-            if ( (dir == 8 || dir == 9 || dir == 7) && rank == 7 ) break; // North-ward blocked
-            if ( (dir == -8 || dir == -9 || dir == -7) && rank == 0 ) break; // South-ward blocked
-
-            targetSq += dir;
-            if (!isSquareValid(targetSq)) break;
-
-            Piece target = b.getPiece(targetSq);
-            if (target == NO_PIECE) {
-                moves.push_back({from, targetSq, NO_PIECE_TYPE});
-            } else {
-                if (colorOf(target) != us) {
-                    moves.push_back({from, targetSq, NO_PIECE_TYPE}); // Capture
-                }
-                break; // Blocked by any piece
-            }
-        }
-    }
-}
-
-// Re-implementing generatePseudoLegalMoves to include sliding pieces
+// Re-implementing generatePseudoLegalMoves using enumeration
 std::vector<Move> Board::generatePseudoLegalMoves() const {
     std::vector<Move> moves;
     moves.reserve(50); 
     
-    for (int from = 0; from < 64; from++) {
-        Piece p = board[from];
-        if (p == NO_PIECE || colorOf(p) != turn) continue;
-        
-        PieceType pt = typeOf(p);
-        int r = from / 8;
-        int c = from % 8;
-        int direction = (turn == White) ? 1 : -1;
+    enumeratePseudoLegalMoves([&](const Move& m) {
+        moves.push_back(m);
+        return false; // Continue enumeration
+    });
 
-        if (pt == PAWN) {
-            // Pawn moves... (simplified)
-            int forward = from + 8 * direction;
-            if (isSquareValid(forward) && board[forward] == NO_PIECE) {
-                // Promotion?
-                 if ((turn == White && r == 6) || (turn == Black && r == 1)) {
-                    moves.push_back({from, forward, QUEEN}); // Add all promos
-                    moves.push_back({from, forward, KNIGHT}); 
-                    moves.push_back({from, forward, ROOK}); 
-                    moves.push_back({from, forward, BISHOP}); 
-                 } else {
-                    moves.push_back({from, forward, NO_PIECE_TYPE});
-                    // Double push
-                    if ((turn == White && r == 1) || (turn == Black && r == 6)) {
-                        int forward2 = forward + 8 * direction;
-                        if (isSquareValid(forward2) && board[forward2] == NO_PIECE) {
-                            moves.push_back({from, forward2, NO_PIECE_TYPE});
-                        }
-                    }
-                 }
-            }
-            // Captures
-            for (int dx : {-1, 1}) {
-                if (c + dx >= 0 && c + dx <= 7) {
-                    int capSq = from + 8 * direction + dx;
-                    if (isSquareValid(capSq)) {
-                        Piece target = board[capSq];
-                        if (target != NO_PIECE && colorOf(target) != turn) {
-                             if ((turn == White && r == 6) || (turn == Black && r == 1)) {
-                                moves.push_back({from, capSq, QUEEN}); // ...
-                             } else {
-                                moves.push_back({from, capSq, NO_PIECE_TYPE});
-                             }
-                        }
-                        // En Passant
-                        if (capSq == enPassantSquare) {
-                            moves.push_back({from, capSq, NO_PIECE_TYPE});
-                        }
-                    }
-                }
-            }
-        }
-        else if (pt == KNIGHT) {
-            // Knight logic
-            const int KnightOffsets[] = {-17, -15, -10, -6, 6, 10, 15, 17};
-            for (int offset : KnightOffsets) {
-                int targetSq = from + offset;
-                if (!isSquareValid(targetSq)) continue;
-                // Check wrap
-                int dr = abs((targetSq/8) - r);
-                int dc = abs((targetSq%8) - c);
-                if (dr + dc == 3) {
-                     Piece target = board[targetSq];
-                     if (target == NO_PIECE || colorOf(target) != turn) {
-                         moves.push_back({from, targetSq, NO_PIECE_TYPE});
-                     }
-                }
-            }
-        }
-        else if (pt == KING) {
-             const int KingOffsets[] = {-9, -8, -7, -1, 1, 7, 8, 9};
-             for (int offset : KingOffsets) {
-                int targetSq = from + offset;
-                if (!isSquareValid(targetSq)) continue;
-                int dr = abs((targetSq/8) - r);
-                int dc = abs((targetSq%8) - c);
-                if (dr <= 1 && dc <= 1) {
-                     Piece target = board[targetSq];
-                     if (target == NO_PIECE || colorOf(target) != turn) {
-                         moves.push_back({from, targetSq, NO_PIECE_TYPE});
-                     }
-                }
-             }
-
-             // Castling
-             Side opp = (turn == White) ? Black : White;
-             if (!isCheck()) {
-                 if (turn == White) {
-                     if (castlingRights & 1) { // K
-                         if (board[5] == NO_PIECE && board[6] == NO_PIECE) {
-                             if (!isSquareAttacked(5, opp)) {
-                                 moves.push_back({4, 6, NO_PIECE_TYPE});
-                             }
-                         }
-                     }
-                     if (castlingRights & 2) { // Q
-                         if (board[1] == NO_PIECE && board[2] == NO_PIECE && board[3] == NO_PIECE) {
-                             if (!isSquareAttacked(3, opp)) {
-                                 moves.push_back({4, 2, NO_PIECE_TYPE});
-                             }
-                         }
-                     }
-                 } else { // Black
-                     if (castlingRights & 4) { // k
-                         if (board[61] == NO_PIECE && board[62] == NO_PIECE) {
-                             if (!isSquareAttacked(61, opp)) {
-                                 moves.push_back({60, 62, NO_PIECE_TYPE});
-                             }
-                         }
-                     }
-                     if (castlingRights & 8) { // q
-                         if (board[57] == NO_PIECE && board[58] == NO_PIECE && board[59] == NO_PIECE) {
-                             if (!isSquareAttacked(59, opp)) {
-                                 moves.push_back({60, 58, NO_PIECE_TYPE});
-                             }
-                         }
-                     }
-                 }
-             }
-        }
-        else if (pt == BISHOP || pt == QUEEN) {
-            addSlidingMoves(*this, from, BishopDir, 4, moves);
-        }
-        
-        if (pt == ROOK || pt == QUEEN) {
-            addSlidingMoves(*this, from, RookDir, 4, moves);
-        }
-    }
     return moves;
 }
 
 std::vector<Move> Board::getLegalMoves() const {
-    std::vector<Move> pseudo = generatePseudoLegalMoves();
     std::vector<Move> legal;
+    legal.reserve(40);
     
-    Board copy = *this;
-    for (const auto& m : pseudo) {
+    enumeratePseudoLegalMoves([&](const Move& m) {
+        Board copy = *this;
         if (copy.makeMove(m)) {
             legal.push_back(m);
-            copy.undoMove();
         }
-    }
+        return false; // Continue enumeration
+    });
     
     return legal;
 }
