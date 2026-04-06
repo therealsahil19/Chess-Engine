@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -45,7 +46,9 @@ bool StockfishClient::start() {
     siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
     // Create the child process.
-    std::string commandLine = "\"" + exePath + "\"";
+    std::string sanitizedPath = exePath;
+    sanitizedPath.erase(std::remove(sanitizedPath.begin(), sanitizedPath.end(), '\"'), sanitizedPath.end());
+    std::string commandLine = "\"" + sanitizedPath + "\"";
     std::vector<char> cmd(commandLine.begin(), commandLine.end());
     cmd.push_back(0);
 
