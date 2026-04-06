@@ -242,6 +242,50 @@ void test_game_reviewer_summary() {
     // GameEnd should be skipped
 }
 
+void test_move_serialization() {
+    // Test Move::fromString
+    Move m1 = Move::fromString("e2e4");
+    EXPECT_EQ(m1.from, stringToSquare("e2"));
+    EXPECT_EQ(m1.dest, stringToSquare("e4"));
+    EXPECT_EQ(m1.promotion, NO_PIECE_TYPE);
+
+    Move m2 = Move::fromString("a7a8q");
+    EXPECT_EQ(m2.from, stringToSquare("a7"));
+    EXPECT_EQ(m2.dest, stringToSquare("a8"));
+    EXPECT_EQ(m2.promotion, QUEEN);
+
+    Move m3 = Move::fromString("a7a8r");
+    EXPECT_EQ(m3.promotion, ROOK);
+
+    Move m4 = Move::fromString("a7a8b");
+    EXPECT_EQ(m4.promotion, BISHOP);
+
+    Move m5 = Move::fromString("a7a8n");
+    EXPECT_EQ(m5.promotion, KNIGHT);
+
+    Move m6 = Move::fromString("abc");
+    EXPECT_TRUE(m6.isNull());
+
+    Move m7 = Move::fromString("a7a8x");
+    EXPECT_EQ(m7.promotion, NO_PIECE_TYPE);
+
+    // Test Move::toString
+    Move m8;
+    m8.from = stringToSquare("e2");
+    m8.dest = stringToSquare("e4");
+    m8.promotion = NO_PIECE_TYPE;
+    EXPECT_EQ(m8.toString(), "e2e4");
+
+    Move m9;
+    m9.from = stringToSquare("a7");
+    m9.dest = stringToSquare("a8");
+    m9.promotion = QUEEN;
+    EXPECT_EQ(m9.toString(), "a7a8q");
+
+    Move m10; // Null move
+    EXPECT_EQ(m10.toString(), "0000");
+}
+
 int main() {
     std::cout << "Running tests...\n";
     test_squareToString_and_stringToSquare();
@@ -258,6 +302,7 @@ int main() {
     test_stockfish_integration();
     test_game_reviewer_classification();
     test_game_reviewer_summary();
+    test_move_serialization();
     std::cout << "All tests passed!\n";
     return 0;
 }
